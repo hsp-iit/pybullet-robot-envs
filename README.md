@@ -53,15 +53,16 @@ Main features:
 - Also VR is available.
 
 ### Examples
-- `helloworld.py`: a basic script for loading one of the pybullet models
-- `helloworld_icub.py`: a basic script loading an [iCub sdf model](https://github.com/giuliavezzani/icub-models/blob/master/iCub/robots/iCubGazeboV2_5/model.sdf). In order to run the script, download the model by:
-`git clone https://github.com/giuliavezzani/icub-models`.
-This model has the base fixed to the ground, suitable for manipulation tasks.
-However, no accurate models for the iCub hand are available so far in a format suitable for `pybullet`.
+- `helloworld.py`: a basic script for loading one of pybullet models
+- `helloworld_icub.py`: a basic script loading an [iCub sdf model](https://github.com/giuliavezzani/icub-models/blob/master/iCub/robots/iCubGazeboV2_5/model.sdf). 
+In order to run the script, download the model by:
+```
+git clone https://github.com/giuliavezzani/icub-models
+```
+This model has the **base fixed to the ground**, suitable for manipulation tasks.
+However, **no accurate models for the iCub hand are available** so far in a format suitable for `pybullet`.
 
 
 ### Issues with our icub_models
+- Problems in importing [sdf model with hands](https://github.com/robotology/icub-gazebo/blob/master/icub_with_hands/icub_with_hands.sdf)
 
-- managed to import sdf model even with use_parent_model_frame=1
-- problems in importing sdf model with hands
-- robot falls down: it should be solvable (maybe I made it)
