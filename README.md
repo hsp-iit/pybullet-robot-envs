@@ -1,14 +1,23 @@
 ## pybullet-workbook
 
 ### PyBullet installation
-1. `virtualenv pybullet`
-2. `source pybullet/bin/activate`
+1. Create a virtual environment:
+```
+virtualenv pybullet
+```
+2. Activate the virtual environment:
+```
+source pybullet/bin/activate
+```
 3. Install all the dependencies necessary for doing RL training with py bullet:
 ```
 pip install -r requirements.txt
 ```
-4. test installation running `python helloworld.py`
-5. test RL framework running:
+4. Test installation running:
+```
+python helloworld.py
+```
+5. Test RL framework running:
   ```
   python -m pybullet_envs.examples.enjoy_TF_HumanoidBulletEnv_v0_2017may
   ```
@@ -16,10 +25,13 @@ or
 ```
 python -m pybullet_envs.examples.kukaGymEnvTest
 ```
-6. git clone https://github.com/openai/baselines.git
+6. Get OpenAI baselines:
+```
+git clone https://github.com/openai/baselines.git
+```
 7. Test everything working with:
 ```
-cd baselines
+cd baselines/
 python -m pybullet_envs.agents.train_ppo --config=pybullet_pendulum --logdir=pendulum
 ```
 
