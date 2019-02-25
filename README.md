@@ -37,20 +37,20 @@ python -m pybullet_envs.agents.train_ppo --config=pybullet_pendulum --logdir=pen
 
 ### Pybullet summary
 
-Pybullet tutorial is available [here](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#)
+Pybullet tutorial is available [here](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#).
+Main features:
 
-- it is possible to load urdf
-- interactive opengl gui
-- it is possible to control robots (inverse dynamics and kinematics)
-- options in camera rendering
+- It is possible to load **urdf/sdf** models;
+- Interactive OpenGl gui;
+- It is possible to control robots (**inverse dynamics and kinematics**);
+- Options in camera rendering;
 - RL framework:
-    - a suit for gym environments is installed together with PyBullet
-    - it includes pybullet version of openai gym envs.
-    - to train: we can use
-       - [openai baselines](https://github.com/openai/baselines)
-       - [agents](https://pypi.org/project/agents/): a python package for tensorflow implementation of RL algorithms
-    - in pybullet there are already some examples, but they look old (at least the ones installed with pip)
-- also VR is available
+    - **a suit for gym environments is installed together with PyBullet**;
+    - It includes pybullet version of openai gym envs;
+    - To train we can use
+       - [openai baselines](https://github.com/openai/baselines);
+       - [agents](https://pypi.org/project/agents/): a python package for tensorflow implementation of RL algorithms;
+- Also VR is available.
 
 ### Examples
 - `helloworld.py`: a basic script for loading one of the pybullet models
