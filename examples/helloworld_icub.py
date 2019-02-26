@@ -6,16 +6,14 @@ physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 p.setGravity(0,0,-10)
 planeId = p.loadURDF("plane.urdf")
-cubeStartPos = [0,0,1]
-cubeStartOrientation = p.getQuaternionFromEuler([0,0,0])
-#boxId = p.loadURDF("r2d2.urdf",cubeStartPos, cubeStartOrientation)
-#icubId = p.loadURDF("/home/gvezzani/giulia_code/icub_models_to_test/icub-models/iCub/robots/iCubGazeboV2_5/model.urdf")
-icubId = p.loadSDF("/home/gvezzani/giulia_code/icub_models_to_test/icub-models/iCub/robots/iCubGazeboV2_5/model.sdf")
-#icubId = p.loadSDF("/home/gvezzani/giulia_code/icub_models_to_test/icub-gazebo/iCubHeidelberg01_model/iCubHeidelberg01.sdf")
-#icubId = p.loadSDF("/home/gvezzani/giulia_code/icub_models_to_test/icub-gazebo/icub_with_hands/icub_with_hands.sdf")
-#icubId = p.loadSDF("/home/gvezzani/giulia_code/icub_models_to_test/icub-gazebo/icub/icub.sdf")
+tablePos = [1.0, 0.0, 0.0]
+objPos = [0.41, 0.0, 0.8]
+tableID = p.loadURDF("table/table.urdf", tablePos)
+objID = p.loadURDF("cube_small.urdf", objPos)
 
-print(p.getJointInfo(icubId[0], 21))
+
+icubId = p.loadSDF("/home/gvezzani/giulia_code/icub_models_to_test/icub-models/iCub/robots/iCubGazeboV2_5/model.sdf")
+
 for i in range (10000):
     p.stepSimulation()
     maxForce = 5
@@ -25,7 +23,7 @@ for i in range (10000):
         targetVelocity = 2,
         force = maxForce)
     time.sleep(1./240.)
-cubePos, cubeOrn = p.getBasePositionAndOrientation(boxId)
-print(cubePos,cubeOrn)
+
+
 
 p.disconnect()
