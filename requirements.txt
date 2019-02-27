@@ -1,6 +1,6 @@
 pybullet
 tensorflow
-gym
+gym==0.10.11
 joblib
 cloudpickle
 agents
