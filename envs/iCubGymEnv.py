@@ -71,7 +71,7 @@ class iCubGymEnv(gym.Env):
         self.viewer = None
 
     def reset(self):
-        p.setGravity(0,0,-10)
+        #p.setGravity(0,0,-10)
         self.terminated = 0
         p.resetSimulation()
         p.setPhysicsEngineParameter(numSolverIterations=150)
@@ -121,3 +121,4 @@ class iCubGymEnv(gym.Env):
 
     def step(self):
         p.stepSimulation()
+        #self._icub.step()

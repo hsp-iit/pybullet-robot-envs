@@ -1,5 +1,6 @@
 
 from envs.iCubGymEnv import iCubGymEnv
+import time
 
 def main():
 
@@ -7,8 +8,8 @@ def main():
 
     env.reset()
 
-    for t in range(1000):
-        env.render()
+    for t in range(100000):
+        #env.render()
         env.step()
 
 if __name__ == '__main__':
