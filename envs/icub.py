@@ -39,6 +39,8 @@ class iCub:
         self.motorNames = []
         self.motorIndices = []
 
+        self.right_hand_Id = 37
+
         self.reset()
 
     def reset(self):
@@ -98,3 +100,17 @@ class iCub:
          return 6
     def getObservationDimension(self):
         return len(self.getObservation())
+
+    def getObservation(self):
+        observation = []
+        state = p.getLinkState(self.icubId, self.right_hand_Id)
+        pos = state[0]
+        orn = state[1]
+        euler = p.getEulerFromQuaternion(orn)
+
+        print(pos)
+        print(euler)
+        observation.extend(list(pos))
+        observation.extend(list(euler))
+
+        return observation

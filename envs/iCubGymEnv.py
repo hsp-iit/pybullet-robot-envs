@@ -121,4 +121,4 @@ class iCubGymEnv(gym.Env):
 
     def step(self):
         p.stepSimulation()
-        #self._icub.step()
+        self._icub.getObservation()
