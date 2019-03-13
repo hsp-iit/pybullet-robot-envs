@@ -12,7 +12,7 @@ from math import pi
 
 class iCub:
 
-    def __init__(self, urdfRootPath='/home/gvezzani/giulia_code/icub_models_to_test/icub-models/iCub/robots/iCubGenova01', timeStep=0.01):
+    def __init__(self, urdfRootPath=currentdir+'/icub_with_hands_pybullet.sdf', timeStep=0.01):
         self.urdfRootPath = urdfRootPath
         self.timeStep = timeStep
 
@@ -44,55 +44,55 @@ class iCub:
         self.reset()
 
     def reset(self):
-        self.icubId = p.loadSDF("/home/gvezzani/giulia_code/icub_models_to_test/icub-models/iCub/robots/iCubGenova01/model.sdf")
+        self.icubId = p.loadSDF(currentdir+"/icub_with_hands_pybullet.sdf")
         self.icubId = self.icubId[0]
         self.numJoints = p.getNumJoints(self.icubId)
 
-        count = 0;
-        for jointIndex in self.indices_torso:
-            jointInfo = p.getJointInfo(self.icubId, jointIndex)
-            qIndex = jointInfo[0]
-            if qIndex > -1:
-                self.motorNames.append(str(jointInfo[1]))
-                self.motorIndices.append(jointIndex)
-            p.resetJointState(self.icubId, jointIndex, self.home_pos_torso[count])
-            p.setJointMotorControl2(self.icubId, jointIndex, p.POSITION_CONTROL, targetPosition=self.home_pos_torso[count], force=self.maxForce)
-            count = count + 1
-
-        count = 0;
-        for jointIndex in self.indices_left_arm:
-            jointInfo = p.getJointInfo(self.icubId, jointIndex)
-            qIndex = jointInfo[0]
-
-            if qIndex > -1:
-                self.motorNames.append(str(jointInfo[1]))
-                self.motorIndices.append(jointIndex)
-            p.resetJointState(self.icubId, jointIndex, self.home_left_arm[count])
-            p.setJointMotorControl2(self.icubId, jointIndex, p.POSITION_CONTROL, targetPosition=self.home_left_arm[count], force=self.maxForce)
-            print(p.getJointState(self.icubId, jointIndex))
-            count = count + 1
-        count = 0;
-
-        for jointIndex in self.indices_right_arm:
-            jointInfo = p.getJointInfo(self.icubId, jointIndex)
-            qIndex = jointInfo[0]
-            if qIndex > -1:
-                self.motorNames.append(str(jointInfo[1]))
-                self.motorIndices.append(jointIndex)
-            p.resetJointState(self.icubId, jointIndex, self.home_right_arm[count])
-            p.setJointMotorControl2(self.icubId, jointIndex, p.POSITION_CONTROL, targetPosition=self.home_right_arm[count], force=self.maxForce)
-            count = count + 1
-        count = 0;
-
-        for jointIndex in self.indices_head:
-            jointInfo = p.getJointInfo(self.icubId, jointIndex)
-            qIndex = jointInfo[0]
-            if qIndex > -1:
-                self.motorNames.append(str(jointInfo[1]))
-                self.motorIndices.append(jointIndex)
-            p.resetJointState(self.icubId, jointIndex, self.home_pos_head[count])
-            p.setJointMotorControl2(self.icubId, jointIndex, p.POSITION_CONTROL, targetPosition=self.home_pos_head[count], force=self.maxForce)
-            count = count + 1
+        # count = 0;
+        # for jointIndex in self.indices_torso:
+        #     jointInfo = p.getJointInfo(self.icubId, jointIndex)
+        #     qIndex = jointInfo[0]
+        #     if qIndex > -1:
+        #         self.motorNames.append(str(jointInfo[1]))
+        #         self.motorIndices.append(jointIndex)
+        #     p.resetJointState(self.icubId, jointIndex, self.home_pos_torso[count])
+        #     p.setJointMotorControl2(self.icubId, jointIndex, p.POSITION_CONTROL, targetPosition=self.home_pos_torso[count], force=self.maxForce)
+        #     count = count + 1
+        #
+        # count = 0;
+        # for jointIndex in self.indices_left_arm:
+        #     jointInfo = p.getJointInfo(self.icubId, jointIndex)
+        #     qIndex = jointInfo[0]
+        #
+        #     if qIndex > -1:
+        #         self.motorNames.append(str(jointInfo[1]))
+        #         self.motorIndices.append(jointIndex)
+        #     p.resetJointState(self.icubId, jointIndex, self.home_left_arm[count])
+        #     p.setJointMotorControl2(self.icubId, jointIndex, p.POSITION_CONTROL, targetPosition=self.home_left_arm[count], force=self.maxForce)
+        #     print(p.getJointState(self.icubId, jointIndex))
+        #     count = count + 1
+        # count = 0;
+        #
+        # for jointIndex in self.indices_right_arm:
+        #     jointInfo = p.getJointInfo(self.icubId, jointIndex)
+        #     qIndex = jointInfo[0]
+        #     if qIndex > -1:
+        #         self.motorNames.append(str(jointInfo[1]))
+        #         self.motorIndices.append(jointIndex)
+        #     p.resetJointState(self.icubId, jointIndex, self.home_right_arm[count])
+        #     p.setJointMotorControl2(self.icubId, jointIndex, p.POSITION_CONTROL, targetPosition=self.home_right_arm[count], force=self.maxForce)
+        #     count = count + 1
+        # count = 0;
+        #
+        # for jointIndex in self.indices_head:
+        #     jointInfo = p.getJointInfo(self.icubId, jointIndex)
+        #     qIndex = jointInfo[0]
+        #     if qIndex > -1:
+        #         self.motorNames.append(str(jointInfo[1]))
+        #         self.motorIndices.append(jointIndex)
+        #     p.resetJointState(self.icubId, jointIndex, self.home_pos_head[count])
+        #     p.setJointMotorControl2(self.icubId, jointIndex, p.POSITION_CONTROL, targetPosition=self.home_pos_head[count], force=self.maxForce)
+        #     count = count + 1
 
     def getActionDimension(self):
          if (self.useInverseKinematics):
@@ -101,16 +101,16 @@ class iCub:
     def getObservationDimension(self):
         return len(self.getObservation())
 
-    def getObservation(self):
-        observation = []
-        state = p.getLinkState(self.icubId, self.right_hand_Id)
-        pos = state[0]
-        orn = state[1]
-        euler = p.getEulerFromQuaternion(orn)
-
-        print(pos)
-        print(euler)
-        observation.extend(list(pos))
-        observation.extend(list(euler))
-
-        return observation
+    # def getObservation(self):
+    #     observation = []
+    #     state = p.getLinkState(self.icubId, self.right_hand_Id)
+    #     pos = state[0]
+    #     orn = state[1]
+    #     euler = p.getEulerFromQuaternion(orn)
+    #
+    #     print(pos)
+    #     print(euler)
+    #     observation.extend(list(pos))
+    #     observation.extend(list(euler))
+    #
+    #     return observation

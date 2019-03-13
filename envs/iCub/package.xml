@@ -1,0 +1,14 @@
+<package>
+  <name>iCub</name>
+  <version>1.6.0</version>
+  <description>
+    This is not an actual package, but rather a placeholder to 
+    make sure that the share/iCub directory is found as the 
+    iCub package by ROS based software.
+  </description>
+  <maintainer email=""></maintainer>
+  <license>All Right Reserved</license>
+
+  <url></url>
+  <author></author>
+</package>

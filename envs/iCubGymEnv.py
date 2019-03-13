@@ -25,7 +25,7 @@ class iCubGymEnv(gym.Env):
     'video.frames_per_second': 50 }
 
     def __init__(self,
-                 urdfRoot='/home/gvezzani/giulia_code/icub_models_to_test/icub-models/iCub/robots/iCubGenova01', ## TODO
+                 urdfRoot=currentdir+'/icub_with_hands_pybullet.sdf', ## TODO
                  actionRepeat=1,
                  isEnableSelfCollision=True,
                  renders=False,
@@ -85,7 +85,7 @@ class iCubGymEnv(gym.Env):
         self._icub = icub.iCub(urdfRootPath=self._urdfRoot, timeStep=self._timeStep)
 
         tablePos = [0.8, 0.0, 0.0]
-        p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), tablePos)
+        #p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), tablePos)
 
         self._envStepCounter = 0
         p.stepSimulation()
@@ -121,4 +121,4 @@ class iCubGymEnv(gym.Env):
 
     def step(self):
         p.stepSimulation()
-        self._icub.getObservation()
+        # self._icub.getObservation()
