@@ -62,5 +62,10 @@ However, **no accurate models for the iCub hand are available** so far in a form
 
 
 ### Envs
-A gym-like environment  for the iCub is under development in [/envs](https://github.com/giuliavezzani/pybullet-workbook/tree/master/envs).
-The structure takes inspiration from [pybullet kuka env](https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/gym/pybullet_envs/bullet/kukaGymEnv.py).
+Gym-like environments  for the iCub and the Franka Panda are under development in [/envs](https://github.com/giuliavezzani/pybullet-workbook/tree/master/envs).
+
+The iCub model has been obtained from the urdf including hands manually fixed the joint reference frames.
+
+Tha Panda model has been obtained by converting the .urdf.xarco model provided by [franka_ros](https://github.com/frankaemika/franka_ros/blob/kinetic-devel/franka_description/robots/panda_arm.urdf.xacro) using [Ros](https://answers.ros.org/question/10401/how-to-convert-xacro-file-to-urdf-file/).
+
+The structureof the environments takes inspiration from [pybullet kuka env](https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/gym/pybullet_envs/bullet/kukaGymEnv.py).
