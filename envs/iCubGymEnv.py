@@ -3,7 +3,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 print ("current_dir=" + currentdir)
 os.sys.path.insert(0,currentdir)
 
-import math
+import math as m
 import gym
 from gym import spaces
 from gym.utils import seeding
@@ -25,7 +25,7 @@ class iCubGymEnv(gym.Env):
     'video.frames_per_second': 50 }
 
     def __init__(self,
-                 urdfRoot=currentdir+'/icub_with_hands_pybullet.sdf', ## TODO
+                 urdfRoot=currentdir+'/icub_fixed_model.sdf', ## TODO
                  actionRepeat=1,
                  isEnableSelfCollision=True,
                  renders=False,
@@ -71,28 +71,32 @@ class iCubGymEnv(gym.Env):
         self.viewer = None
 
     def reset(self):
-        #p.setGravity(0,0,-10)
         self.terminated = 0
         p.resetSimulation()
         p.setPhysicsEngineParameter(numSolverIterations=150)
         p.setTimeStep(self._timeStep)
 
+        ## Load table and object for simulation
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"),[0,0,0])
+        tablePos = [0.85, 0.0, 0.0]
+        p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), tablePos)
         objPos = [0.41, 0.0, 0.8]
         objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "cube_small.urdf"), objPos)
 
         p.setGravity(0,0,-10)
-        self._icub = icub.iCub(urdfRootPath=self._urdfRoot, timeStep=self._timeStep)
 
-        tablePos = [0.8, 0.0, 0.0]
-        #p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), tablePos)
+        # Load robot
+        self._icub = icub.iCub(urdfRootPath=self._urdfRoot, timeStep=self._timeStep)
 
         self._envStepCounter = 0
         p.stepSimulation()
+
+        ## TODO Update this
         self._observation = [0, 0, 0]
         return np.array(self._observation)
 
     def render(self, mode="rgb_array", close=False):
+        ## TODO Check the behavior of this function
         if mode != "rgb_array":
           return np.array([])
 
@@ -112,7 +116,6 @@ class iCubGymEnv(gym.Env):
             projectionMatrix=proj_matrix, renderer=self._p.ER_BULLET_HARDWARE_OPENGL)
             #renderer=self._p.ER_TINY_RENDERER)
 
-
         rgb_array = np.array(px, dtype=np.uint8)
         rgb_array = np.reshape(rgb_array, (RENDER_HEIGHT, RENDER_WIDTH, 4))
 
@@ -120,5 +123,6 @@ class iCubGymEnv(gym.Env):
         return rgb_array
 
     def step(self):
+        ## TODO Do something with the robot
         p.stepSimulation()
         # self._icub.getObservation()
