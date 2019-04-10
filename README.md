@@ -54,15 +54,13 @@ Main features:
 
 ### Examples
 - `helloworld.py`: a basic script for loading one of pybullet models
-- `helloworld_icub.py`: a basic script loading an [iCub sdf model](https://github.com/giuliavezzani/icub-models/blob/master/iCub/robots/iCubGazeboV2_5/model.sdf). 
-In order to run the script, download the model by:
-```
-git clone https://github.com/giuliavezzani/icub-models
-```
+- `helloworld_icub.py`: a basic script loading an [iCub sdf model](https://github.com/giuliavezzani/pybullet-workbook/blob/master/envs/icub_fixed_model.sdf). 
+
 This model has the **base fixed to the ground**, suitable for manipulation tasks.
 However, **no accurate models for the iCub hand are available** so far in a format suitable for `pybullet`.
 
 
-### Issues with our icub_models
-- Problems in importing [sdf model with hands](https://github.com/robotology/icub-gazebo/blob/master/icub_with_hands/icub_with_hands.sdf)
 
+### Envs
+A gym-like environment  for the iCub is under development in [/envs](https://github.com/giuliavezzani/pybullet-workbook/tree/master/envs).
+The structure takes inspiration from [pybullet kuka env](https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/gym/pybullet_envs/bullet/kukaGymEnv.py).
