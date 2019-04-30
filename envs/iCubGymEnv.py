@@ -57,7 +57,7 @@ class iCubGymEnv(gym.Env):
 
         self.seed()
         self.reset()
-        observationDim = 3
+        observationDim = len(self.getExtendedObservation())
         print("observationDim")
         print(observationDim)
 
@@ -81,7 +81,7 @@ class iCubGymEnv(gym.Env):
         tablePos = [0.85, 0.0, 0.0]
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), tablePos)
         objPos = [0.41, 0.0, 0.8]
-        objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "cube_small.urdf"), objPos)
+        self.objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "cube_small.urdf"), objPos)
 
         p.setGravity(0,0,-10)
 
@@ -92,8 +92,33 @@ class iCubGymEnv(gym.Env):
         p.stepSimulation()
 
         ## TODO Update this
-        self._observation = [0, 0, 0]
+        self._observation = self.getExtendedObservation()
         return np.array(self._observation)
+
+    def getExtendedObservation(self):
+        self._observation = self._icub.getObservation()
+        handState = p.getLinkState(self._icub.icubId, self._icub.indices_left_arm[-1])
+        handPos = handState[0]
+        handOrn = handState[1]
+
+        cubePos, cubeOrn = p.getBasePositionAndOrientation(self.objID)
+        invHandPos, invHandOrn = p.invertTransform(handPos, handOrn)
+        handEul = p.getEulerFromQuaternion(handOrn)
+
+        cubePosInHand, cubeOrnInHand = p.multiplyTransforms(invHandPos, invHandOrn,
+                                                                cubePos, cubeOrn)
+        projectedCubePos2D = [cubePosInHand[0], cubePosInHand[1]]
+        cubeEulerInHand = p.getEulerFromQuaternion(cubeOrnInHand)
+
+        #we return the relative x,y position and euler angle of cube in hand space
+        cubeInHandPosXYEulZ = [cubePosInHand[0], cubePosInHand[1], cubeEulerInHand[2]]
+
+        self._observation.extend(list(cubeInHandPosXYEulZ))
+        return self._observation
+
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
 
     def render(self, mode="rgb_array", close=False):
         ## TODO Check the behavior of this function
@@ -122,7 +147,52 @@ class iCubGymEnv(gym.Env):
         rgb_array = rgb_array[:, :, :3]
         return rgb_array
 
-    def step(self):
-        ## TODO Do something with the robot
+    def step0(self):
         p.stepSimulation()
-        # self._icub.getObservation()
+        self._observation = self.getExtendedObservation()
+        return np.array(self._observation), 0, 0, {}
+
+    def step(self, action):
+        if self._isDiscrete:
+            return []
+        else:
+            #print("action[0]=", str(action[0]))
+            dv = 0.005
+            dx = action[0] * dv
+            dy = action[1] * dv
+            dz = action[1] * 0.002
+            da = action[2] * 0.05
+            realAction = [dx, dy, dz, da]
+        return self.step2(realAction)
+
+    def step2(self, action):
+        for i in range(self._actionRepeat):
+            self._icub.applyAction(action)
+            p.stepSimulation()
+            if self._termination():
+                break
+                self._envStepCounter += 1
+            if self._renders:
+                time.sleep(self._timeStep)
+        self._observation = self.getExtendedObservation()
+        done = self._termination()
+
+        reward = 0
+        return np.array(self._observation), reward, done, {}
+
+    def _termination(self):
+        state = p.getLinkState(self._icub.icubId, self._icub.indices_left_arm[-1])
+        currHandPos = state[0]
+
+        if (self.terminated or self._envStepCounter > self._maxSteps):
+            self._observation = self.getExtendedObservation()
+            return True
+
+        maxDist = 0.005
+        closestPoints = p.getClosestPoints(self.objID, self._icub.icubId, maxDist)
+        if (len(closestPoints)):  #(actualEndEffectorPos[2] <= -0.43):
+            self.terminated = 1
+
+            #push and terminate
+            return True
+        return False

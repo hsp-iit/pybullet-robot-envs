@@ -22,7 +22,7 @@ for root, dirs, files in os.walk(os.path.dirname(dir_path)):
             print (root+'/'+str(file))
             p.setAdditionalSearchPath(root)
 
-robotIds = p.loadSDF("icub_fixed_model.sdf")
+robotIds = p.loadSDF("../envs/icub_fixed_model.sdf")
 icubId = robotIds[0]
 
 # set constraint between base_link and world
