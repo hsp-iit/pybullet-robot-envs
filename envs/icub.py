@@ -50,13 +50,6 @@ class iCub:
                                   p.getBasePositionAndOrientation(self.icubId)[0][2]*1.2],
                                   p.getBasePositionAndOrientation(self.icubId)[1])
 
-        # Get cartesian world position of left hand link frame
-        l_state = p.getLinkState(self.icubId, self.indices_left_arm[-1], computeForwardKinematics=1)
-        self.handPos = list(l_state[4])
-        self.handOrn = list(l_state[5])
-        print("PRIMA: iCub reset(): handPos")
-        print(self.handPos)
-
         ## Set all joints initial values
         for count,i in enumerate(self.indices_torso):
             p.resetJointState(self.icubId, i, self.home_pos_torso[count]/180*m.pi)
@@ -86,14 +79,12 @@ class iCub:
         print(self.ll)
 
         # Get cartesian world position of left hand link frame
-        l_state = p.getLinkState(self.icubId, self.indices_left_arm[-1], computeForwardKinematics=1)
-        self.handPos = [0.41, 0.0, 0.8]#list(l_state[4])
+        l_state = p.getLinkState(self.icubId, self.indices_left_arm[-1])
+        self.handPos = [0.2, 0.2, 0.8]#list(l_state[4])
         self.handOrn = [0.0,0.0,0.0]#[list(l_state[5])]
-        print("DOPO: iCub reset(): handPos")
+        print("iCub reset(): handPos")
         print(self.handPos)
-        j_state = p.getJointState(self.icubId, self.indices_left_arm[-1])
-        self.handYaw = self.home_left_arm[-1]/180*m.pi
-
+        
         self.motorNames = []
         self.motorIndices = []
         for i in self.indices_torso:
