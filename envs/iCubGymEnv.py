@@ -26,6 +26,7 @@ class iCubGymEnv(gym.Env):
 
     def __init__(self,
                  urdfRoot=currentdir+'/icub_fixed_model.sdf', ## TODO
+                 useInverseKinematics=1,
                  actionRepeat=1,
                  isEnableSelfCollision=True,
                  renders=False,
@@ -34,6 +35,7 @@ class iCubGymEnv(gym.Env):
 
         self._isDiscrete = isDiscrete
         self._timeStep = 1./240.
+        self._useInverseKinematics = useInverseKinematics
         self._urdfRoot = urdfRoot
         self._actionRepeat = actionRepeat
         self._isEnableSelfCollision = isEnableSelfCollision
@@ -58,16 +60,15 @@ class iCubGymEnv(gym.Env):
         self.seed()
         self.reset()
         observationDim = len(self.getExtendedObservation())
-        print("observationDim")
-        print(observationDim)
-
         observation_high = np.array([largeValObservation] * observationDim)
+        self.observation_space = spaces.Box(-observation_high, observation_high)
 
-        action_dim = 10
+        action_dim = self._icub.getActionDimension()
         self._action_bound = 1
         action_high = np.array([self._action_bound] * action_dim)
         self.action_space = spaces.Box(-action_high, action_high)
-        self.observation_space = spaces.Box(-observation_high, observation_high)
+
+
         self.viewer = None
 
     def reset(self):
@@ -86,12 +87,15 @@ class iCubGymEnv(gym.Env):
         p.setGravity(0,0,-10)
 
         # Load robot
-        self._icub = icub.iCub(urdfRootPath=self._urdfRoot, timeStep=self._timeStep)
+        self._icub = icub.iCub(urdfRootPath=self._urdfRoot,
+                                timeStep=self._timeStep,
+                                useInverseKinematics=self._useInverseKinematics)
 
         self._envStepCounter = 0
-        p.stepSimulation()
+        # Let the world run for a bit
+        for _ in range(50):
+            p.stepSimulation()
 
-        ## TODO Update this
         self._observation = self.getExtendedObservation()
         return np.array(self._observation)
 
@@ -153,16 +157,16 @@ class iCubGymEnv(gym.Env):
         return np.array(self._observation), 0, 0, {}
 
     def step(self, action):
-        if self._isDiscrete:
-            return []
-        else:
-            #print("action[0]=", str(action[0]))
+
+        if self._icub.useInverseKinematics:
             dv = 0.005
             dx = action[0] * dv
             dy = action[1] * dv
             dz = action[1] * 0.002
-            da = action[2] * 0.05
-            realAction = [dx, dy, dz, da]
+            realAction = [dx, dy, dz, dy]
+        else:
+            dv = 0.01
+            realAction = [i * dv for i in action]
         return self.step2(realAction)
 
     def step2(self, action):
@@ -171,28 +175,29 @@ class iCubGymEnv(gym.Env):
             p.stepSimulation()
             if self._termination():
                 break
-                self._envStepCounter += 1
-            if self._renders:
-                time.sleep(self._timeStep)
+            self._envStepCounter += 1
+        if self._renders:
+            time.sleep(self._timeStep)
         self._observation = self.getExtendedObservation()
         done = self._termination()
 
         reward = 0
         return np.array(self._observation), reward, done, {}
 
+    # TODO
     def _termination(self):
-        state = p.getLinkState(self._icub.icubId, self._icub.indices_left_arm[-1])
-        currHandPos = state[0]
-
         if (self.terminated or self._envStepCounter > self._maxSteps):
             self._observation = self.getExtendedObservation()
             return True
 
-        maxDist = 0.005
-        closestPoints = p.getClosestPoints(self.objID, self._icub.icubId, maxDist)
-        if (len(closestPoints)):  #(actualEndEffectorPos[2] <= -0.43):
-            self.terminated = 1
-
-            #push and terminate
-            return True
+        #if target as reached:
+            #self.terminated = 1
+            #...
+            #self._observation = self.getExtendedObservation()
+            #return True
         return False
+
+    # TODO
+    def _reward(self):
+        reward = -1000
+        return reward
