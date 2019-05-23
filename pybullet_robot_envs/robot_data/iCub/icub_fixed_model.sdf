@@ -1639,7 +1639,7 @@
           <izz>0.000304729</izz>
         </inertia>
       </inertial>
-      <!--collision name='l_hand_collision'>
+      <collision name='l_hand_collision'>
         <pose frame=''>-0.39968 0.019493 -0.107405 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1647,7 +1647,7 @@
             <uri>/iCub/meshes/simmechanics/sim_sea_2-5_l_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
-      </collision-->
+      </collision>
       <visual name='l_hand_visual'>
         <pose frame=''>-0.39968 0.019493 -0.107405 0 -0 0</pose>
         <geometry>

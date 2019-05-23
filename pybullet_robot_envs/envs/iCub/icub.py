@@ -8,18 +8,20 @@ import numpy as np
 import copy
 import math
 import pybullet_data
+import robot_data
 import math as m
 
 class iCub:
 
-    def __init__(self, urdfRootPath=currentdir+'/icub_fixed_model.sdf',
+    def __init__(self, urdfRootPath=robot_data.getDataPath(),
                     timeStep=0.01,
-                    useInverseKinematics=0):
+                    useInverseKinematics=0, arm='l'):
 
-        self.urdfRootPath = urdfRootPath
+        self.urdfRootPath = os.path.join(urdfRootPath, "iCub/icub_fixed_model.sdf")
         self.timeStep = timeStep
         self.useInverseKinematics = useInverseKinematics
         self.useNullSpace = 0
+        self.useOrientation = 1
         self.useSimulation = 1
 
         self.indices_torso = range(12,15)
@@ -33,15 +35,15 @@ class iCub:
         self.home_left_arm = [-29.4, 28.8, 0, 44.59, 0, 0, 0]
         self.home_right_arm = [-29.4, 30.4, 0, 44.59, 0, 0, 0]
 
+        self.workspace_lim = [[0.2,0.5],[-0.2,0.2],[0.5,0.8]]
+
+        self.control_arm = arm if arm =='r' or arm =='l' else 'l' #left arm by default
+
         self.reset()
 
     def reset(self):
-        self.icubId = p.loadSDF(self.urdfRootPath)
-        self.icubId = self.icubId[0]
+        self.icubId = p.loadSDF(self.urdfRootPath)[0]
         self.numJoints = p.getNumJoints(self.icubId)
-
-        ## for j in range (self.numJoints):
-        ##    print(p.getJointInfo(self.icubId,j))
 
         # set constraint between base_link and world
         self.constr_id = p.createConstraint(self.icubId,-1,-1,-1,p.JOINT_FIXED,[0,0,0],[0,0,0],
@@ -76,40 +78,34 @@ class iCub:
                 targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
 
         self.ll, self.ul, self.jr, self.rs = self.getJointRanges()
-        print(self.ll)
 
-        # Get cartesian world position of left hand link frame
-        l_state = p.getLinkState(self.icubId, self.indices_left_arm[-1])
-        self.handPos = [0.2, 0.2, 0.8]#list(l_state[4])
-        self.handOrn = [0.0,0.0,0.0]#[list(l_state[5])]
-        print("iCub reset(): handPos")
-        print(self.handPos)
-        
+        # set initial hand pose
+        if self.useInverseKinematics:
+            if self.control_arm =='l':
+                self.handPos = [0.3,0.2,0.75] # x,y,z
+                self.handOrn = [0.3,0.4,0.35] # roll,pitch,yaw
+            else:
+                self.handPos = [0.2,-0.2,0.75] # x,y,z
+                self.handOrn = [0.3, -0.4, 2.8] # roll,pitch,yaw
+
+
+        # save indices of only the joints to control
+        control_arm_indices = self.indices_left_arm if self.control_arm =='l' else self.indices_right_arm
+        self.motorIndices = [i for i in self.indices_torso] + [j for j in control_arm_indices]
+
         self.motorNames = []
-        self.motorIndices = []
         for i in self.indices_torso:
             jointInfo = p.getJointInfo(self.icubId, i)
             if jointInfo[3] > -1:
                 self.motorNames.append(str(jointInfo[1]))
-                self.motorIndices.append(i)
-        for i in self.indices_left_arm:
+        for i in control_arm_indices:
             jointInfo = p.getJointInfo(self.icubId, i)
             if jointInfo[3] > -1:
                 self.motorNames.append(str(jointInfo[1]))
-                self.motorIndices.append(i)
 
     def getJointRanges(self):
-        """
-        Returns
-        -------
-        lowerLimits : [ float ] * numDofs
-        upperLimits : [ float ] * numDofs
-        jointRanges : [ float ] * numDofs
-        restPoses : [ float ] * numDofs
-        """
 
         lowerLimits, upperLimits, jointRanges, restPoses = [], [], [], []
-
         for i in range(self.numJoints):
             jointInfo = p.getJointInfo(self.icubId, i)
 
@@ -126,7 +122,6 @@ class iCub:
         return lowerLimits, upperLimits, jointRanges, restPoses
 
     def getActionDimension(self):
-        ## TO CHECK
          if not self.useInverseKinematics:
              return len(self.motorIndices)
          return 6 #position x,y,z of hand link + roll/pitch/yaw angles of wrist joints?
@@ -135,86 +130,84 @@ class iCub:
         return len(self.getObservation())
 
     def getObservation(self):
-        #Cartesian wolrd pos/orn of left hand center of mass
+        #Cartesian world pos/orn of left hand center of mass
         observation = []
-        state = p.getLinkState(self.icubId, self.indices_left_arm[-1])
+        state = p.getLinkState(self.icubId, self.motorIndices[-1])
         pos = state[0]
         orn = state[1]
         euler = p.getEulerFromQuaternion(orn)
 
         observation.extend(list(pos))
-        observation.extend(list(euler))
+        observation.extend(list(euler)) #roll, pitch, yaw
 
         return observation
 
-    def applyAction(self, motorCommands):
+    def applyAction(self, action):
 
         if(self.useInverseKinematics):
 
-            dx = motorCommands[0]
-            dy = motorCommands[1]
-            dz = motorCommands[2]
+            assert len(action)>=3, ('number of action commands must be equal to 3 at least (dx,dy,dz)',len(action))
 
-            #state = p.getLinkState(self.icubId, self.indices_left_arm[-1])
-            #currHandPos = state[3]
-            self.handPos[0] = dx #self.handPos[0] + dx
-            self.handPos[1] = dy #self.handPos[1] + dy
-            self.handPos[2] = dz #self.handPos[2] + dz
+            dx, dy, dz = action[:3]
 
-            #if (self.handPos[1] > 0.2):
-            #    self.handPos[1] = 0.2
-            #if (self.handPos[1] < -0.2):
-            #    self.handPos[1] = -0.2
+            self.handPos[0] = min(self.workspace_lim[0][1], max(self.workspace_lim[0][0], self.handPos[0] + dx))
+            self.handPos[1] = min(self.workspace_lim[1][1], max(self.workspace_lim[1][0], self.handPos[1] + dy))
+            self.handPos[2] = min(self.workspace_lim[2][1], max(self.workspace_lim[2][0], self.handPos[2] + dz))
 
-            #if (self.handPos[0] > 0.6):
-            #    self.handPos[0] = 0.6
-            #if (self.handPos[0] < 0.2):
-            #    self.handPos[0] = 0.2
+            if not self.useOrientation:
+                quat_orn = []
 
-            #if (self.handPos[2] > 1):
-            #    self.handPos[2] = 1
-            #if (self.handPos[2] < 0.5):
-            #    self.handPos[2] = 0.5
+            elif len(action) is 6:
+                droll, dpitch, dyaw = action[3:]
 
-            print(self.handPos[0])
+                self.handOrn[0] = min(m.pi, max(-m.pi, self.handOrn[0] + droll))
+                self.handOrn[1] = min(m.pi, max(-m.pi, self.handOrn[1] + dpitch))
+                self.handOrn[2] = min(m.pi, max(-m.pi, self.handOrn[2] + dyaw))
 
-            self.handOrn = p.getQuaternionFromEuler([0, 0, 0])
+                quat_orn = p.getQuaternionFromEuler(self.handOrn)
+
+            else:
+                quat_orn = p.getLinkState(self.icubId,self.motorIndices[-3])[5]
 
             if self.useNullSpace:
-                jointPoses = p.calculateInverseKinematics(self.icubId, self.indices_left_arm[-1],
+                jointPoses = p.calculateInverseKinematics(self.icubId, self.motorIndices[-1],
                                                         self.handPos,
-                                                        lowerLimits=self.ll,
-                                                        upperLimits=self.ul,
                                                         jointRanges=self.jr,
-                                                        restPoses=self.jr)
+                                                        restPoses=self.jr,
+                                                        )
             else:
-                jointPoses = p.calculateInverseKinematics(self.icubId, self.indices_left_arm[-1],self.handPos,self.handOrn)
+                jointPoses = p.calculateInverseKinematics(self.icubId, self.motorIndices[-1],self.handPos,quat_orn)
 
             if (self.useSimulation):
                 for i in range(self.numJoints):
                     jointInfo = p.getJointInfo(self.icubId, i)
-                    #print(jointInfo[1])
-                    p.setJointMotorControl2(bodyUniqueId=self.icubId,
-                                            jointIndex=i,
-                                            controlMode=p.POSITION_CONTROL,
-                                            targetPosition=jointPoses[i],
-                                            targetVelocity=0,
-                                            positionGain=0.25,
-                                            velocityGain=0.75,
-                                            force=50)
+                    if jointInfo[3] > -1:
+                        p.setJointMotorControl2(bodyUniqueId=self.icubId,
+                                                jointIndex=i,
+                                                controlMode=p.POSITION_CONTROL,
+                                                targetPosition=jointPoses[i],
+                                                targetVelocity=0,
+                                                positionGain=0.25,
+                                                velocityGain=0.75,
+                                                force=50)
             else:
                 #reset the joint state (ignoring all dynamics, not recommended to use during simulation)
                 for i in range(self.numJoints):
                     p.resetJointState(self.icubId, i, jointPoses[i])
 
         else:
-            assert len(motorCommands)==len(self.motorIndices), 'number of motor commands differs from number of motor to control (10)'
-            for action in range(len(motorCommands)):
-                motor = self.motorIndices[action]
+            assert len(action)==len(self.motorIndices), ('number of motor commands differs from number of motor to control',len(action))
+
+            for a in range(len(action)):
+                motor = self.motorIndices[a]
+
+                curr_motor_pos = p.getJointState(self.icubId, motor)[0]
+                new_motor_pos = min(self.ul[motor], max(self.ll[motor], curr_motor_pos + action[a]))
+
                 p.setJointMotorControl2(self.icubId,
                                         motor,
                                         p.POSITION_CONTROL,
-                                        targetPosition=motorCommands[action],
+                                        targetPosition=new_motor_pos,
                                         targetVelocity=0,
                                         positionGain=0.25,
                                         velocityGain=0.75,
