@@ -10,7 +10,7 @@ from gym.utils import seeding
 import numpy as np
 import time
 import pybullet as p
-import icub
+from icubEnv import iCubEnv
 import random
 import pybullet_data
 import robot_data
@@ -20,6 +20,11 @@ largeValObservation = 100
 
 RENDER_HEIGHT = 720
 RENDER_WIDTH = 960
+
+def goal_distance(goal_a, goal_b):
+    assert goal_a.shape == goal_b.shape
+    return np.linalg.norm(goal_a - goal_b, axis=-1)
+
 
 class iCubPushGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'],
@@ -50,6 +55,8 @@ class iCubPushGymEnv(gym.Env):
         self._cam_yaw = 180
         self._cam_pitch = -40
         self._h_table = []
+        self._target_dist_max = 0.1
+        self._target_dist_min = 0.005
 
         # Initialize PyBullet simulator
         self._p = p
@@ -89,7 +96,7 @@ class iCubPushGymEnv(gym.Env):
         self._envStepCounter = 0
 
         # Load robot
-        self._icub = icub.iCub(urdfRootPath=self._urdfRoot, timeStep=self._timeStep, useInverseKinematics=self._useIK, arm=self._control_arm)
+        self._icub = iCubEnv(urdfRootPath=self._urdfRoot, timeStep=self._timeStep, useInverseKinematics=self._useIK, arm=self._control_arm)
 
         ## Load table and object for simulation
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"),[0,0,0])
@@ -127,15 +134,15 @@ class iCubPushGymEnv(gym.Env):
         handLinkVelA = handState[7]
 
         # get object position and transform it wrt hand c.o.m. frame
-        cubePos, cubeOrn = p.getBasePositionAndOrientation(self._objID)
+        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
         invHandPos, invHandOrn = p.invertTransform(handPos, handOrn)
         handEul = p.getEulerFromQuaternion(handOrn)
 
-        cubePosInHand, cubeOrnInHand = p.multiplyTransforms(invHandPos, invHandOrn,
-                                                                cubePos, cubeOrn)
+        objPosInHand, objOrnInHand = p.multiplyTransforms(invHandPos, invHandOrn,
+                                                                objPos, objOrn)
 
-        self._observation.extend(list(cubePosInHand))
-        self._observation.extend(list(cubeOrnInHand))
+        self._observation.extend(list(objPosInHand))
+        self._observation.extend(list(objOrnInHand))
         #self._observation.extend(list(handLinkVelL))
         #self._observation.extend(list(handLinkVelA))
         return self._observation
@@ -170,18 +177,25 @@ class iCubPushGymEnv(gym.Env):
             return self.step2([a*0.05 for a in action])
 
     def step2(self, action):
+
         for i in range(self._actionRepeat):
             self._icub.applyAction(action)
             p.stepSimulation()
+
             if self._termination():
                 break
+
             self._envStepCounter += 1
+
         if self._renders:
             time.sleep(self._timeStep)
+
         self._observation = self.getExtendedObservation()
+
         done = self._termination()
 
-        reward = 0
+        reward = self._compute_reward()
+
         return np.array(self._observation), reward, done, {}
 
     def seed(self, seed=None):
@@ -217,20 +231,29 @@ class iCubPushGymEnv(gym.Env):
 
     # TODO
     def _termination(self):
+
         if (self.terminated or self._envStepCounter > self._maxSteps):
             self._observation = self.getExtendedObservation()
             return True
 
-        #if target as reached:
-            #self.terminated = 1
-            #...
-            #self._observation = self.getExtendedObservation()
-            #return True
+        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
+        d = goal_distance(np.array(objPos), np.array(self.target_pose))
+
+        if d <= self._target_dist_min:
+            return True
+
         return False
 
-    # TODO
     def _compute_reward(self):
         reward = -1000
+        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
+        d = goal_distance(np.array(objPos), np.array(self.target_pose))
+
+        if d < self._target_dist_max:
+            reward = -d*10
+        if d <= self._target_dist_min:
+            reward += 1000
+
         return reward
 
     def _sample_pose(self):

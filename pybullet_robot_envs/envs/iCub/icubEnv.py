@@ -11,7 +11,7 @@ import pybullet_data
 import robot_data
 import math as m
 
-class iCub:
+class iCubEnv:
 
     def __init__(self, urdfRootPath=robot_data.getDataPath(),
                     timeStep=0.01,
