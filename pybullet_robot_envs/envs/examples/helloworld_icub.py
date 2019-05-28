@@ -3,6 +3,7 @@ import pybullet_data
 import time
 import os
 import math as m
+import numpy as np
 
 # Open GUI and set pybullet_data in the path
 p.connect(p.GUI)
@@ -22,7 +23,7 @@ for root, dirs, files in os.walk(os.path.dirname(dir_path)):
             print (root+'/'+str(file))
             p.setAdditionalSearchPath(root)
 
-robotIds = p.loadSDF("../envs/icub_fixed_model.sdf")
+robotIds = p.loadSDF("../../robot_data/iCub/icub_fixed_model.sdf")
 icubId = robotIds[0]
 
 # set constraint between base_link and world
@@ -41,6 +42,11 @@ init_pos = [0]*15 + [-29.4, 28.8, 0, 44.59, 0, 0, 0, 0.47, 0, 0, -29.4, 30.4, 0,
 
 # all set to zero
 #init_pos = [0]*p.getNumJoints(icubId)
+
+
+p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"),[0,0,0])
+tableId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [0.85, 0.0, 0.0])
+objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"), [0.3,0.0,0.8])
 
 # add debug slider
 jointIds=[]

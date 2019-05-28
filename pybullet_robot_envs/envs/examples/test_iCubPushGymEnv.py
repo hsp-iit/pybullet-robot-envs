@@ -48,7 +48,7 @@ def main():
 
     for t in range(10000000 ):
         #env.step0()
-        env.render()
+        #env.render()
         action = []
         for motorId in motorsIds:
             action.append(env._p.readUserDebugParameter(motorId))

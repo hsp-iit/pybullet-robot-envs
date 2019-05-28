@@ -37,8 +37,7 @@ class iCubPushGymEnv(gym.Env):
                  isDiscrete=0,
                  actionRepeat=1,
                  renders=False,
-                 maxSteps = 1000,
-                 dist_delta=0.03):
+                 maxSteps = 1000):
 
         self._control_arm=control_arm
         self._isDiscrete = isDiscrete
@@ -56,7 +55,7 @@ class iCubPushGymEnv(gym.Env):
         self._cam_pitch = -40
         self._h_table = []
         self._target_dist_max = 0.1
-        self._target_dist_min = 0.005
+        self._target_dist_min = 0.02
 
         # Initialize PyBullet simulator
         self._p = p
@@ -77,7 +76,8 @@ class iCubPushGymEnv(gym.Env):
         self.observation_space = spaces.Box(-observation_high, observation_high, dtype='float32')
 
         if (self._isDiscrete):
-            self.action_space = spaces.Discrete(13)
+            self.action_space = spaces.Discrete(13) if self._icub.useOrientation else spaces.Discrete(7)
+
         else:
             action_dim = self._icub.getActionDimension()
             self._action_bound = 1
@@ -95,11 +95,12 @@ class iCubPushGymEnv(gym.Env):
         p.setTimeStep(self._timeStep)
         self._envStepCounter = 0
 
+        p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"),[0,0,0])
+
         # Load robot
         self._icub = iCubEnv(urdfRootPath=self._urdfRoot, timeStep=self._timeStep, useInverseKinematics=self._useIK, arm=self._control_arm)
 
         ## Load table and object for simulation
-        p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"),[0,0,0])
         tableId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [0.85, 0.0, 0.0])
         table_info = p.getVisualShapeData(tableId,-1)[0]
         self._h_table =table_info[5][2] + table_info[3][2]
@@ -109,7 +110,7 @@ class iCubPushGymEnv(gym.Env):
 
         # Randomize start position of object and target.
         obj_pose, self.target_pose = self._sample_pose()
-        self._objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"), [0.3,0.0,0.8])
+        self._objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"),obj_pose)
         self._targetID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "domino/domino.urdf"), self.target_pose)
 
         self._debugGUI()
@@ -119,7 +120,7 @@ class iCubPushGymEnv(gym.Env):
             p.stepSimulation()
 
         self._observation = self.getExtendedObservation()
-        return np.array(self._observation)
+        return np.array([self._observation])
 
     def getExtendedObservation(self):
         # get robot observation
@@ -150,34 +151,42 @@ class iCubPushGymEnv(gym.Env):
     def step(self, action):
 
         if (self._isDiscrete):
-            dv = 0.005
-            dv1 = 0.05
-            dx = [0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0][action]
-            dy = [0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0][action]
-            dz = [0, 0, 0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0][action]
-            droll = [0, 0, 0, 0, 0, 0, 0, -dv1, dv1, 0, 0, 0, 0][action]
-            dpitch = [0, 0, 0, 0, 0, 0, 0, 0, 0, -dv1, dv1, 0, 0][action]
-            dyaw = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -dv1, dv1][action]
 
-            realAction = [dx, dy, dz, droll, dpitch, dyaw]
+            dv = 0.005
+            if not self._icub.useOrientation:
+                dx = [0, -dv, dv, 0, 0, 0, 0][action]
+                dy = [0, 0, 0, -dv, dv, 0, 0][action]
+                dz = [0, 0, 0, 0, 0, -dv, dv][action]
+                realAction = [dx, dy, dz]
+            else:
+                dv1 = 0.05
+                dx = [0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0][action]
+                dy = [0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0][action]
+                dz = [0, 0, 0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0][action]
+                droll = [0, 0, 0, 0, 0, 0, 0, -dv1, dv1, 0, 0, 0, 0][action]
+                dpitch = [0, 0, 0, 0, 0, 0, 0, 0, 0, -dv1, dv1, 0, 0][action]
+                dyaw = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -dv1, dv1][action]
+                #dz = - abs(dz) #force arm to go down
+                realAction = [dx, dy, dz, droll, dpitch, dyaw]
+
             return self.step2(realAction)
 
         elif self._useIK:
 
             dv = 0.005
-            realPos = [a*0.005 for a in action[:3]]
+            realPos = [a*0.005 for a in action[0][:3]]
             realOrn = []
+            #realPos[2] = - abs(realPos[2])
 
             if self.action_space.shape[-1] is 6:
-                realOrn = [a*0.05 for a in action[3:]]
+                realOrn = [a*0.05 for a in action[0][3:]]
 
             return self.step2(realPos+realOrn)
 
         else:
-            return self.step2([a*0.05 for a in action])
+            return self.step2([a*0.05 for a in action[0]])
 
     def step2(self, action):
-
         for i in range(self._actionRepeat):
             self._icub.applyAction(action)
             p.stepSimulation()
@@ -196,7 +205,7 @@ class iCubPushGymEnv(gym.Env):
 
         reward = self._compute_reward()
 
-        return np.array(self._observation), reward, done, {}
+        return np.array([self._observation]), np.array([reward]), np.array([done]), {}
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -229,32 +238,34 @@ class iCubPushGymEnv(gym.Env):
         rgb_array = rgb_array[:, :, :3]
         return rgb_array
 
+    def __del__(self):
+        p.disconnect()
+
     # TODO
     def _termination(self):
 
         if (self.terminated or self._envStepCounter > self._maxSteps):
             self._observation = self.getExtendedObservation()
-            return True
+            return np.float32(1.0)
 
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
         d = goal_distance(np.array(objPos), np.array(self.target_pose))
 
         if d <= self._target_dist_min:
-            return True
-
-        return False
+            self.terminated = 1
+        return (d <= self._target_dist_min).astype(np.float32)
 
     def _compute_reward(self):
-        reward = -1000
+        reward = np.float32(0.0)
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
         d = goal_distance(np.array(objPos), np.array(self.target_pose))
 
-        if d < self._target_dist_max:
-            reward = -d*10
+        #if d < self._target_dist_max:
+        reward = -d
         if d <= self._target_dist_min:
             reward += 1000
 
-        return reward
+        return reward.astype(np.float32)
 
     def _sample_pose(self):
         ws_lim = self._icub.workspace_lim

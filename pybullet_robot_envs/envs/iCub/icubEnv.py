@@ -21,7 +21,7 @@ class iCubEnv:
         self.timeStep = timeStep
         self.useInverseKinematics = useInverseKinematics
         self.useNullSpace = 0
-        self.useOrientation = 1
+        self.useOrientation = 0
         self.useSimulation = 1
 
         self.indices_torso = range(12,15)
