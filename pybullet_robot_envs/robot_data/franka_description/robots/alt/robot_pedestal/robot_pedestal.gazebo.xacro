@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<robot name="robot_pedestal_gazebo" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <gazebo>
+      <static>true</static>
+    </gazebo>
+</robot>

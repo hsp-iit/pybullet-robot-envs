@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="panda_camera_gazebo">
+
+ <!-- Camera -->
+    <gazebo reference="panda_camera">
+    	<material>Gazebo/Green</material>
+	    	<sensor type="camera" name="camera1">
+	      	<update_rate>30.0</update_rate>
+	      	<camera name="head">
+		<horizontal_fov>1.3962634</horizontal_fov>
+		<image>
+		 	<width>800</width>
+		  	<height>800</height>
+		  	<format>R8G8B8</format>
+	       	</image>
+		<clip>
+		  	<near>0.02</near>
+		  	<far>300</far>
+		</clip>
+	      	</camera>
+	      	<plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+			<alwaysOn>true</alwaysOn>
+			<updateRate>30.0</updateRate>
+			<cameraName>panda/camera1</cameraName>
+			<imageTopicName>image_raw</imageTopicName>
+			<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+			<frameName>panda_optical_frame</frameName>
+      <Cx>0</Cx>
+      <Cy>0</Cy>
+      <broadcastTF>true</broadcastTF>
+			<hackBaseline>0.0</hackBaseline>
+			<distortionK1>0.000000001</distortionK1>
+			<distortionK2>0.000000001</distortionK2>
+			<distortionK3>0.000000001</distortionK3>
+			<distortionT1>0.000000001</distortionT1>
+			<distortionT2>0.000000001</distortionT2>
+	      	</plugin>
+    	</sensor>
+    </gazebo>
+  </xacro:macro>
+
+</robot>

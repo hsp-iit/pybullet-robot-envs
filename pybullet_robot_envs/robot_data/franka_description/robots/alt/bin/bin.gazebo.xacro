@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="bin_gazebo" params="prefix">
+    <gazebo reference="${prefix}drop_point">
+      <sensor name="${prefix}contact_sensor" type="contact">
+        <update_rate>10</update_rate>
+        <contact>
+          <collision>${prefix}base_link_collision</collision>
+        </contact>
+      </sensor>
+    </gazebo>
+
+    <gazebo>
+      <static>true</static>
+      <plugin name="${prefix}object_disposal_plugin" filename="libObjectDisposalPlugin.so">
+        <contact_sensor_name>${prefix}contact_sensor</contact_sensor_name>
+        <contact_side_normal>0 0 1</contact_side_normal>
+        <disposal_pose>0 0 0 0 0 0</disposal_pose>
+        <update_rate>1</update_rate>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>

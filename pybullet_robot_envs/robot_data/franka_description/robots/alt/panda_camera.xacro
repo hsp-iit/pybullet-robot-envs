@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda_camera">
+  <xacro:macro name="panda_camera" params="connected_to:='' ns:='' rpy:='' xyz:='' ">
+  <xacro:unless value="${connected_to == ''}">
+    <joint name="${ns}_camera_joint" type="fixed">
+      <parent link="${connected_to}"/>
+      <child link="${ns}_camera"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+  </xacro:unless>
+
+  <xacro:property name="cameraSize" value="0.05"/>
+
+  <link name="${ns}_camera">
+    <visual>
+      <geometry>
+          <box size="${cameraSize} ${0.5*cameraSize} ${0.5*cameraSize}"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <geometry>
+          <box size="${cameraSize} ${0.5*cameraSize} ${0.5*cameraSize}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <!--joint name="${ns}_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-pi/2} 0.0 ${-pi/2}" />
+      <parent link="${ns}_camera" />
+      <child link="${ns}_optical_frame"/>
+    </joint>
+
+    <link name="${ns}_optical_frame">
+    </link-->
+  </xacro:macro>
+
+</robot>
