@@ -13,19 +13,25 @@ import math as m
 
 class pandaEnv:
 
-    def __init__(self, urdfRootPath=robot_data.getDataPath(), timeStep=0.01, useInverseKinematics=0):
+    def __init__(self, urdfRootPath=robot_data.getDataPath(), timeStep=0.01, useInverseKinematics=0, basePosition=[-0.6,-0.4,0.625], useFixedBase= True):
 
-        self.urdfRootPath = os.path.join(urdfRootPath, "franka_description/robots/panda_arm_no-params.urdf")
+        self.urdfRootPath = os.path.join(urdfRootPath, "franka_description/robots/panda_arm_no_params.urdf")
         self.timeStep = timeStep
         self.useInverseKinematics = useInverseKinematics
         self.useNullSpace = 0
         self.useOrientation = 1
         self.useSimulation = 1
-
+        self.basePosition = basePosition
+        self.useFixedBase = useFixedBase
+        self.workspace_lim = [[0,0.80],[-0.80,0.80],[0,0.40]]
+        #number of the end effector
+        self.endEffLink = 8 
         self.reset()
 
-    def reset(self,basePosition = [-0.6,-0.4,0.625], useFixedBase=True):
-        self.pandaId = p.loadURDF(self.urdfRootPath,basePosition,useFixedBase)
+    def reset(self):
+
+        self.pandaId = p.loadURDF(self.urdfRootPath, basePosition = self.basePosition, useFixedBase = self.useFixedBase)
+        
         self.numJoints = p.getNumJoints(self.pandaId)
         ## Set all joints initial values
         for i in range(self.numJoints):
@@ -58,9 +64,10 @@ class pandaEnv:
         return len(self.getObservation())
 
     def getObservation(self):
-        #Cartesian world pos/orn of left hand center of mass
+        #Cartesian world pos/orn of endEff
         observation = []
-        state = p.getLinkState(self.pandaId, self.motorIndices[-1])
+        #REVIEW TO DO 
+        state = p.getLinkState(self.pandaId, self.endEffLink)
         pos = state[0]
         orn = state[1]
         euler = p.getEulerFromQuaternion(orn)
@@ -127,13 +134,12 @@ class pandaEnv:
             assert len(action)==len(self.motorIndices), ('number of motor commands differs from number of motor to control',len(action))
 
             for a in range(len(action)):
-                motor = self.motorIndices[a]
 
-                curr_motor_pos = p.getJointState(self.icubId, motor)[0]
+                curr_motor_pos = p.getJointState(self.pandaId, a)[0]
                 new_motor_pos = curr_motor_pos + action[a] #supposed to be a delta 
 
-                p.setJointMotorControl2(self.icubId,
-                                        motor,
+                p.setJointMotorControl2(self.pandaId,
+                                        a,
                                         p.POSITION_CONTROL,
                                         targetPosition=new_motor_pos,
                                         targetVelocity=0,

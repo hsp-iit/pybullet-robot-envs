@@ -24,19 +24,14 @@ class pandaEnv:
         self.initPos = []
 
     def loadRobot(self, pathURDF):
-        path = os.path.join(pathURDF, "franka_description/robots/panda_arm.urdf")
-        self.pandaId = p.loadURDF(path, basePosition = [-0.6,-0.4,0.625], useFixedBase=True)
+        path = os.path.join(pathURDF, "franka_description/robots/panda_arm_no_params.urdf")
+        self.pandaId = p.loadURDF(path, basePosition = [-0.6,-0.4, 0.625], useFixedBase=True)
         self.numJoints = p.getNumJoints(self.pandaId)
         #pathArm = os.path.join(pathURDF, "franka_description/robots/hand.urdf")
         #self.handId = p.loadURDF(pathArm)
         self.init_pos = [0 for i in range(self.numJoints)]
         tableId = p.loadURDF(os.path.join(pathURDF, "franka_description/table.urdf"), useFixedBase=True)
         cubeId = p.loadURDF( os.path.join(pathURDF, "franka_description/cube_small.urdf"),[0,0,0.8] )
-    
-
-    def loadEndEff(self, pathURDF):
-    	path = os.path.join(pathURDF, "franka_description/robots/hand.urdf")
-
 
     def loadSliders(self):
         jointIds = []
@@ -53,7 +48,10 @@ class pandaEnv:
     def runSimulation(self):
         while True:
             for i in range(self.numJoints):
-                p.setJointMotorControl2(self.pandaId, i, p.POSITION_CONTROL, targetPosition=0, targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=40, maxVelocity=3)
+                p.setJointMotorControl2(self.pandaId, i, p.POSITION_CONTROL, targetPosition=0, targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
+            
+            print(p.getLinkState(self.pandaId, 8))
+            #print(str(p.getLinkState(self.pandaId, 10)[0][2] - p.getLinkState(self.pandaId, 9)[0][2]) + '\n')
             p.stepSimulation()
             time.sleep(0.01)
 
