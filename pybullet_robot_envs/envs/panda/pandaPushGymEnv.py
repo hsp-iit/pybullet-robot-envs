@@ -276,6 +276,7 @@ class pandaPushGymEnv(gym.Env):
             
             #print(p.getLinkState(self.pandaId, 8))
             #print(str(p.getLinkState(self.pandaId, 10)[0][2] - p.getLinkState(self.pandaId, 9)[0][2]) + '\n')
+            print(self._compute_reward())
             p.stepSimulation()
             time.sleep(0.01)
 
