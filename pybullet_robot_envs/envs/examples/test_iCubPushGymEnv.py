@@ -55,11 +55,11 @@ def main():
 
         action = int(action[0]) if discreteAction else action
 
-        state, reward, done, _ = env.step(action)
+        state, reward, done, _ = env.step([action])
         if t%10==0:
             print("reward ", reward)
             print("done ", done)
-            env._p.addUserDebugText(' '.join(str(round(e,2)) for e in state[:6]),[0,-0.5,1.2],[1,0,0],replaceItemUniqueId=idx)
+            #env._p.addUserDebugText(' '.join(str(round(e,2)) for e in state[:6]),[0,-0.5,1.2],[1,0,0],replaceItemUniqueId=idx)
 
 if __name__ == '__main__':
     main()
