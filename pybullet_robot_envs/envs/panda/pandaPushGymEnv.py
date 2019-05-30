@@ -95,7 +95,7 @@ class pandaPushGymEnv(gym.Env):
 
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
-        self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[-0.6,-0.4,0.625], useInverseKinematics= self._useIK)
+        self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625], useInverseKinematics= self._useIK)
         
 
         # Load table and object for simulation
@@ -109,9 +109,9 @@ class pandaPushGymEnv(gym.Env):
         self._panda.workspace_lim[2][0] = self._h_table
         # Randomize start position of object and target.
         obj_pose, self.target_pose = self._sample_pose()
-        
+
         self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = [0.3,0.0,0.8])
-        self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "domino/domino.urdf"), self.target_pose)
+        self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), self.target_pose)
 
         self._debugGUI()
         p.setGravity(0,0,-9.8)
@@ -269,11 +269,22 @@ class pandaPushGymEnv(gym.Env):
         return 0 
 
 
+    def runFreeSimulation(self):
+        while True:
+            for i in range(self._panda.numJoints):
+                p.setJointMotorControl2(self._panda.pandaId, i, p.POSITION_CONTROL, targetPosition=0, targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
+            
+            #print(p.getLinkState(self.pandaId, 8))
+            #print(str(p.getLinkState(self.pandaId, 10)[0][2] - p.getLinkState(self.pandaId, 9)[0][2]) + '\n')
+            p.stepSimulation()
+            time.sleep(0.01)
 
 
 def main():
 
     pollettRinforzante = pandaPushGymEnv()
+    pollettRinforzante.runFreeSimulation()    
+
 
 if __name__== "__main__":
     main()

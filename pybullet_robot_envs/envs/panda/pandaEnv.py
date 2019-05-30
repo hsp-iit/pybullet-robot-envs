@@ -56,7 +56,7 @@ class pandaEnv:
 
     def getActionDimension(self):
         if not self.useInverseKinematics:
-            return len(self.motorIndices)
+            return self.numJoints
             #position x,y,z of hand link + roll/pitch/yaw angles of wrist joints?
         return 6 #only end-eff control 
 

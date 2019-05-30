@@ -50,7 +50,7 @@ class pandaEnv:
             for i in range(self.numJoints):
                 p.setJointMotorControl2(self.pandaId, i, p.POSITION_CONTROL, targetPosition=0, targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
             
-            print(p.getLinkState(self.pandaId, 8))
+            #print(p.getLinkState(self.pandaId, 8))
             #print(str(p.getLinkState(self.pandaId, 10)[0][2] - p.getLinkState(self.pandaId, 9)[0][2]) + '\n')
             p.stepSimulation()
             time.sleep(0.01)
