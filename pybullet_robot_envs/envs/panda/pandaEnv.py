@@ -131,7 +131,7 @@ class pandaEnv:
                     p.resetJointState(self.icubId, i, jointPoses[i])
         """
         else:
-            assert len(action)==len(self.motorIndices), ('number of motor commands differs from number of motor to control',len(action))
+            assert len(action)==self.numJoints, ('number of motor commands differs from number of motor to control',len(action))
 
             for a in range(len(action)):
 

@@ -24,7 +24,7 @@ RENDER_WIDTH = 960
 
 def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
-    return np.linalg.norm(goal_a, goal_b)
+    return np.linalg.norm(goal_a - goal_b, axis = -1)
 
 class pandaPushGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'],
@@ -171,6 +171,9 @@ class pandaPushGymEnv(gym.Env):
             #TO DO 
             return 0
 
+        else:
+            return self.step2([a*0.05 for a in action])
+
 
     def step2(self,action):
 
@@ -240,12 +243,13 @@ class pandaPushGymEnv(gym.Env):
 
 
     def _compute_reward(self):
-        reward = -1000
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        d = goal_distance(np.array(objPos), np.array(self.target_pose))
+        reward = np.float(32.0)
+        #objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
+        endEffAct = self._panda.getObservation()[0:3]
+        d = goal_distance(np.array(endEffAct), np.array(self.target_pose))
 
-        if d < self._target_dist_max:
-            reward = -d*10
+        print(d)
+        reward = -d
         if d <= self._target_dist_min:
             reward += 1000
 
@@ -272,11 +276,11 @@ class pandaPushGymEnv(gym.Env):
     def runFreeSimulation(self):
         while True:
             for i in range(self._panda.numJoints):
-                p.setJointMotorControl2(self._panda.pandaId, i, p.POSITION_CONTROL, targetPosition=0, targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
+                p.setJointMotorControl2(self._panda.pandaId, i, p.POSITION_CONTROL, targetPosition=0, targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=70)
             
             #print(p.getLinkState(self.pandaId, 8))
             #print(str(p.getLinkState(self.pandaId, 10)[0][2] - p.getLinkState(self.pandaId, 9)[0][2]) + '\n')
-            print(self._compute_reward())
+            self._compute_reward()
             p.stepSimulation()
             time.sleep(0.01)
 
