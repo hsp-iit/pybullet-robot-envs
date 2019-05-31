@@ -5,12 +5,16 @@ print(currentdir)
 parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
-from envs.iCub.iCubPushGymEnv import iCubPushGymEnv
+import pybullet_robot_envs
 import pybullet_data
-import robot_data
+
+from pybullet_robot_envs.envs.icub_envs.icub_push_gym_env import iCubPushGymEnv
+from pybullet_robot_envs import robot_data
+
 
 import time
 import math as m
+import numpy as np
 
 def main():
 

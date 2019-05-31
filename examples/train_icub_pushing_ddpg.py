@@ -5,15 +5,15 @@ print(currentdir)
 parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
-from envs.iCub.iCubPushGymEnv import iCubPushGymEnv
-from pybullet_envs.bullet.kukaGymEnv import KukaGymEnv
+
+from pybullet_robot_envs.envs.icub_envs.icub_push_gym_env import iCubPushGymEnv
+from pybullet_robot_envs import robot_data
 
 #from baselines import ddpg
 from baselines.ddpg import ddpg
 print(ddpg)
 import datetime
 import pybullet_data
-import robot_data
 
 import time
 import math as m
@@ -31,21 +31,20 @@ def callback(lcl, glb):
 
 def main():
 
-  use_IK = 1
-  discreteAction = 0
-  use_IK = 1 if discreteAction else use_IK
+    use_IK = 1
+    discreteAction = 0
+    use_IK = 1 if discreteAction else use_IK
 
-  #icubenv = KukaGymEnv(renders=True, isDiscrete=False)
-  icubenv = iCubPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=False, useIK=use_IK, isDiscrete=discreteAction)
+    #icubenv = KukaGymEnv(renders=True, isDiscrete=False)
+    icubenv = iCubPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=False, useIK=use_IK, isDiscrete=discreteAction)
 
-  act = ddpg.learn(env=icubenv,
+    logger.configure(dir='../pybullet_logs/icubpush_ddpg', format_strs=['stdout','log','csv','tensorboard'])
+
+    act = ddpg.learn(env=icubenv,
                     network='mlp',
-                    total_timesteps=100000,
+                    total_timesteps=1000,
                     )
-
-  print("Saving model to icub_pushing_model.pkl")
-  act.save("icub_pushing_model.pkl")
-
+ ##! the trained model cannot be saved for the moment
 
 if __name__ == '__main__':
   main()

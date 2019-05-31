@@ -10,7 +10,7 @@ from gym.utils import seeding
 import numpy as np
 import time
 import pybullet as p
-from icubEnv import iCubEnv
+from icub_env import iCubEnv
 import random
 import pybullet_data
 import robot_data
@@ -25,15 +25,14 @@ def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
     return np.linalg.norm(goal_a - goal_b, axis=-1)
 
-
 class iCubPushGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
 
     def __init__(self,
                  urdfRoot=robot_data.getDataPath(),
-                 useIK=0,
-                 control_arm='r',
+                 useIK=1,
+                 control_arm='l',
                  isDiscrete=0,
                  actionRepeat=1,
                  renders=False,
@@ -55,7 +54,7 @@ class iCubPushGymEnv(gym.Env):
         self._cam_pitch = -40
         self._h_table = []
         self._target_dist_max = 0.1
-        self._target_dist_min = 0.02
+        self._target_dist_min = 0.07
 
         # Initialize PyBullet simulator
         self._p = p
@@ -113,6 +112,9 @@ class iCubPushGymEnv(gym.Env):
         self._objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"),obj_pose)
         self._targetID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "domino/domino.urdf"), self.target_pose)
 
+        #limit iCub workspace to table plane
+        self._icub.workspace_lim[2][0] = self._h_table+0.01
+
         self._debugGUI()
         p.setGravity(0,0,-9.8)
         # Let the world run for a bit
@@ -120,7 +122,7 @@ class iCubPushGymEnv(gym.Env):
             p.stepSimulation()
 
         self._observation = self.getExtendedObservation()
-        return np.array([self._observation])
+        return np.array(self._observation)
 
     def getExtendedObservation(self):
         # get robot observation
@@ -142,17 +144,17 @@ class iCubPushGymEnv(gym.Env):
         objPosInHand, objOrnInHand = p.multiplyTransforms(invHandPos, invHandOrn,
                                                                 objPos, objOrn)
 
-        self._observation.extend(list(objPosInHand))
-        self._observation.extend(list(objOrnInHand))
+        self._observation.extend(list(objPos))
+        self._observation.extend(list(objOrn))
         #self._observation.extend(list(handLinkVelL))
         #self._observation.extend(list(handLinkVelA))
         return self._observation
 
     def step(self, action):
-
+        ws_lim = self._icub.workspace_lim
         if (self._isDiscrete):
 
-            dv = 0.005
+            dv = 0.003
             if not self._icub.useOrientation:
                 dx = [0, -dv, dv, 0, 0, 0, 0][action]
                 dy = [0, 0, 0, -dv, dv, 0, 0][action]
@@ -173,18 +175,18 @@ class iCubPushGymEnv(gym.Env):
 
         elif self._useIK:
 
-            dv = 0.005
-            realPos = [a*0.005 for a in action[0][:3]]
+            dv = 0.01
+            realPos = [a*0.005 for a in action[:3]]
             realOrn = []
             #realPos[2] = - abs(realPos[2])
 
             if self.action_space.shape[-1] is 6:
-                realOrn = [a*0.05 for a in action[0][3:]]
+                realOrn = [a*0.05 for a in action[3:]]
 
             return self.step2(realPos+realOrn)
 
         else:
-            return self.step2([a*0.05 for a in action[0]])
+            return self.step2([a*0.05 for a in action])
 
     def step2(self, action):
         for i in range(self._actionRepeat):
@@ -205,7 +207,16 @@ class iCubPushGymEnv(gym.Env):
 
         reward = self._compute_reward()
 
-        return np.array([self._observation]), np.array([reward]), np.array([done]), {}
+        ws_lim = self._icub.workspace_lim
+        cost = (not ws_lim[0][0]<self._observation[0]<ws_lim[0][1]) or \
+                (not ws_lim[1][0]<self._observation[1]<ws_lim[1][1]) or \
+                (not ws_lim[2][0]<self._observation[2]<ws_lim[2][1])
+
+        #reward -= cost*1
+        #print("reward")
+        #print(reward)
+
+        return np.array(self._observation), np.array(reward), np.array(done), {}
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -248,29 +259,38 @@ class iCubPushGymEnv(gym.Env):
             self._observation = self.getExtendedObservation()
             return np.float32(1.0)
 
+        handState = p.getLinkState(self._icub.icubId, self._icub.motorIndices[-1], computeLinkVelocity=0)
+        handPos = handState[0]
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        d = goal_distance(np.array(objPos), np.array(self.target_pose))
+        d = goal_distance(np.array(handPos), np.array(objPos))
 
         if d <= self._target_dist_min:
             self.terminated = 1
-        return (d <= self._target_dist_min).astype(np.float32)
+        return (d <= self._target_dist_min)
 
     def _compute_reward(self):
+
         reward = np.float32(0.0)
+
+        handState = p.getLinkState(self._icub.icubId, self._icub.motorIndices[-1], computeLinkVelocity=0)
+        handPos = handState[0]
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        d = goal_distance(np.array(objPos), np.array(self.target_pose))
-
+        tgPos, tgOrn = p.getBasePositionAndOrientation(self._targetID)
+        d1 = goal_distance(np.array(handPos), np.array(objPos))
+        d2 = goal_distance(np.array(objPos), np.array(tgPos))
+        #print("distance")
+        #print(d1)
         #if d < self._target_dist_max:
-        reward = -d
-        if d <= self._target_dist_min:
-            reward += 1000
+        reward = -d1#1/3*-d1+2/3*-d2
+        if d1 <= self._target_dist_min:
+            reward = np.float32(1000.0)
 
-        return reward.astype(np.float32)
+        return reward
 
     def _sample_pose(self):
         ws_lim = self._icub.workspace_lim
-        px,tx = np.random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(2))
-        py,ty = np.random.uniform(low=ws_lim[1][0], high=ws_lim[1][1], size=(2))
+        px,tx =  0.2+0.2*np.random.random(), 0.5#np.random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(2))
+        py,ty =  0.2-0.2*np.random.random(),-0.1#np.random.uniform(low=ws_lim[1][0], high=ws_lim[1][1], size=(2))
         pz,tz = self._h_table, self._h_table
         obj_pose = [px,py,pz]
         tg_pose = [tx,ty,tz]
@@ -289,9 +309,9 @@ class iCubPushGymEnv(gym.Env):
         p.addUserDebugLine(p3,p4,lineColorRGB=[0,0,1],lineWidth=2.0,lifeTime=0)
         p.addUserDebugLine(p4,p1,lineColorRGB=[0,0,1],lineWidth=2.0,lifeTime=0)
 
-        p.addUserDebugLine([0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
-        p.addUserDebugLine([0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
-        p.addUserDebugLine([0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
+        p.addUserDebugLine([-0.07,0,0],[0,0,0],[1,0,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
+        p.addUserDebugLine([-0.07,0,0.03],[-0.07,0.1,0],[0,1,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
+        p.addUserDebugLine([-0.07,0,0.03],[-0.07,0,0.1],[0,0,1],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
 
         p.addUserDebugLine([0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_left_arm[-1])
         p.addUserDebugLine([0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_left_arm[-1])

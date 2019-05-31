@@ -4,6 +4,7 @@ parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0,parentdir)
 
 import pybullet as p
+
 import numpy as np
 import copy
 import math
@@ -124,7 +125,7 @@ class iCubEnv:
     def getActionDimension(self):
          if not self.useInverseKinematics:
              return len(self.motorIndices)
-         return 6 #position x,y,z of hand link + roll/pitch/yaw angles of wrist joints?
+         return 3 #position x,y,z of hand link + roll/pitch/yaw angles of wrist joints?
 
     def getObservationDimension(self):
         return len(self.getObservation())
@@ -150,9 +151,24 @@ class iCubEnv:
 
             dx, dy, dz = action[:3]
 
-            self.handPos[0] = min(self.workspace_lim[0][1], max(self.workspace_lim[0][0], self.handPos[0] + dx))
-            self.handPos[1] = min(self.workspace_lim[1][1], max(self.workspace_lim[1][0], self.handPos[1] + dy))
-            self.handPos[2] = min(self.workspace_lim[2][1], max(self.workspace_lim[2][0], self.handPos[2] + dz))
+            if dx>0:
+                dx = round(dx*abs(self.workspace_lim[0][1]-self.handPos[0]),4)
+            else:
+                dx = round(dx*abs(self.workspace_lim[0][0]-self.handPos[0]),4)
+
+            if dy>0:
+                dy = round(dy*abs(self.workspace_lim[1][1]-self.handPos[1]),4)
+            else:
+                dy = round(dy*abs(self.workspace_lim[1][0]-self.handPos[1]),4)
+
+            if dz>0:
+                dz = round(dz*abs(self.workspace_lim[2][1]-self.handPos[2]),4)
+            else:
+                dz= round(dz*abs(self.workspace_lim[2][0]-self.handPos[2]),4)
+
+            self.handPos[0] += dx #min(self.workspace_lim[0][1], max(self.workspace_lim[0][0], self.handPos[0] + dx))
+            self.handPos[1] += dy #min(self.workspace_lim[1][1], max(self.workspace_lim[1][0], self.handPos[1] + dy))
+            self.handPos[2] += dz #min(self.workspace_lim[2][1], max(self.workspace_lim[2][0], self.handPos[2] + dz))
 
             if not self.useOrientation:
                 quat_orn = []
