@@ -34,7 +34,7 @@ def main():
 
   icubenv = iCubPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction)
 
-  act = deepq.learn(icubenv, network='mlp', total_timesteps=0, load_path="./icubpush_deepq1/icub_pushing_model_deepq.pkl")
+  act = deepq.learn(icubenv, network='mlp', total_timesteps=0, load_path="../pybullet_logs/icubpush_deepq/icub_pushing_model_deepq.pkl")
   print(act)
 
   while True:
@@ -46,10 +46,10 @@ def main():
     while not done:
       #icubenv.render()
       action = act(obs[None])
-      print(action)
+      #print(action)
       obs, rew, done, _ = icubenv.step(action[0])
       episode_rew += rew
-    print("Episode reward", episode_rew)
+      print("Episode reward", episode_rew)
 
 if __name__ == '__main__':
   main()

@@ -59,7 +59,7 @@ def main():
 
         action = int(action[0]) if discreteAction else action
 
-        state, reward, done, _ = env.step([action])
+        state, reward, done, _ = env.step(action)
         if t%10==0:
             print("reward ", reward)
             print("done ", done)

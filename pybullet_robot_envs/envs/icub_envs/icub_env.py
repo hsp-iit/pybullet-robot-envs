@@ -21,7 +21,6 @@ class iCubEnv:
         self.urdfRootPath = os.path.join(urdfRootPath, "iCub/icub_fixed_model.sdf")
         self.timeStep = timeStep
         self.useInverseKinematics = useInverseKinematics
-        self.useNullSpace = 0
         self.useOrientation = 0
         self.useSimulation = 1
 
@@ -133,13 +132,17 @@ class iCubEnv:
     def getObservation(self):
         #Cartesian world pos/orn of left hand center of mass
         observation = []
-        state = p.getLinkState(self.icubId, self.motorIndices[-1])
+        state = p.getLinkState(self.icubId, self.motorIndices[-1],computeLinkVelocity=1)
         pos = state[0]
         orn = state[1]
         euler = p.getEulerFromQuaternion(orn)
+        velL = state[6]
+        velA = state[7]
 
         observation.extend(list(pos))
         observation.extend(list(euler)) #roll, pitch, yaw
+        observation.extend(list(velL))
+        observation.extend(list(velA))
 
         return observation
 
@@ -185,14 +188,8 @@ class iCubEnv:
             else:
                 quat_orn = p.getLinkState(self.icubId,self.motorIndices[-3])[5]
 
-            if self.useNullSpace:
-                jointPoses = p.calculateInverseKinematics(self.icubId, self.motorIndices[-1],
-                                                        self.handPos,
-                                                        jointRanges=self.jr,
-                                                        restPoses=self.jr,
-                                                        )
-            else:
-                jointPoses = p.calculateInverseKinematics(self.icubId, self.motorIndices[-1],self.handPos,quat_orn)
+            # compute joint positions with IK
+            jointPoses = p.calculateInverseKinematics(self.icubId, self.motorIndices[-1],self.handPos,quat_orn)
 
             if (self.useSimulation):
                 for i in range(self.numJoints):

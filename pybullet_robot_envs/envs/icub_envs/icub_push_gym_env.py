@@ -33,7 +33,7 @@ class iCubPushGymEnv(gym.Env):
                  urdfRoot=robot_data.getDataPath(),
                  useIK=1,
                  control_arm='l',
-                 isDiscrete=0,
+                 isDiscrete=1,
                  actionRepeat=1,
                  renders=False,
                  maxSteps = 1000):
@@ -66,7 +66,6 @@ class iCubPushGymEnv(gym.Env):
         else:
             p.connect(p.DIRECT)
 
-        self.seed()
         # initialize simulation environment
         self.reset()
 
@@ -127,27 +126,13 @@ class iCubPushGymEnv(gym.Env):
     def getExtendedObservation(self):
         # get robot observation
         self._observation = self._icub.getObservation()
-        # read hand position/velocity
-        handState = p.getLinkState(self._icub.icubId, self._icub.motorIndices[-1], computeLinkVelocity=1)
-        handPos = handState[0]
-        handOrn = handState[1]
-        handLinkPos = handState[4]
-        handLinkOrn = handState[5]
-        handLinkVelL = handState[6]
-        handLinkVelA = handState[7]
 
         # get object position and transform it wrt hand c.o.m. frame
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        invHandPos, invHandOrn = p.invertTransform(handPos, handOrn)
-        handEul = p.getEulerFromQuaternion(handOrn)
-
-        objPosInHand, objOrnInHand = p.multiplyTransforms(invHandPos, invHandOrn,
-                                                                objPos, objOrn)
 
         self._observation.extend(list(objPos))
         self._observation.extend(list(objOrn))
-        #self._observation.extend(list(handLinkVelL))
-        #self._observation.extend(list(handLinkVelA))
+
         return self._observation
 
     def step(self, action):
@@ -252,7 +237,6 @@ class iCubPushGymEnv(gym.Env):
     def __del__(self):
         p.disconnect()
 
-    # TODO
     def _termination(self):
 
         if (self.terminated or self._envStepCounter > self._maxSteps):
@@ -280,8 +264,8 @@ class iCubPushGymEnv(gym.Env):
         d2 = goal_distance(np.array(objPos), np.array(tgPos))
         #print("distance")
         #print(d1)
-        #if d < self._target_dist_max:
-        reward = -d1#1/3*-d1+2/3*-d2
+
+        reward = -d1
         if d1 <= self._target_dist_min:
             reward = np.float32(1000.0)
 

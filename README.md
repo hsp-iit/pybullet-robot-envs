@@ -1,5 +1,5 @@
-## pybullet-workbook
-
+# **pybullet-robot-envs**
+**pybullet-robot-envs** is a repository
 ### PyBullet installation
 1. Create a virtual environment:
 ```
@@ -17,22 +17,18 @@ pip install -r requirements.txt
 ```
 python helloworld.py
 ```
-5. Test RL framework running:
+5. Train RL framework running:
   ```
-  python -m pybullet_envs.examples.enjoy_TF_HumanoidBulletEnv_v0_2017may
-  ```
-or
+  OPENAI_LOGDIR=$HOME/logs/icubpush_deepq OPENAI_LOG_FORMAT=tensorboard python -m baselines.run --alg=deepq --env=pybullet_robot_envs:iCubPush-v0 --num_timesteps=100000 --save_path=$HOME/logs/icubpush_deepq/model.pkl
 ```
-python -m pybullet_envs.examples.kukaGymEnvTest
-```
+6
 6. Get OpenAI baselines:
 ```
 git clone https://github.com/openai/baselines.git
 ```
 7. Test everything working with:
 ```
-cd baselines/
-python -m pybullet_envs.agents.train_ppo --config=pybullet_pendulum --logdir=pendulum
+OPENAI_LOGDIR=$HOME/logs/icubpush-deepq OPENAI_LOG_FORMAT=tensorboard python -m baselines.run --alg=deepq --env=pybullet_robot_envs:iCubPush-v0 --num_timesteps=0 --load_path=$HOME/logs/icubpush_deepq/model.pkl --play
 ```
 
 ### Pybullet summary
@@ -54,7 +50,7 @@ Main features:
 
 ### Examples
 - `helloworld.py`: a basic script for loading one of pybullet models
-- `helloworld_icub.py`: a basic script loading an [iCub sdf model](https://github.com/giuliavezzani/pybullet-workbook/blob/master/envs/icub_fixed_model.sdf). 
+- `helloworld_icub.py`: a basic script loading an [iCub sdf model](https://github.com/giuliavezzani/pybullet-workbook/blob/master/envs/icub_fixed_model.sdf).
 
 This model has the **base fixed to the ground**, suitable for manipulation tasks.
 However, **no accurate models for the iCub hand are available** so far in a format suitable for `pybullet`.
