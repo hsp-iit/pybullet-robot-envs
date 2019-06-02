@@ -12,7 +12,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0.6"/>
       <geometry>
-				<mesh filename="table.obj" scale="1.5 1 0.05"/>
+				<mesh filename="table.obj" scale="2 2 0.05"/>
       </geometry>
        <material name="white">
         <color rgba="1 1 1 1"/>
@@ -21,7 +21,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.6"/>
       <geometry>
-	 	<box size="1.5 1 0.05"/>
+	 	<box size="2 2 0.05"/>
       </geometry>
     </collision>
 	<visual>
