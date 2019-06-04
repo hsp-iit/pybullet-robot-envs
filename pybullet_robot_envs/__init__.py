@@ -3,7 +3,7 @@ import gym
 from gym.envs.registration import register
 
 register(
-        id='iCubPush-v0',
+        id='iCubReach-v0',
         entry_point='pybullet_robot_envs.envs.icub_envs:iCubPushGymEnv',
         max_episode_steps=1000,
         reward_threshold=1000.0,

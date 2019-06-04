@@ -16,12 +16,12 @@ class iCubEnv:
 
     def __init__(self, urdfRootPath=robot_data.getDataPath(),
                     timeStep=0.01,
-                    useInverseKinematics=0, arm='l'):
+                    useInverseKinematics=0, arm='l', useOrientation=0):
 
         self.urdfRootPath = os.path.join(urdfRootPath, "iCub/icub_fixed_model.sdf")
         self.timeStep = timeStep
         self.useInverseKinematics = useInverseKinematics
-        self.useOrientation = 0
+        self.useOrientation = useOrientation
         self.useSimulation = 1
 
         self.indices_torso = range(12,15)
@@ -122,9 +122,11 @@ class iCubEnv:
         return lowerLimits, upperLimits, jointRanges, restPoses
 
     def getActionDimension(self):
-         if not self.useInverseKinematics:
-             return len(self.motorIndices)
-         return 3 #position x,y,z of hand link + roll/pitch/yaw angles of wrist joints?
+        if not self.useInverseKinematics:
+            return len(self.motorIndices)
+        if self.useOrientation:
+            return 6 #position x,y,z + roll/pitch/yaw of hand frame
+        return 3 #position x,y,z
 
     def getObservationDimension(self):
         return len(self.getObservation())

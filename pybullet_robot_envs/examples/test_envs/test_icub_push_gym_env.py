@@ -16,13 +16,21 @@ import time
 import math as m
 import numpy as np
 
-def main():
+import argparse
 
-    use_IK = 1
-    discreteAction = 0
-    use_IK = 1 if discreteAction else use_IK
 
-    env = iCubPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction)
+parser = argparse.ArgumentParser()
+parser.add_argument('--continueIK', action='store_const', const=1, dest="useIK",
+                    help='use continue Inverse Kinematic action')
+parser.add_argument('--arm', action='store', default='l', dest="arm",
+                    help="choose arm to control: 'l' - left or 'r'-right")
+
+def main(args):
+
+    use_IK = 1 if args.useIK else 0
+
+    env = iCubPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, control_arm=args.arm, useIK=use_IK,
+                         isDiscrete=0, useOrientation=1)
     motorsIds = []
 
     if (env._isDiscrete):
@@ -50,20 +58,18 @@ def main():
     env._p.addUserDebugText('current hand position',[0,-0.5,1.4],[1.1,0,0])
     idx = env._p.addUserDebugText(' ',[0,-0.5,1.2],[1,0,0])
 
-    for t in range(10000000 ):
-        #env.step0()
+    for t in range(10000000):
         #env.render()
         action = []
         for motorId in motorsIds:
             action.append(env._p.readUserDebugParameter(motorId))
 
-        action = int(action[0]) if discreteAction else action
+        action = int(action[0]) if env._isDiscrete else action
 
         state, reward, done, _ = env.step(action)
         if t%10==0:
             print("reward ", reward)
-            print("done ", done)
             #env._p.addUserDebugText(' '.join(str(round(e,2)) for e in state[:6]),[0,-0.5,1.2],[1,0,0],replaceItemUniqueId=idx)
 
 if __name__ == '__main__':
-    main()
+    main(parser.parse_args())

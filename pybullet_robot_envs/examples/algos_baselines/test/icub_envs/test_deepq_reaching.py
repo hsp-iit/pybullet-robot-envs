@@ -16,13 +16,13 @@ from pybullet_robot_envs import robot_data
 import time
 import math as m
 
+log_dir = '../pybullet_logs/icubreach_deepq'
+
 def callback(lcl, glb):
   # stop training if reward exceeds 199
-  total = sum(lcl['episode_rewards'][-101:-1]) / 100
-  totalt = lcl['t']
-  print("totalt")
-  print(totalt)
-  is_solved = totalt > 2000 and total >= 10
+  is_solved = lcl['t'] > 100 and sum(lcl['episode_rewards'][-101:-1]) / 100 >= 199
+  if is_solved:
+      print("is solved!")
   return is_solved
 
 
@@ -34,7 +34,7 @@ def main():
 
   icubenv = iCubPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction)
 
-  act = deepq.learn(icubenv, network='mlp', total_timesteps=0, load_path="../pybullet_logs/icubpush_deepq/icub_pushing_model_deepq.pkl")
+  act = deepq.learn(icubenv, network='mlp', total_timesteps=0, load_path=log_dir = log_dir+"/model.pkl")
   print(act)
 
   while True:

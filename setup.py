@@ -19,18 +19,15 @@ print("packages")
 print(find_packages('pybullet_robot_envs'))
 print("-----")
 
-# Environment-specific dependencies.
-extras = {
-    'pandas':['pandas'],
-    'matplotlib':['matplotlib']
-}
-
 setup(
     name='pybullet_robot_envs',
     version='0.0.1',
-    description="PyBullet Robot Envs: A toolkit for developing OpenAI Gym environments in PyBullet simulator",
-    install_requires=['pybullet','gym','tensorflow','ruamel.yaml'],
-    extras_require=extras,
+    author="Elena Rampone, Andrea Romdhana, Giulia Vezzani",
+    author_email="elena.rampone@iit.it, andrea.romdhana@iit.it, giulia.vezzani@iit.it",
+    description="PyBullet Robot Envs: A collection of OpenAI Gym RL robotic environments in PyBullet simulator",
+    url='https://github.com/robotology-playground/pybullet-robot-envs',
+    python_requires='>=3.5',
+    #install_requires=['gym==0.12.5','pybullet==2.5.0'],
     package_dir={'': '.'},
     packages=find_packages(),
     package_data={'pybullet_robot_envs': need_files},

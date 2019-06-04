@@ -33,6 +33,7 @@ class iCubPushGymEnv(gym.Env):
                  urdfRoot=robot_data.getDataPath(),
                  useIK=1,
                  control_arm='l',
+                 useOrientation=0,
                  isDiscrete=1,
                  actionRepeat=1,
                  renders=False,
@@ -42,6 +43,7 @@ class iCubPushGymEnv(gym.Env):
         self._isDiscrete = isDiscrete
         self._timeStep = 1./240.
         self._useIK = 1 if self._isDiscrete else useIK
+        self._useOrientation = useOrientation
         self._urdfRoot = urdfRoot
         self._actionRepeat = actionRepeat
         self._observation = []
@@ -96,7 +98,8 @@ class iCubPushGymEnv(gym.Env):
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"),[0,0,0])
 
         # Load robot
-        self._icub = iCubEnv(urdfRootPath=self._urdfRoot, timeStep=self._timeStep, useInverseKinematics=self._useIK, arm=self._control_arm)
+        self._icub = iCubEnv(urdfRootPath=self._urdfRoot, timeStep=self._timeStep, useInverseKinematics=self._useIK,
+                             arm=self._control_arm, useOrientation=self._useOrientation)
 
         ## Load table and object for simulation
         tableId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [0.85, 0.0, 0.0])
