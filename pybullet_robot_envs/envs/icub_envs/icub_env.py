@@ -4,11 +4,6 @@ parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0,parentdir)
 
 import pybullet as p
-
-import numpy as np
-import copy
-import math
-import pybullet_data
 import robot_data
 import math as m
 
@@ -152,7 +147,8 @@ class iCubEnv:
 
         if(self.useInverseKinematics):
 
-            assert len(action)>=3, ('number of action commands must be equal to 3 at least (dx,dy,dz)',len(action))
+            if not len(action)>=3:
+                raise AssertionError('number of action commands must be equal to 3 at least (dx,dy,dz)',len(action))
 
             dx, dy, dz = action[:3]
 
@@ -211,13 +207,14 @@ class iCubEnv:
                     p.resetJointState(self.icubId, i, jointPoses[i])
 
         else:
-            assert len(action)==len(self.motorIndices), ('number of motor commands differs from number of motor to control',len(action))
+            if not len(action)==len(self.motorIndices):
+                raise AssertionError('number of motor commands differs from number of motor to control', len(action),len(self.motorIndices))
 
-            for a in range(len(action)):
-                motor = self.motorIndices[a]
+            for idx,val in enumerate(action):
+                motor = self.motorIndices[idx]
 
                 curr_motor_pos = p.getJointState(self.icubId, motor)[0]
-                new_motor_pos = min(self.ul[motor], max(self.ll[motor], curr_motor_pos + action[a]))
+                new_motor_pos = min(self.ul[motor], max(self.ll[motor], curr_motor_pos + val))
 
                 p.setJointMotorControl2(self.icubId,
                                         motor,

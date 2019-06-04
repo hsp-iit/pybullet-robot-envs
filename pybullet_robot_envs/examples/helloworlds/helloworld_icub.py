@@ -9,9 +9,7 @@ import pybullet as p
 import pybullet_data
 import robot_data
 import time
-import os
 import math as m
-import numpy as np
 
 
 def main():
@@ -20,7 +18,7 @@ def main():
     #p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
     # Load plane contained in pybullet_data
-    planeId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"))
+    p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"))
 
     # Set gravity for simulation
     p.setGravity(0,0,-9.8)
@@ -30,7 +28,7 @@ def main():
     icubId = robotIds[0]
 
     # set constraint between base_link and world
-    cid = p.createConstraint(icubId,-1,-1,-1,p.JOINT_FIXED,[0,0,0],[0,0,0],
+    p.createConstraint(icubId,-1,-1,-1,p.JOINT_FIXED,[0,0,0],[0,0,0],
     						 [p.getBasePositionAndOrientation(icubId)[0][0],
     						  p.getBasePositionAndOrientation(icubId)[0][1],
     						  p.getBasePositionAndOrientation(icubId)[0][2]*1.2],
@@ -47,17 +45,21 @@ def main():
     #init_pos = [0]*p.getNumJoints(icubId)
 
     # Load other objects
-    tableId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [0.85, 0.0, 0.0])
-    objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"), [0.3,0.0,0.8])
+    p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [1.1, 0.0, 0.0])
+    p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"), [0.5,0.0,0.8])
 
     # add debug slider
     jointIds=[]
     paramIds=[]
     joints_num = p.getNumJoints(icubId)
+
+    print("len init_pos ",len(init_pos))
+    print("len num joints", joints_num)
+
     for j in range (joints_num):
     	info = p.getJointInfo(icubId,j)
     	jointName = info[1]
-    	jointType = info[2]
+    	#jointType = info[2]
     	jointIds.append(j)
     	paramIds.append(p.addUserDebugParameter(jointName.decode("utf-8"), info[8], info[9], init_pos[j]/180*m.pi))
 

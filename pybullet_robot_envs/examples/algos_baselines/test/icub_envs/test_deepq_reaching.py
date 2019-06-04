@@ -6,15 +6,10 @@ parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
 from baselines import deepq
-import gym
-import pybullet_robot_envs
-import pybullet_data
 
-from pybullet_robot_envs.envs.icub_envs.icub_push_gym_env import iCubPushGymEnv
+from pybullet_robot_envs.envs.icub_envs.icub_reach_gym_env import iCubReachGymEnv
 from pybullet_robot_envs import robot_data
 
-import time
-import math as m
 
 log_dir = '../pybullet_logs/icubreach_deepq'
 
@@ -32,9 +27,9 @@ def main():
   discreteAction = 1
   use_IK = 1 if discreteAction else use_IK
 
-  icubenv = iCubPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction)
+  icubenv = iCubReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction)
 
-  act = deepq.learn(icubenv, network='mlp', total_timesteps=0, load_path=log_dir = log_dir+"/model.pkl")
+  act = deepq.learn(icubenv, network='mlp', total_timesteps=0, load_path=log_dir+"/model.pkl")
   print(act)
 
   while True:

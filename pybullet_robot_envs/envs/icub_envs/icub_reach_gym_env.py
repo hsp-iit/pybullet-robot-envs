@@ -3,7 +3,6 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 print ("current_dir=" + currentdir)
 os.sys.path.insert(0,currentdir)
 
-import math as m
 import gym
 from gym import spaces
 from gym.utils import seeding
@@ -11,10 +10,8 @@ import numpy as np
 import time
 import pybullet as p
 from icub_env import iCubEnv
-import random
 import pybullet_data
 import robot_data
-from pkg_resources import parse_version
 
 largeValObservation = 100
 
@@ -22,10 +19,11 @@ RENDER_HEIGHT = 720
 RENDER_WIDTH = 960
 
 def goal_distance(goal_a, goal_b):
-    assert goal_a.shape == goal_b.shape
+    if not goal_a.shape == goal_b.shape:
+        raise AssertionError("shape of goals mismatch")
     return np.linalg.norm(goal_a - goal_b, axis=-1)
 
-class iCubPushGymEnv(gym.Env):
+class iCubReachGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
 
@@ -55,7 +53,6 @@ class iCubPushGymEnv(gym.Env):
         self._cam_yaw = 180
         self._cam_pitch = -40
         self._h_table = []
-        self._target_dist_max = 0.1
         self._target_dist_min = 0.07
 
         # Initialize PyBullet simulator
@@ -109,10 +106,9 @@ class iCubPushGymEnv(gym.Env):
         #limit iCub workspace to table plane
         self._icub.workspace_lim[2][0] = self._h_table
 
-        # Randomize start position of object and target.
-        obj_pose, self.target_pose = self._sample_pose()
+        # Randomize start position of object
+        obj_pose = self._sample_pose()
         self._objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"),obj_pose)
-        self._targetID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "domino/domino.urdf"), self.target_pose)
 
         #limit iCub workspace to table plane
         self._icub.workspace_lim[2][0] = self._h_table+0.01
@@ -165,11 +161,10 @@ class iCubPushGymEnv(gym.Env):
 
             dv = 0.01
             realPos = [a*0.005 for a in action[:3]]
-            realOrn = []
-            #realPos[2] = - abs(realPos[2])
 
+            realOrn = []
             if self.action_space.shape[-1] is 6:
-                realOrn = [a*0.05 for a in action[3:]]
+                realOrn = [a*0.01 for a in action[3:]]
 
             return self.step2(realPos+realOrn)
 
@@ -177,7 +172,7 @@ class iCubPushGymEnv(gym.Env):
             return self.step2([a*0.05 for a in action])
 
     def step2(self, action):
-        for i in range(self._actionRepeat):
+        for _ in range(self._actionRepeat):
             self._icub.applyAction(action)
             p.stepSimulation()
 
@@ -192,15 +187,8 @@ class iCubPushGymEnv(gym.Env):
         self._observation = self.getExtendedObservation()
 
         done = self._termination()
-
         reward = self._compute_reward()
 
-        ws_lim = self._icub.workspace_lim
-        cost = (not ws_lim[0][0]<self._observation[0]<ws_lim[0][1]) or \
-                (not ws_lim[1][0]<self._observation[1]<ws_lim[1][1]) or \
-                (not ws_lim[2][0]<self._observation[2]<ws_lim[2][1])
-
-        #reward -= cost*1
         #print("reward")
         #print(reward)
 
@@ -215,7 +203,7 @@ class iCubPushGymEnv(gym.Env):
         if mode != "rgb_array":
           return np.array([])
 
-        base_pos,orn = self._p.getBasePositionAndOrientation(self._icub.icubId)
+        base_pos,_ = self._p.getBasePositionAndOrientation(self._icub.icubId)
         view_matrix = self._p.computeViewMatrixFromYawPitchRoll(
             cameraTargetPosition=base_pos,
             distance=self._cam_dist,
@@ -248,7 +236,7 @@ class iCubPushGymEnv(gym.Env):
 
         handState = p.getLinkState(self._icub.icubId, self._icub.motorIndices[-1], computeLinkVelocity=0)
         handPos = handState[0]
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
+        objPos, _ = p.getBasePositionAndOrientation(self._objID)
         d = goal_distance(np.array(handPos), np.array(objPos))
 
         if d <= self._target_dist_min:
@@ -261,10 +249,8 @@ class iCubPushGymEnv(gym.Env):
 
         handState = p.getLinkState(self._icub.icubId, self._icub.motorIndices[-1], computeLinkVelocity=0)
         handPos = handState[0]
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        tgPos, tgOrn = p.getBasePositionAndOrientation(self._targetID)
+        objPos, _ = p.getBasePositionAndOrientation(self._objID)
         d1 = goal_distance(np.array(handPos), np.array(objPos))
-        d2 = goal_distance(np.array(objPos), np.array(tgPos))
         #print("distance")
         #print(d1)
 
@@ -275,14 +261,13 @@ class iCubPushGymEnv(gym.Env):
         return reward
 
     def _sample_pose(self):
-        ws_lim = self._icub.workspace_lim
-        px,tx =  0.2+0.2*np.random.random(), 0.5#np.random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(2))
-        py,ty =  0.2-0.2*np.random.random(),-0.1#np.random.uniform(low=ws_lim[1][0], high=ws_lim[1][1], size=(2))
-        pz,tz = self._h_table, self._h_table
+        #ws_lim = self._icub.workspace_lim
+        px =  0.2+0.2*np.random.random()
+        py =  0.2-0.2*np.random.random()
+        pz = self._h_table
         obj_pose = [px,py,pz]
-        tg_pose = [tx,ty,tz]
 
-        return obj_pose, tg_pose
+        return obj_pose
 
     def _debugGUI(self):
         ws = self._icub.workspace_lim

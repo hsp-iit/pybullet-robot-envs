@@ -5,28 +5,11 @@ print(currentdir)
 parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
-try:
-    from mpi4py import MPI
-except ImportError:
-    MPI = None
 
-import pybullet_robot_envs
-import pybullet_data
-
-from pybullet_robot_envs.envs.icub_envs.icub_push_gym_env import iCubPushGymEnv
+from pybullet_robot_envs.envs.icub_envs.icub_reach_gym_env import iCubReachGymEnv
 from pybullet_robot_envs import robot_data
 
-import datetime
-import time
 import math as m
-
-import gym
-import itertools
-import numpy as np
-import tensorflow as tf
-import tensorflow.contrib.layers as layers
-
-import baselines.common.tf_util as U
 
 from baselines import logger
 from baselines import deepq
@@ -45,7 +28,7 @@ def main():
   discreteAction = 1
   use_IK = 1 if discreteAction else use_IK
 
-  icubenv = env = iCubPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=False, useIK=use_IK, isDiscrete=discreteAction) #gym.make("iCubPush-v0")
+  icubenv = iCubReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=False, useIK=use_IK, isDiscrete=discreteAction) #gym.make("iCubPush-v0")
 
   logger.configure(dir=log_dir, format_strs=['stdout','log','csv','tensorboard'])
 

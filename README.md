@@ -98,11 +98,11 @@ The [README.md](pybullet_robot_envs/README.md) file provides detailed informatio
 Run the following script to open an interactive GUI in PyBullet and test the iCub environment:
 * Forward Kinematic: use the sliders to change the positions of the iCub arm's joints
   ```
-  $ python pybullet_robot_envs/examples/test_envs/test_icub_push_gym_env.py --arm l
+  $ python pybullet_robot_envs/examples/test_envs/test_icub_reach_gym_env.py --arm l
   ```
 * Inverse Kinematic: use the sliders to change the (x,y,z),(roll,pitch,yaw) position of the iCub's hand
   ```
-  $ python pybullet_robot_envs/examples/test_envs/test_icub_push_gym_env.py --arm r --continueIK
+  $ python pybullet_robot_envs/examples/test_envs/test_icub_reach_gym_env.py --arm r --continueIK
   ```
 ##### Panda
 
