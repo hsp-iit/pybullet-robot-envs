@@ -1,7 +1,6 @@
 <p align="center">
 <h1 align="center">Environments</h1>
 </p>
----
 
 ## Overview
  - [Robot environments](#robot-environments)
