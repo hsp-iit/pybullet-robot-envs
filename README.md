@@ -1,13 +1,12 @@
 <p align="center">
 <h1 align="center">Pybullet-robot-envs</h1>
 </p>
-
 <p align="center">
-<h align="center"> ⚠️ **Status**: Pre-alpha ⚠️ </h>
+<h align="center"> ⚠️ Status: Pre-alpha ⚠️ </h>
 </p>
 
-
 ---
+
 **pybullet-robot-envs** is a *Python* package that collects robotic environments based on the [PyBullet](https://github.com/bulletphysics/bullet3) simulator, suitable to develop and test Reinforcement Learning algorithms on simulated **grasping** and **manipulation** applications.
 
 The pybullet-robot-envs inherit from the [OpenAI Gym](https://github.com/openai/gym/tree/master/gym) interface.
@@ -28,9 +27,10 @@ The package provides environments for the **iCub Humanoid robot** and the **Fran
  - [Environments](#environments)
     - [Test Environments](#test-environments)
  - [RL Examples](#rl-examples)
+
 ---
 
-### Motivation
+## Motivation
 This repository is part of a project which aims to develop Reinforcement Learning approaches for the accomplishment of grasp and manipulation tasks with the iCub Humanoid robot and the Franka Emika Panda robot.
 
 A Reinforcement Learning based approach generally includes two basics modules: the **environment**, i.e. the world, and the **agent**, i.e. the algorithm. The agent sends action to the environment, which replies with observations and rewards. This repository provides environments with OpenAI Gym interface that interact with the [PyBullet](https://github.com/bulletphysics/bullet3) module to simulate the robotic tasks and the learned policies.
@@ -51,15 +51,15 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
  - *render(self, mode='human')*: Render one frame of the environment.
 
 
-### Prerequisites
+## Prerequisites
 *pybullet-robot-envs* requires python3 (>=3.5).
 
-### Installation
+## Installation
 1. Before installing the required dependencies, you may want to create a virtual environment and activate it:
-  ```
-  $ virtualenv ve_pybullet
-  $ source pybullet/bin/activate
-  ```
+    ```
+    $ virtualenv ve_pybullet
+    $ source pybullet/bin/activate
+    ```
 
 2. Clone the repository:
     ```
@@ -80,19 +80,19 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
       env = gym.make('pybullet_robot_envs:<id_env>')
       ```
 
-#### Testing
+### Testing
 You can test your installation by running the following basic robot simulations on PyBullet:
 ```
 $ python pybullet_robot_envs/examples/helloworlds/helloworld_icub.py
 $ python pybullet_robot_envs/examples/helloworlds/helloworld_panda.py
 ```
 
-### Environments
+## Environments
 The [README.md](pybullet_robot_envs/README.md) file provides detailed information about the robotic environments of the repository. In general, there are two types of environments:
 - **Robot environments**: load the URDF/SDF robot models and provide methods to directly interact with the robot in the simulation. They are not OpenAI Gym-like environments.
 - **Task environments**: provide the implementation of the RL task and are OpenAI Gym-like environments. Inside the task environment, the specific robot environment is instantiated.
 
-#### Test Environments
+### Test Environments
 
 ##### iCub
 Run the following script to open an interactive GUI in PyBullet and test the iCub environment:
@@ -107,7 +107,7 @@ Run the following script to open an interactive GUI in PyBullet and test the iCu
 ##### Panda
 
 
-### RL Examples
+## RL Examples
 Run the following scripts to train and test the implemented environments with standard RL algorithms from [OpenAI Baselines](https://github.com/openai/baselines).
 
 Note: You need to run the `$ pip install -r requirements.txt` command, if not already done during the installation step.
@@ -122,10 +122,10 @@ Note: You need to run the `$ pip install -r requirements.txt` command, if not al
 
 * Track the learning process with tensorboard:
   1. Run tensorboard by specifying the log directory:
-    ```
-    $ tensorboard --logdir ../pybullet_logs/icubreach_deepq
-    TensorBoard 1.13.1 at <url>:6006 (Press CTRL+C to quit)
-    ```
+      ```
+      $ tensorboard --logdir ../pybullet_logs/icubreach_deepq
+        TensorBoard 1.13.1 at <url>:6006 (Press CTRL+C to quit)
+      ```
   2. Enter the `<url>:6006` into the web browser and track the mean reward per episode
 
 
