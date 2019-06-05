@@ -58,7 +58,7 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
 1. Before installing the required dependencies, you may want to create a virtual environment and activate it:
     ```
     $ virtualenv ve_pybullet
-    $ source pybullet/bin/activate
+    $ source ve_pybullet/bin/activate
     ```
 
 2. Clone the repository:
