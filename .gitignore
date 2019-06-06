@@ -99,6 +99,9 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
+
+# openai baselines
+.pkl
 /site
 
 # mypy

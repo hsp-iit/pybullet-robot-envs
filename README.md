@@ -54,6 +54,8 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
 ## Prerequisites
 *pybullet-robot-envs* requires python3 (>=3.5).
 
+**Note**: If you have both *Python 2.7* and *Python 3.5* installed on you system, you may need to run every command listed in the [Installation](#installation) section with `pip3` instead of `pip`.
+
 ## Installation
 1. Before installing the required dependencies, you may want to create a virtual environment and activate it:
     ```
@@ -66,19 +68,26 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
     $ git clone https://github.com/robotology-playground/pybullet-robot-envs.git
     $ cd pybullet-robot-envs
     ```
-3. Install the dependencies necessary to run the examples and do sample RL training with PyBullet:
+3. Install the dependencies necessary to run and test the environments with PyBullet:
     ```
     $ pip install -r requirements.txt
     ```
-5. To install the environments and register them as Gym environments do:
+5. [Optional] Install the environments and register them as Gym environments by doing:
     ```
     $ pip install -e .
     ```
     After this step, they can be instantiated in any script by doing:
       ```
       import gym
-      env = gym.make('pybullet_robot_envs:<id_env>')
+      env = gym.make('pybullet_robot_envs:iCubReach-v0')
       ```
+    where `iCubReach-v0` is the environment id. You can check the available environment ids in the file [pybullet_robot_envs/__init__.py](pybullet_robot_envs/__init__.py). If you create a new environment and you want to register it as Gym environment, you can modify this file by adding a new `register( id=<id_env>, entry_point=path_to_import_env>)`. See [this](https://github.com/openai/gym/blob/master/docs/creating-environments.md) guide for detailed instruction.
+
+6. [Optional] Install the [OpenAI Baselines](https://github.com/openai/baselines) package to run the [RL Examples](#rl-examples) by doing:
+    ```
+    $ pip install git+https://github.com/openai/baselines.git
+    ```
+
 
 ### Testing
 You can test your installation by running the following basic robot simulations on PyBullet:
@@ -110,7 +119,7 @@ Run the following script to open an interactive GUI in PyBullet and test the iCu
 ## RL Examples
 Run the following scripts to train and test the implemented environments with standard RL algorithms from [OpenAI Baselines](https://github.com/openai/baselines).
 
-Note: You need to run the `$ pip install -r requirements.txt` command, if not already done during the installation step.
+**Note**: You need to run the `$ pip install git+https://github.com/openai/baselines.git` command, if not already done during the installation step.
 
 ##### iCubReach-v0
 
@@ -131,7 +140,7 @@ Note: You need to run the `$ pip install -r requirements.txt` command, if not al
 
 * Test the trained model on episodes of 1000 timestamps:
   ```
-  python pybullet_robot_envs/examples/algos_baselines/test/icub_envs/test_deepq_reaching.py
+  $ python pybullet_robot_envs/examples/algos_baselines/test/icub_envs/test_deepq_reaching.py
   ```
 
 ##### PandaReach-v0
