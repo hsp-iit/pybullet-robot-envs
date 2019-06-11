@@ -1,6 +1,5 @@
 import os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-print ("current_dir=" + currentdir)
 os.sys.path.insert(0,currentdir)
 
 import gym
@@ -29,11 +28,12 @@ class iCubReachGymEnv(gym.Env):
 
     def __init__(self,
                  urdfRoot=robot_data.getDataPath(),
+                 actionRepeat=1,
                  useIK=1,
+                 isDiscrete=0,
                  control_arm='l',
                  useOrientation=0,
-                 isDiscrete=1,
-                 actionRepeat=1,
+                 rnd_obj_pose=1,
                  renders=False,
                  maxSteps = 1000):
 
@@ -53,17 +53,18 @@ class iCubReachGymEnv(gym.Env):
         self._cam_yaw = 180
         self._cam_pitch = -40
         self._h_table = []
-        self._target_dist_min = 0.07
+        self._target_dist_min = 0.05
+        self._rnd_obj_pose = rnd_obj_pose
 
         # Initialize PyBullet simulator
         self._p = p
         if self._renders:
-          cid = p.connect(p.SHARED_MEMORY)
-          if (cid<0):
-             cid = p.connect(p.GUI)
-          p.resetDebugVisualizerCamera(2.5,90,-60,[0.52,-0.2,-0.33])
+          self._cid = p.connect(p.SHARED_MEMORY)
+          if (self._cid<0):
+             self._cid = p.connect(p.GUI)
+          p.resetDebugVisualizerCamera(2.5,90,-60,[0.0,-0.0,-0.0])
         else:
-            p.connect(p.DIRECT)
+            self._cid = p.connect(p.DIRECT)
 
         # initialize simulation environment
         self.reset()
@@ -99,8 +100,8 @@ class iCubReachGymEnv(gym.Env):
                              arm=self._control_arm, useOrientation=self._useOrientation)
 
         ## Load table and object for simulation
-        tableId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [0.85, 0.0, 0.0])
-        table_info = p.getVisualShapeData(tableId,-1)[0]
+        self._tableId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [0.85, 0.0, 0.0])
+        table_info = p.getVisualShapeData(self._tableId,-1)[0]
         self._h_table =table_info[5][2] + table_info[3][2]
 
         #limit iCub workspace to table plane
@@ -111,7 +112,7 @@ class iCubReachGymEnv(gym.Env):
         self._objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"),obj_pose)
 
         #limit iCub workspace to table plane
-        self._icub.workspace_lim[2][0] = self._h_table+0.01
+        self._icub.workspace_lim[2][0] = self._h_table
 
         self._debugGUI()
         p.setGravity(0,0,-9.8)
@@ -128,11 +129,22 @@ class iCubReachGymEnv(gym.Env):
 
         # get object position and transform it wrt hand c.o.m. frame
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
+        objEuler = p.getEulerFromQuaternion(objOrn) #roll, pitch, yaw
 
         self._observation.extend(list(objPos))
-        self._observation.extend(list(objOrn))
+        self._observation.extend(list(objEuler))
 
-        return self._observation
+        # relative object position wrt hand c.o.m. frame
+        invHandPos, invHandOrn = p.invertTransform(self._observation[:3], p.getQuaternionFromEuler(self._observation[3:6]))
+
+        objPosInHand, objOrnInHand = p.multiplyTransforms(invHandPos, invHandOrn,
+                                                                objPos, objOrn)
+
+        objEulerInHand = p.getEulerFromQuaternion(objOrnInHand)
+        self._observation.extend(list(objPosInHand))
+        self._observation.extend(list(objEulerInHand))
+
+        return np.array(self._observation)
 
     def step(self, action):
         ws_lim = self._icub.workspace_lim
@@ -145,7 +157,7 @@ class iCubReachGymEnv(gym.Env):
                 dz = [0, 0, 0, 0, 0, -dv, dv][action]
                 realAction = [dx, dy, dz]
             else:
-                dv1 = 0.05
+                dv1 = 0.005
                 dx = [0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0][action]
                 dy = [0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0][action]
                 dz = [0, 0, 0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0][action]
@@ -160,7 +172,7 @@ class iCubReachGymEnv(gym.Env):
         elif self._useIK:
 
             dv = 0.01
-            realPos = [a*0.005 for a in action[:3]]
+            realPos = [a*0.003 for a in action[:3]]
 
             realOrn = []
             if self.action_space.shape[-1] is 6:
@@ -192,7 +204,7 @@ class iCubReachGymEnv(gym.Env):
         #print("reward")
         #print(reward)
 
-        return np.array(self._observation), np.array(reward), np.array(done), {}
+        return self._observation, np.array(reward), np.array(done), {}
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -226,7 +238,7 @@ class iCubReachGymEnv(gym.Env):
         return rgb_array
 
     def __del__(self):
-        p.disconnect()
+        self._p.disconnect(self._cid)
 
     def _termination(self):
 
@@ -256,14 +268,20 @@ class iCubReachGymEnv(gym.Env):
 
         reward = -d1
         if d1 <= self._target_dist_min:
-            reward = np.float32(1000.0)
+            reward = np.float32(100.0)
 
         return reward
 
     def _sample_pose(self):
-        #ws_lim = self._icub.workspace_lim
-        px =  0.2+0.2*np.random.random()
-        py =  0.2-0.2*np.random.random()
+        ws_lim = self._icub.workspace_lim
+        # px =  0.1+0.3*np.random.random()
+        # py =  0.15-0.3*np.random.random()
+        if self._rnd_obj_pose:
+            px = np.random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(1))
+            py = np.random.uniform(low=ws_lim[1][0]+0.005*np.random.random(), high=ws_lim[1][1]-0.005*np.random.random(), size=(1))
+        else:
+            px = ws_lim[0][0] + 0.5*(ws_lim[0][1]-ws_lim[0][0])
+            py = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
         pz = self._h_table
         obj_pose = [px,py,pz]
 
@@ -281,14 +299,14 @@ class iCubReachGymEnv(gym.Env):
         p.addUserDebugLine(p3,p4,lineColorRGB=[0,0,1],lineWidth=2.0,lifeTime=0)
         p.addUserDebugLine(p4,p1,lineColorRGB=[0,0,1],lineWidth=2.0,lifeTime=0)
 
-        p.addUserDebugLine([-0.07,0,0],[0,0,0],[1,0,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
-        p.addUserDebugLine([-0.07,0,0.03],[-0.07,0.1,0],[0,1,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
-        p.addUserDebugLine([-0.07,0,0.03],[-0.07,0,0.1],[0,0,1],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
+        p.addUserDebugLine([0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
+        p.addUserDebugLine([0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
+        p.addUserDebugLine([0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
 
         p.addUserDebugLine([0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_left_arm[-1])
         p.addUserDebugLine([0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_left_arm[-1])
         p.addUserDebugLine([0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_left_arm[-1])
 
-        p.addUserDebugLine([0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._objID)
-        p.addUserDebugLine([0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._objID)
-        p.addUserDebugLine([0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._objID)
+        p.addUserDebugLine([0.0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._objID)
+        p.addUserDebugLine([0.0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._objID)
+        p.addUserDebugLine([0.0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._objID)

@@ -6,7 +6,7 @@ register(
         id='iCubReach-v0',
         entry_point='pybullet_robot_envs.envs.icub_envs:iCubReachGymEnv',
         max_episode_steps=1000,
-        reward_threshold=1000.0,
+        kwargs={ 'useIK':1, 'isDiscrete':0, 'control_arm':'l', 'useOrientation':0, 'rnd_obj_pose':1, 'maxSteps':500},
 )
 
 # --------------------------- #

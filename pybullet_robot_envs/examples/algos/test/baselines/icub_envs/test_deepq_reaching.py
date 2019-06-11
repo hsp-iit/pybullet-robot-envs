@@ -11,15 +11,7 @@ from pybullet_robot_envs.envs.icub_envs.icub_reach_gym_env import iCubReachGymEn
 from pybullet_robot_envs import robot_data
 
 
-log_dir = '../pybullet_logs/icubreach_deepq'
-
-def callback(lcl, glb):
-  # stop training if reward exceeds 199
-  is_solved = lcl['t'] > 100 and sum(lcl['episode_rewards'][-101:-1]) / 100 >= 199
-  if is_solved:
-      print("is solved!")
-  return is_solved
-
+log_dir = '../pybullet_logs/icubreach_deepq/random_obj'
 
 def main():
 
@@ -27,7 +19,7 @@ def main():
   discreteAction = 1
   use_IK = 1 if discreteAction else use_IK
 
-  icubenv = iCubReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction)
+  icubenv = iCubReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction, rnd_obj_pose=1)
 
   act = deepq.learn(icubenv, network='mlp', total_timesteps=0, load_path=log_dir+"/model.pkl")
   print(act)

@@ -20,7 +20,7 @@ def main(args):
     use_IK = 1 if args.useIK else 0
 
     env = iCubReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, control_arm=args.arm, useIK=use_IK,
-                         isDiscrete=0, useOrientation=1)
+                         isDiscrete=0, useOrientation=1, rnd_obj_pose=1)
     motorsIds = []
 
     if (env._isDiscrete):
@@ -57,7 +57,7 @@ def main(args):
         action = int(action[0]) if env._isDiscrete else action
 
         state, reward, done, _ = env.step(action)
-        if t%10==0:
+        if t%100==0:
             print("reward ", reward)
             #env._p.addUserDebugText(' '.join(str(round(e,2)) for e in state[:6]),[0,-0.5,1.2],[1,0,0],replaceItemUniqueId=idx)
 

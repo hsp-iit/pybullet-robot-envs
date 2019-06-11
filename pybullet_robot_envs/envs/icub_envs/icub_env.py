@@ -30,7 +30,7 @@ class iCubEnv:
         self.home_left_arm = [-29.4, 28.8, 0, 44.59, 0, 0, 0]
         self.home_right_arm = [-29.4, 30.4, 0, 44.59, 0, 0, 0]
 
-        self.workspace_lim = [[0.2,0.5],[-0.2,0.2],[0.5,0.8]]
+        self.workspace_lim = [[0.2,0.52],[-0.2,0.2],[0.5,0.8]]
 
         self.control_arm = arm if arm =='r' or arm =='l' else 'l' #left arm by default
 
@@ -139,7 +139,11 @@ class iCubEnv:
         observation.extend(list(pos))
         observation.extend(list(euler)) #roll, pitch, yaw
         observation.extend(list(velL))
-        observation.extend(list(velA))
+        #observation.extend(list(velA))
+
+        jointStates = p.getJointStates(self.icubId,self.motorIndices)
+        jointPoses = [x[0] for x in jointStates]
+        observation.extend(list(jointPoses))
 
         return observation
 
@@ -152,27 +156,27 @@ class iCubEnv:
 
             dx, dy, dz = action[:3]
 
-            if dx>0:
-                dx = round(dx*abs(self.workspace_lim[0][1]-self.handPos[0]),4)
-            else:
-                dx = round(dx*abs(self.workspace_lim[0][0]-self.handPos[0]),4)
+            # if dx>0:
+            #     dx = round(dx*abs(self.workspace_lim[0][1]-self.handPos[0]),4)
+            # else:
+            #     dx = round(dx*abs(self.workspace_lim[0][0]-self.handPos[0]),4)
+            #
+            # if dy>0:
+            #     dy = round(dy*abs(self.workspace_lim[1][1]-self.handPos[1]),4)
+            # else:
+            #     dy = round(dy*abs(self.workspace_lim[1][0]-self.handPos[1]),4)
+            #
+            # if dz>0:
+            #     dz = round(dz*abs(self.workspace_lim[2][1]-self.handPos[2]),4)
+            # else:
+            #     dz= round(dz*abs(self.workspace_lim[2][0]-self.handPos[2]),4)
 
-            if dy>0:
-                dy = round(dy*abs(self.workspace_lim[1][1]-self.handPos[1]),4)
-            else:
-                dy = round(dy*abs(self.workspace_lim[1][0]-self.handPos[1]),4)
-
-            if dz>0:
-                dz = round(dz*abs(self.workspace_lim[2][1]-self.handPos[2]),4)
-            else:
-                dz= round(dz*abs(self.workspace_lim[2][0]-self.handPos[2]),4)
-
-            self.handPos[0] += dx #min(self.workspace_lim[0][1], max(self.workspace_lim[0][0], self.handPos[0] + dx))
-            self.handPos[1] += dy #min(self.workspace_lim[1][1], max(self.workspace_lim[1][0], self.handPos[1] + dy))
-            self.handPos[2] += dz #min(self.workspace_lim[2][1], max(self.workspace_lim[2][0], self.handPos[2] + dz))
+            self.handPos[0] = min(self.workspace_lim[0][1], max(self.workspace_lim[0][0], self.handPos[0] + dx))
+            self.handPos[1] = min(self.workspace_lim[1][1], max(self.workspace_lim[1][0], self.handPos[1] + dy))
+            self.handPos[2] = min(self.workspace_lim[2][1], max(self.workspace_lim[2][0], self.handPos[2] + dz))
 
             if not self.useOrientation:
-                quat_orn = []
+                quat_orn = p.getQuaternionFromEuler(self.handOrn) #[]
 
             elif len(action) is 6:
                 droll, dpitch, dyaw = action[3:]
