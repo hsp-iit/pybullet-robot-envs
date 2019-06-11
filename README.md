@@ -125,7 +125,7 @@ Run the following scripts to train and test the implemented environments with st
 
 * Train iCub to perform a *reach* task by using [DQN](https://github.com/openai/baselines/tree/master/baselines/deepq) (discrete action space):
   ```
-  $ python pybullet_robot_envs/examples/algos_baselines/train/icub_envs/train_deep_reaching.py
+  $ python pybullet_robot_envs/examples/algos/train/baselines/icub_envs/train_deepq_reaching.py
   ```
   The trained model is saved as *.pkl* in the `../pybullet_logs/icubreach_deepq` folder, together with some log files, as *tensorboard* files.
 
@@ -140,7 +140,7 @@ Run the following scripts to train and test the implemented environments with st
 
 * Test the trained model on episodes of 1000 timestamps:
   ```
-  $ python pybullet_robot_envs/examples/algos_baselines/test/icub_envs/test_deepq_reaching.py
+  $ python pybullet_robot_envs/examples/algos/test/baselines/icub_envs/test_deepq_reaching.py
   ```
 
 ##### PandaReach-v0
