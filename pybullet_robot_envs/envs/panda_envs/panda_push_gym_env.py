@@ -36,8 +36,9 @@ class pandaPushGymEnv(gym.Env):
                  actionRepeat = 1,
                  renders = False,
                  maxSteps = 1000,
-                 dist_delta = 0.03):
+                 dist_delta = 0.03, numControlledJoints = 7, fixedPositionObj = True, includeVelObs = True):
 
+        self.action_dim = numControlledJoints
         self._isDiscrete = isDiscrete
         self._timeStep = 1./240.
         self._useIK = useIK 
@@ -55,6 +56,8 @@ class pandaPushGymEnv(gym.Env):
         self._target_dist_max = 0.3
         self._target_dist_min = 0.2
         self._p = p
+        self.fixedPositionObj = fixedPositionObj
+        self.includeVelObs = includeVelObs
         
         if self._renders:
           cid = p.connect(p.SHARED_MEMORY)
@@ -76,9 +79,9 @@ class pandaPushGymEnv(gym.Env):
             self.action_space = spaces.Discrete(self._panda.getActionDimension())
         
         else:
-            action_dim = 8 #self._panda.getActionDimension()
+            #self.action_dim = 2 #self._panda.getActionDimension()
             self._action_bound = 1
-            action_high = np.array([self._action_bound] * action_dim)
+            action_high = np.array([self._action_bound] * self.action_dim)
             self.action_space = spaces.Box(-action_high, action_high, dtype='float32')
             
         self.viewer = None
@@ -94,7 +97,7 @@ class pandaPushGymEnv(gym.Env):
 
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
-        self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625], useInverseKinematics= self._useIK)
+        self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625], useInverseKinematics= self._useIK, actionSpace = self.action_dim, includeVelObs = self.includeVelObs)
         
 
         # Load table and object for simulation
@@ -107,9 +110,12 @@ class pandaPushGymEnv(gym.Env):
         #limit panda workspace to table plane
         self._panda.workspace_lim[2][0] = self._h_table
         # Randomize start position of object and target.
-        obj_pose, self.target_pose = self._sample_pose()
 
-        self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = [0.7,0.0,0.8])
+        if (self.fixedPositionObj):
+            self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = [0.7,0.0,0.64], useFixedBase=True)
+        else:
+            self.target_pose = self._sample_pose() 
+            self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition= self.target_pose, useFixedBase=True)
         #self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), self.target_pose)
 
         self._debugGUI()
@@ -251,7 +257,6 @@ class pandaPushGymEnv(gym.Env):
         reward = -d
         if d <= self._target_dist_min:
             reward = np.float32(1000.0) + (100 - d*80)
-
         return reward
 
 

@@ -27,7 +27,7 @@ def main():
     
     discreteAction = 0 
     rend = False
-    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0, isDiscrete=discreteAction)
+    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0, isDiscrete=discreteAction, numControlledJoints = 2, fixedPositionObj = True, includeVelObs = True)
     n_actions = pandaenv.action_space.shape[-1]
     param_noise = None
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))
@@ -35,13 +35,13 @@ def main():
     
     pandaenv = DummyVecEnv([lambda: pandaenv])
 
-    model = DDPG(MlpPolicy, pandaenv,normalize_observations=True, verbose=1, param_noise=param_noise, action_noise=action_noise, tensorboard_log="./panda_reaching_ddpg/")
-    model.learn(total_timesteps=400000)
+    model = DDPG(MlpPolicy, pandaenv,normalize_observations = False, normalize_returns = False, verbose=1, param_noise=param_noise, action_noise=action_noise, tensorboard_log="./panda_reaching_ddpg/", reward_scale = 1)
+    model.learn(total_timesteps=1000000)
 
     #logger.configure(folder='../pybullet_logs/panda_reaching_ddpg', format_strs=['stdout','log','csv','tensorboard'])
 
     print("Saving model to panda.pkl")
-    model.save("../../test/panda_envs/panda_reaching")
+    model.save("../../test/panda_envs/panda_reaching_2D_fixed_extended_obs_MlpPolicy")
     del model # remove to demonstrate saving and loading
 
 if __name__ == '__main__':

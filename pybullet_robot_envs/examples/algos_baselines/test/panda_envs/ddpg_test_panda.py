@@ -23,9 +23,9 @@ import gym
 
 
 def main():
-    model = DDPG.load("panda_reaching")
+    model = DDPG.load("panda_reaching_2D_fixed_extended_obs_MlpPolicy")
 
-    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=0, isDiscrete=0)
+    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=0, numControlledJoints = 2, fixedPositionObj = True, includeVelObs = True)
     obs = pandaenv.reset()
     while True:
         action, _states = model.predict(obs)
