@@ -27,8 +27,8 @@ class iCubEnv:
         self.home_pos_torso = [0.0, 0.0, 0.0] #degrees
         self.home_pos_head = [0.47, 0, 0]
 
-        self.home_left_arm = [-29.4, 28.8, 0, 44.59, 0, 0, 0]
-        self.home_right_arm = [-29.4, 30.4, 0, 44.59, 0, 0, 0]
+        self.home_left_arm = [-29.4, 40.0, 0, 44.59, 0, 0, 0]
+        self.home_right_arm = [-29.4, 40.0, 0, 44.59, 0, 0, 0]
 
         self.workspace_lim = [[0.2,0.52],[-0.2,0.2],[0.5,0.8]]
 
@@ -77,10 +77,10 @@ class iCubEnv:
         # set initial hand pose
         if self.useInverseKinematics:
             if self.control_arm =='l':
-                self.handPos = [0.3,0.2,0.75] # x,y,z
+                self.handPos = [0.25,0.35,0.85] # x,y,z
                 self.handOrn = [0.3,0.4,0.35] # roll,pitch,yaw
             else:
-                self.handPos = [0.2,-0.2,0.75] # x,y,z
+                self.handPos = [0.25,-0.35,0.85] # x,y,z
                 self.handOrn = [0.3, -0.4, 2.8] # roll,pitch,yaw
 
 
