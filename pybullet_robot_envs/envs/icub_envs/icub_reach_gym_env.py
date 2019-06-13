@@ -67,6 +67,7 @@ class iCubReachGymEnv(gym.Env):
             self._cid = p.connect(p.DIRECT)
 
         # initialize simulation environment
+        self.seed()
         self.reset()
 
         observationDim = len(self._observation)
@@ -274,11 +275,9 @@ class iCubReachGymEnv(gym.Env):
 
     def _sample_pose(self):
         ws_lim = self._icub.workspace_lim
-        # px =  0.1+0.3*np.random.random()
-        # py =  0.15-0.3*np.random.random()
         if self._rnd_obj_pose:
-            px = np.random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(1))
-            py = np.random.uniform(low=ws_lim[1][0]+0.005*np.random.random(), high=ws_lim[1][1]-0.005*np.random.random(), size=(1))
+            px = self.np_random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(1))
+            py = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand(), size=(1))
         else:
             px = ws_lim[0][0] + 0.5*(ws_lim[0][1]-ws_lim[0][0])
             py = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
