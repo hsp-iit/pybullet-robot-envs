@@ -22,13 +22,13 @@ def goal_distance(goal_a, goal_b):
         raise AssertionError("shape of goals mismatch")
     return np.linalg.norm(goal_a - goal_b, axis=-1)
 
-class iCubReachGymEnv(gym.Env):
+class iCubPushGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
 
     def __init__(self,
                  urdfRoot=robot_data.getDataPath(),
-                 actionRepeat=4,
+                 actionRepeat=2,
                  useIK=1,
                  isDiscrete=0,
                  control_arm='l',
@@ -109,7 +109,7 @@ class iCubReachGymEnv(gym.Env):
         self._icub.workspace_lim[2][0] = self._h_table
 
         # Randomize start position of object
-        obj_pose = self._sample_pose()
+        obj_pose, self._tg_pose = self._sample_pose()
         self._objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"),obj_pose)
 
         #limit iCub workspace to table plane
@@ -247,10 +247,8 @@ class iCubReachGymEnv(gym.Env):
             self._observation = self.getExtendedObservation()
             return np.float32(1.0)
 
-        handState = p.getLinkState(self._icub.icubId, self._icub.motorIndices[-1], computeLinkVelocity=0)
-        handPos = handState[0]
         objPos, _ = p.getBasePositionAndOrientation(self._objID)
-        d = goal_distance(np.array(handPos), np.array(objPos))
+        d = goal_distance(np.array(objPos), np.array(self._tg_pose))
 
         if d <= self._target_dist_min:
             self.terminated = 1
@@ -264,11 +262,12 @@ class iCubReachGymEnv(gym.Env):
         handPos = handState[0]
         objPos, _ = p.getBasePositionAndOrientation(self._objID)
         d1 = goal_distance(np.array(handPos), np.array(objPos))
+        d2 = goal_distance(np.array(objPos), np.array(self._tg_pose))
         #print("distance")
         #print(d1)
 
-        reward = -d1
-        if d1 <= self._target_dist_min:
+        reward = -d1 - d2
+        if d2 <= self._target_dist_min:
             reward = np.float32(100.0)
 
         return reward
@@ -276,15 +275,17 @@ class iCubReachGymEnv(gym.Env):
     def _sample_pose(self):
         ws_lim = self._icub.workspace_lim
         if self._rnd_obj_pose:
-            px = self.np_random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(1))
-            py = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand(), size=(1))
+            px1, px2 = self.np_random.uniform(low=ws_lim[0][0]+0.005*self.np_random.rand(), high=ws_lim[0][1]-0.005*self.np_random.rand(), size=(2))
+            py1, py2 = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand(), size=(2))
         else:
-            px = ws_lim[0][0] + 0.5*(ws_lim[0][1]-ws_lim[0][0])
-            py = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
-        pz = self._h_table
-        obj_pose = [px,py,pz]
+            px1, px2 = ws_lim[0][0] + 0.6*(ws_lim[0][1]-ws_lim[0][0]), ws_lim[0][0] + 0.2*(ws_lim[0][1]-ws_lim[0][0])
+            py1, py2 = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0]), ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
 
-        return obj_pose
+        pz = self._h_table
+        pose1  = [px1,py1,pz]
+        pose2 = [px2,py2,pz]
+
+        return pose1, pose2
 
     def _debugGUI(self):
         ws = self._icub.workspace_lim
@@ -309,3 +310,7 @@ class iCubReachGymEnv(gym.Env):
         p.addUserDebugLine([0.0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._objID)
         p.addUserDebugLine([0.0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._objID)
         p.addUserDebugLine([0.0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._objID)
+
+        p.addUserDebugLine(self._tg_pose,[self._tg_pose[i]+n for i,n in enumerate([0.1,0,0])],[1,0,0],lineWidth=2.0,lifeTime=0)
+        p.addUserDebugLine(self._tg_pose,[self._tg_pose[i]+n for i,n in enumerate([0,0.1,0])],[0,1,0],lineWidth=2.0,lifeTime=0)
+        p.addUserDebugLine(self._tg_pose,[self._tg_pose[i]+n for i,n in enumerate([0,0,0.1])],[0,0,1],lineWidth=2.0,lifeTime=0)

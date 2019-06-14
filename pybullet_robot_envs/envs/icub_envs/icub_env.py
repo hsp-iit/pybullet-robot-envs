@@ -27,10 +27,10 @@ class iCubEnv:
         self.home_pos_torso = [0.0, 0.0, 0.0] #degrees
         self.home_pos_head = [0.47, 0, 0]
 
-        self.home_left_arm = [-29.4, 40.0, 0, 44.59, 0, 0, 0]
-        self.home_right_arm = [-29.4, 40.0, 0, 44.59, 0, 0, 0]
+        self.home_left_arm = [-29.4, 40.0, 0, 70, 0, 0, 0]
+        self.home_right_arm = [-29.4, 40.0, 0, 70, 0, 0, 0]
 
-        self.workspace_lim = [[0.2,0.52],[-0.2,0.2],[0.5,0.8]]
+        self.workspace_lim = [[0.25,0.52],[-0.2,0.2],[0.5,1.0]]
 
         self.control_arm = arm if arm =='r' or arm =='l' else 'l' #left arm by default
 
