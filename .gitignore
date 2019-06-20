@@ -7,6 +7,9 @@ pybullet/
 # C extensions
 *.so
 
+/Users/andreronda/Documents/Tesi/pybullet-robot-envs/pybullet_robot_envs/examples/algos/train/baselines/panda_envs/panda_reaching_ddpg
+
+
 # Distribution / packaging
 .Python
 build/
