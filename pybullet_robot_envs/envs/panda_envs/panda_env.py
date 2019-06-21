@@ -15,7 +15,7 @@ class pandaEnv:
 
     def __init__(self, urdfRootPath=robot_data.getDataPath(), timeStep=0.01, useInverseKinematics=0, basePosition=[-0.6,-0.4,0.625], useFixedBase= True, actionSpace = 7, includeVelObs = True):
 
-        self.urdfRootPath = os.path.join(urdfRootPath, "franka_description/robots/panda_arm_no_params.urdf")
+        self.urdfRootPath = os.path.join(urdfRootPath, "franka_description/robots/panda_arm_physics.urdf")
         self.timeStep = timeStep
         self.useInverseKinematics = useInverseKinematics
         self.useNullSpace = 0
@@ -23,7 +23,7 @@ class pandaEnv:
         self.useSimulation = 1
         self.basePosition = basePosition
         self.useFixedBase = useFixedBase
-        self.workspace_lim = [[0.2,0.70],[-0.70,0.70],[0,0.40]]
+        self.workspace_lim = [[0.2,0.60],[-0.60,0.60],[0,0.40]]
         self.endEffLink = 8
         self.actionSpace = actionSpace
         self.includeVelObs = includeVelObs
