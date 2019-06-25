@@ -8,7 +8,7 @@ print(parentdir)
 
 
 
-from envs.panda_envs.panda_reach_gym_env import pandaReachGymEnv
+from envs.panda_envs.panda_push_gym_env import pandaPushGymEnv
 from stable_baselines import logger
 from stable_baselines.ddpg.policies import LnMlpPolicy
 from stable_baselines.common.vec_env import DummyVecEnv
@@ -77,12 +77,10 @@ def main(argv):
         elif opt in ("-t", "--t"):
             timesteps = int(arg)
 
-            
-
     
     discreteAction = 0 
     rend = False
-    pandaenv = pandaReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0, isDiscrete=discreteAction, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
+    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0, isDiscrete=discreteAction, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
     n_actions = pandaenv.action_space.shape[-1]
     param_noise = None
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))
@@ -91,12 +89,19 @@ def main(argv):
     pandaenv = DummyVecEnv([lambda: pandaenv])
 
     model = DDPG(LnMlpPolicy, pandaenv,normalize_observations = normalize_observations, gamma=gamma,batch_size=batch_size,memory_limit=memory_limit, normalize_returns = normalize_returns, verbose=1, param_noise=param_noise, action_noise=action_noise, tensorboard_log="./panda_reaching_ddpg/", reward_scale = 1)
-    model.learn(total_timesteps=10000000)
+    print(timesteps)
+    """
+    partial_steps = timesteps/5
+    for i in range(5):
+        model.learn(total_timesteps=partial_steps)
+        print("Saving model to panda.pkl")
+        model.save("../../../test/baselines/panda_envs/panda_pushing_7DOF_"+ str(i))
+    """
+    model.learn(total_timesteps=timesteps)
+    print("Saving model to panda.pkl")
+    model.save("../../../test/baselines/panda_envs/panda_pushing_7DOF")
 
     #logger.configure(folder='../pybullet_logs/panda_reaching_ddpg', format_strs=['stdout','log','csv','tensorboard'])
-
-    print("Saving model to panda.pkl")
-    model.save("../../../test/baselines/panda_envs/panda_reaching_6D_")
     del model # remove to demonstrate saving and loading
 
 if __name__ == '__main__':

@@ -2,10 +2,10 @@
 import os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 #print(currentdir)
-parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(currentdir))))
+parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(currentdir)))))
 os.sys.path.insert(0, parentdir)
 print(parentdir)
-from envs.panda_envs.panda_reach_gym_env import pandaReachGymEnv
+from envs.panda_envs.panda_push_gym_env import pandaPushGymEnv
 
 
 from stable_baselines.ddpg.policies import MlpPolicy
@@ -23,9 +23,9 @@ import gym
 
 
 def main():
-    model = DDPG.load("panda_reaching_2D_fixed_extended_obs_MlpPolicy")
+    model = DDPG.load("panda_pushing_7DOF_4")
 
-    pandaenv = pandaReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=0, numControlledJoints = 2, fixedPositionObj = True, includeVelObs = True)
+    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=0, numControlledJoints = 7, fixedPositionObj = False, includeVelObs = True)
     obs = pandaenv.reset()
     while True:
         action, _states = model.predict(obs)
