@@ -93,6 +93,6 @@ class pandaEnv:
                                         targetVelocity=0,
                                         positionGain=0.25,
                                         velocityGain=0.75,
-                                        force=50)
+                                        force=100)
 
     

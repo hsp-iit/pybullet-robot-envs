@@ -5,9 +5,10 @@ print(currentdir)
 parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
-from envs.panda.pandaPushGymEnv import pandaPushGymEnv
+from pybullet_robot_envs.envs.panda_envs.panda_reach_gym_env import pandaReachGymEnv
+from pybullet_robot_envs import robot_data
 import pybullet_data
-import robot_data
+
 
 import time
 import math as m
@@ -18,7 +19,7 @@ def main():
     discreteAction = 0
     use_IK = 1 if discreteAction else use_IK
 
-    env = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction)
+    env = pandaReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=use_IK, isDiscrete=discreteAction)
     motorsIds = []
 
     if (env._isDiscrete):
@@ -28,7 +29,7 @@ def main():
         dv = 1
         #joints_idx = env._icub.motorIndices
 
-        for j in range(env._panda.numJoints):
+        for j in range(7):
             info = env._p.getJointInfo(env._panda.pandaId,j)
             jointName = info[1]
             motorsIds.append(env._p.addUserDebugParameter(jointName.decode("utf-8"), -dv, dv, 0.0))
@@ -40,7 +41,7 @@ def main():
     for t in range(10000000):
         #env.render()
         action = []
-        for motorId in range(env._panda.numJoints):
+        for motorId in range(7):
             action.append(env._p.readUserDebugParameter(motorId))
             
         action = int(action[0]) if discreteAction else action
