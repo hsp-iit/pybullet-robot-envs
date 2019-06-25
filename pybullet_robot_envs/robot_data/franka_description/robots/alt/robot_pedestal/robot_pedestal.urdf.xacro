@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<robot name="robot_pedestal_urdf" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- robot pedestal -->
+<xacro:macro name = "robot_pedestal_urdf" params = "pedestal_prefix pedestal_parent pedestal_height *origin">
+  <joint name="${pedestal_prefix}pedestal_joint" type="fixed">
+    <xacro:insert_block name="origin" />
+    <parent link="${pedestal_parent}"/>
+    <child link="${pedestal_prefix}pedestal_link"/>
+  </joint>
+
+  <link name="${pedestal_prefix}pedestal_link">
+    <visual>
+      <origin xyz="0 0 ${0.5*pedestal_height}"/>
+      <geometry>
+        <box size="0.3 0.3 ${pedestal_height}"/>
+      </geometry>
+      <material name="pedestal_color">
+        <color rgba="0 ${40/255} ${134/255} 1"/>
+      </material>
+    </visual>
+
+    <inertial>
+      <mass value="500"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+    </inertial>
+  </link>
+
+  <gazebo reference="${pedestal_prefix}pedestal_link">
+    <material>Gazebo/White</material>
+  </gazebo>
+
+</xacro:macro>
+
+</robot>

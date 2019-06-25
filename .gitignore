@@ -7,6 +7,9 @@ __pycache__/
 # C extensions
 *.so
 
+pybullet_robot_envs/examples/algos/train/baselines/panda_envs/panda_reaching_ddpg
+
+
 # Distribution / packaging
 .Python
 build/
@@ -106,3 +109,5 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+.DS_Store
+*.local
