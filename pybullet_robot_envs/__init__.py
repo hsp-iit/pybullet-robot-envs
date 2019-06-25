@@ -3,7 +3,7 @@
 import logging
 import gym
 from gym.envs.registration import register
-"""
+
 register(
         id='iCubReach-v0',
         entry_point='pybullet_robot_envs.envs.icub_envs:iCubReachGymEnv',
@@ -16,6 +16,20 @@ register(
         entry_point='pybullet_robot_envs.envs.icub_envs:iCubPushGymEnv',
         max_episode_steps=1000,
         kwargs={ 'useIK':1, 'isDiscrete':0, 'control_arm':'l', 'useOrientation':0, 'rnd_obj_pose':1, 'maxSteps':1000},
+)
+
+
+register(
+        id='pandaReach-v0',
+        entry_point='pybullet_robot_envs.envs.panda_envs:pandaReachGymEnv',
+        max_episode_steps=1000,
+        kwargs={
+                 'useIK':0,
+                 'isDiscrete':0,
+                 'actionRepeat':1,
+                 'renders':False,
+                 'maxSteps':1000,
+                 'dist_delta':0.03, 'numControlledJoints':2, 'fixedPositionObj':True, 'includeVelObs':True},
 )
 
 # --------------------------- #

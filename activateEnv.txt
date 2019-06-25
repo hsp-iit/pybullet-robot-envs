@@ -1,1 +1,0 @@
-. pybullet/bin/activate

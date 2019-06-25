@@ -77,15 +77,15 @@ def main(argv):
         elif opt in ("-t", "--t"):
             timesteps = int(arg)
 
-    
-    discreteAction = 0 
+
+    discreteAction = 0
     rend = False
     pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0, isDiscrete=discreteAction, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
     n_actions = pandaenv.action_space.shape[-1]
     param_noise = None
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))
 
-    
+
     pandaenv = DummyVecEnv([lambda: pandaenv])
 
     model = DDPG(LnMlpPolicy, pandaenv,normalize_observations = normalize_observations, gamma=gamma,batch_size=batch_size,memory_limit=memory_limit, normalize_returns = normalize_returns, verbose=1, param_noise=param_noise, action_noise=action_noise, tensorboard_log="./panda_reaching_ddpg/", reward_scale = 1)
@@ -106,4 +106,3 @@ def main(argv):
 
 if __name__ == '__main__':
     main(sys.argv[1:])
-

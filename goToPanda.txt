@@ -1,3 +1,0 @@
-#! /bin/bash
-. pybullet/bin/activate
-cd pybullet_robot_envs/examples/algos/train/baselines/panda_envs/
