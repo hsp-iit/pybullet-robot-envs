@@ -121,6 +121,9 @@ Run the following scripts to train and test the implemented environments with st
 
 **Note**: You need to run the `$ pip install git+https://github.com/openai/baselines.git` command, if not already done during the installation step.
 
+You can find more examples in the repository [https://github.com/eleramp/robot-agents](https://github.com/eleramp/robot-agents) which is a Python-based framework composed of two main cores:
+  - **robot_agents**: collection of scripts to train and test with different RL algorithms
+  - **Evaluation**: scripts to easily setup and evaluate different experiments. You can define in one script a list of experiments by specifying for each one Gym-like environment and RL algorithm, and then evaluate their training or testing by running a single script. 
 ##### iCubReach-v0
 
 * Train iCub to perform a *reach* task by using [DQN](https://github.com/openai/baselines/tree/master/baselines/deepq) (discrete action space):

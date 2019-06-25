@@ -28,7 +28,7 @@ class iCubPushGymEnv(gym.Env):
 
     def __init__(self,
                  urdfRoot=robot_data.getDataPath(),
-                 actionRepeat=2,
+                 actionRepeat=4,
                  useIK=1,
                  isDiscrete=0,
                  control_arm='l',
@@ -53,7 +53,7 @@ class iCubPushGymEnv(gym.Env):
         self._cam_yaw = 180
         self._cam_pitch = -40
         self._h_table = []
-        self._target_dist_min = 0.05
+        self._target_dist_min = 0.03
         self._rnd_obj_pose = rnd_obj_pose
 
         # Initialize PyBullet simulator
@@ -62,7 +62,7 @@ class iCubPushGymEnv(gym.Env):
           self._cid = p.connect(p.SHARED_MEMORY)
           if (self._cid<0):
              self._cid = p.connect(p.GUI)
-          p.resetDebugVisualizerCamera(2.5,90,-60,[0.0,-0.0,-0.0])
+          p.resetDebugVisualizerCamera(2,-10,-45,[0.3,0.5,-0.0])
         else:
             self._cid = p.connect(p.DIRECT)
 
@@ -268,15 +268,16 @@ class iCubPushGymEnv(gym.Env):
 
         reward = -d1 - d2
         if d2 <= self._target_dist_min:
-            reward = np.float32(100.0)
+            reward = np.float32(1000.0)
 
         return reward
 
     def _sample_pose(self):
         ws_lim = self._icub.workspace_lim
         if self._rnd_obj_pose:
-            px1, px2 = self.np_random.uniform(low=ws_lim[0][0]+0.005*self.np_random.rand(), high=ws_lim[0][1]-0.005*self.np_random.rand(), size=(2))
-            py1, py2 = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand(), size=(2))
+            px1, px2 = self.np_random.uniform(low=ws_lim[0][0]+0.05*self.np_random.rand(), high=ws_lim[0][1]-0.005*self.np_random.rand(), size=(2))
+            py1 = self.np_random.uniform(low=ws_lim[1][1]-0.005*self.np_random.rand(), high=0.5*(ws_lim[1][0]+ws_lim[1][1]), size=(1))
+            py2 = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=0.5*(ws_lim[1][0]+ws_lim[1][1]), size=(1))
         else:
             px1, px2 = ws_lim[0][0] + 0.6*(ws_lim[0][1]-ws_lim[0][0]), ws_lim[0][0] + 0.2*(ws_lim[0][1]-ws_lim[0][0])
             py1, py2 = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0]), ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
