@@ -52,9 +52,7 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
 
 
 ## Prerequisites
-*pybullet-robot-envs* requires python3 (>=3.5).
-
-**Note**: If you have both *Python 2.7* and *Python 3.5* installed on you system, you may need to run every command listed in the [Installation](#installation) section with `pip3` instead of `pip`.
+*pybullet-robot-envs* requires **python3** (>=3.5).
 
 ## Installation
 1. Before installing the required dependencies, you may want to create a virtual environment and activate it:
@@ -70,11 +68,11 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
     ```
 3. Install the dependencies necessary to run and test the environments with PyBullet:
     ```
-    $ pip install -r requirements.txt
+    $ pip3 install -r requirements.txt
     ```
 5. [Optional] Install the environments and register them as Gym environments by doing:
     ```
-    $ pip install -e .
+    $ pip3 install -e .
     ```
     After this step, they can be instantiated in any script by doing:
       ```
@@ -85,7 +83,7 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
 
 6. [Optional] Install the [OpenAI Baselines](https://github.com/openai/baselines) package to run the [RL Examples](#rl-examples) by doing:
     ```
-    $ pip install git+https://github.com/openai/baselines.git
+    $ pip3 install git+https://github.com/openai/baselines.git
     ```
 
 
@@ -119,11 +117,11 @@ Run the following script to open an interactive GUI in PyBullet and test the iCu
 ## RL Examples
 Run the following scripts to train and test the implemented environments with standard RL algorithms from [OpenAI Baselines](https://github.com/openai/baselines).
 
-**Note**: You need to run the `$ pip install git+https://github.com/openai/baselines.git` command, if not already done during the installation step.
+**Note**: You need to run the `$ pip3 install git+https://github.com/openai/baselines.git` command, if not already done during the installation step.
 
 You can find more examples in the repository [https://github.com/eleramp/robot-agents](https://github.com/eleramp/robot-agents) which is a Python-based framework composed of two main cores:
   - **robot_agents**: collection of scripts to train and test with different RL algorithms
-  - **Evaluation**: scripts to easily setup and evaluate different experiments. You can define in one script a list of experiments by specifying for each one Gym-like environment and RL algorithm, and then evaluate their training or testing by running a single script. 
+  - **Evaluation**: scripts to easily setup and evaluate different experiments. You can define in one script a list of experiments by specifying for each one Gym-like environment and RL algorithm, and then evaluate their training or testing by running a single script.
 ##### iCubReach-v0
 
 * Train iCub to perform a *reach* task by using [DQN](https://github.com/openai/baselines/tree/master/baselines/deepq) (discrete action space):
