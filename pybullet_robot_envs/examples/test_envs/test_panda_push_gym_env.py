@@ -43,7 +43,7 @@ def main():
         action = []
         for motorId in range(7):
             action.append(env._p.readUserDebugParameter(motorId))
-            
+
         action = int(action[0]) if discreteAction else action
 
         #print(env.step(action))

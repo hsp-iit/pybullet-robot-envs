@@ -16,11 +16,15 @@
 ## Robot environments
 ### iCub Env
 ### Panda Env
-
+In the environments related to panda you can control the robot only by acting on robot's joints.
+The action space has dimension 7 by default, but you can specify the number of joints to be used when you call one of the training scripts.
+BE CAREFUL to use the same number of joints when you cal the test scripts.
+The main  differences between the environments consists of the reward function.
 ## Task environments
 
 ### iCub Reach Env
 ### iCub Push Env
 
 ### Panda Reach Env
+In this environment the rewad function has been modeled in
 ### Panda Push Env
