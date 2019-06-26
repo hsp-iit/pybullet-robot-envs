@@ -13,6 +13,7 @@ from stable_baselines.ddpg.policies import LnMlpPolicy
 from stable_baselines.common.vec_env import DummyVecEnv
 from stable_baselines.ddpg.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
 from stable_baselines import DDPG
+from termcolor import colored
 
 import datetime
 import pybullet_data
@@ -42,16 +43,18 @@ def main(argv):
     # -t
     timesteps = 10000000
 
+    policy_name = "reaching_policy"
+
     # COMMAND LINE PARAMS MANAGEMENT:
     try:
-        opts, args = getopt.getopt(argv,"hj:p:g:b:m:r:o:t:",["j=","p=","g=","b=","m=","r=","o=","t="])
+        opts, args = getopt.getopt(argv,"hj:p:g:b:m:r:o:t:n:",["j=","p=","g=","b=","m=","r=","o=","t=","n="])
     except getopt.GetoptError:
         print ('test.py -t <timesteps> -j <numJoints> -p <fixedPoseObject> -g <gamma> -b <batchsize> -m <memory_limit> -r <norm_ret> -o <norm_obs> ')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
             print('------------------ Default values:')
-            print('test.py -t <timesteps: 10000000> -j <numJoints: 7> -p <fixedPoseObject: False> -g <gamma 0.9> -b <batch_size: 16> -m <memory_limit: 1000000> -r <norm_ret: True> -o <norm_obs: False> ')
+            print('train.py -t <timesteps: 10000000> -j <numJoints: 7> -p <fixedPoseObject: False> -n <policy_name:"reaching_policy"> -g <gamma: 0.9> -b <batch_size: 16> -m <memory_limit: 1000000> -r <norm_ret: True> -o <norm_obs: False> ')
             print('------------------')
             return 0
             sys.exit()
@@ -75,31 +78,43 @@ def main(argv):
             normalize_returns = bool(arg)
         elif opt in ("-t", "--t"):
             timesteps = int(arg)
+        elif opt in ("-n","--n"):
+            policy_name = str(arg)
 
-            
 
-    
-    discreteAction = 0 
+
+
+    discreteAction = 0
     rend = False
     pandaenv = pandaReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0, isDiscrete=discreteAction, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
     n_actions = pandaenv.action_space.shape[-1]
     param_noise = None
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))
 
-    
+
     pandaenv = DummyVecEnv([lambda: pandaenv])
 
     model = DDPG(LnMlpPolicy, pandaenv,normalize_observations = normalize_observations, gamma=gamma,batch_size=batch_size,
                     memory_limit=memory_limit, normalize_returns = normalize_returns, verbose=1, param_noise=param_noise,
                     action_noise=action_noise, tensorboard_log="../pybullet_logs/pandareach_ddpg/", reward_scale = 1)
-    model.learn(total_timesteps=10000000)
 
-    #logger.configure(folder='../pybullet_logs/panda_reaching_ddpg', format_strs=['stdout','log','csv','tensorboard'])
+    print(colored("-----Timesteps:","red"))
+    print(colored(timesteps,"red"))
+    print(colored("-----Number Joints Controlled:","red"))
+    print(colored(numControlledJoints,"red"))
+    print(colored("-----Object Position Fixed:","red"))
+    print(colored(fixed,"red"))
+    print(colored("-----Policy Name:","red"))
+    print(colored(policy_name,"red"))
+    print(colored("------","red"))
+    print(colored("Launch the script with -h for further info","red"))
+
+    model.learn(total_timesteps=timesteps)
 
     print("Saving model to panda.pkl")
-    model.save("../../../test/baselines/panda_envs/panda_reaching_6D_")
+    model.save("../pybullet_logs/pandareach_ddpg/policies"+ policy_name)
+
     del model # remove to demonstrate saving and loading
 
 if __name__ == '__main__':
     main(sys.argv[1:])
-
