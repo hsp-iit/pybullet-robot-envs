@@ -35,8 +35,8 @@ endEffAct = self._panda.getObservation()[0:3]
 d = goal_distance(np.array(endEffAct), np.array(objPos))
 reward = -d
 if d <= self._target_dist_min:
- reward = np.float32(1000.0) + (100 - d*80)
- return reward
+    reward = np.float32(1000.0) + (100 - d*80)
+    return reward
 ```
 
 ### Panda Push Env
