@@ -39,5 +39,4 @@ if d <= self._target_dist_min:
  return reward
 ```
 
-
 ### Panda Push Env
