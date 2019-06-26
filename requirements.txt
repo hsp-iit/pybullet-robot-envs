@@ -4,3 +4,4 @@ matplotlib
 pandas
 ruamel.yaml
 tensorflow>=1.4.0
+stable_baselines
