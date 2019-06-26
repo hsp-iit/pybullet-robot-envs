@@ -112,6 +112,12 @@ Run the following script to open an interactive GUI in PyBullet and test the iCu
   $ python pybullet_robot_envs/examples/test_envs/test_icub_reach_gym_env.py --arm r --continueIK
   ```
 ##### Panda
+Run the following script to open an interactive GUI in pybullet and test the Panda environment:
+```
+$ python pybullet_robot_envs/examples/test_envs/test_panda_push_gym_env.py
+```
+
+
 
 
 ## RL Examples
@@ -145,3 +151,23 @@ You can find more examples in the repository [https://github.com/eleramp/robot-a
   ```
 
 ##### PandaReach-v0
+
+* Train panda to perform a *reach* task by using [DDPG](https://github.com/hill-a/stable-baselines) (stable_baselines install required) (continuous action space):
+  ```
+  $ python pybullet_robot_envs/examples/algos/train/baselines/panda_envs/train_ddpg_reaching.py
+  ```
+  The trained model is saved as *.pkl* in the `../pybullet_logs/pandareach_ddpg` folder, together with some log files, as *tensorboard* files.
+
+* Track the learning process with tensorboard:
+  1. Run tensorboard by specifying the log directory:
+      ```
+      $ tensorboard --logdir ../pybullet_logs/pandareach_ddpg
+        TensorBoard 1.13.1 at <url>:6006 (Press CTRL+C to quit)
+      ```
+  2. Enter the `<url>:6006` into the web browser and track the mean reward per episode
+
+
+* Test the trained model on episodes of 1000 timestamps:
+  ```
+  $ python pybullet_robot_envs/examples/algos/test/baselines/panda_envs/test_ddpg_reaching.py
+  ```

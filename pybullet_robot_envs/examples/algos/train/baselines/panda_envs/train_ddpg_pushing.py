@@ -88,7 +88,9 @@ def main(argv):
 
     pandaenv = DummyVecEnv([lambda: pandaenv])
 
-    model = DDPG(LnMlpPolicy, pandaenv,normalize_observations = normalize_observations, gamma=gamma,batch_size=batch_size,memory_limit=memory_limit, normalize_returns = normalize_returns, verbose=1, param_noise=param_noise, action_noise=action_noise, tensorboard_log="./panda_reaching_ddpg/", reward_scale = 1)
+    model = DDPG(LnMlpPolicy, pandaenv,normalize_observations = normalize_observations, gamma=gamma,batch_size=batch_size,
+                memory_limit=memory_limit, normalize_returns = normalize_returns, verbose=1, param_noise=param_noise,
+                action_noise=action_noise, tensorboard_log="../pybullet_logs/pandareach_ddpg/", reward_scale = 1)
     print(timesteps)
     """
     partial_steps = timesteps/5
@@ -99,7 +101,7 @@ def main(argv):
     """
     model.learn(total_timesteps=timesteps)
     print("Saving model to panda.pkl")
-    model.save("../../../test/baselines/panda_envs/panda_pushing_7DOF")
+    model.save("../pybullet_logs/pandareach_ddpg/policies")
 
     #logger.configure(folder='../pybullet_logs/panda_reaching_ddpg', format_strs=['stdout','log','csv','tensorboard'])
     del model # remove to demonstrate saving and loading
