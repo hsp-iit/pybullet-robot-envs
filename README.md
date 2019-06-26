@@ -82,7 +82,7 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
       ```
     where `iCubReach-v0` is the environment id. You can check the available environment ids in the file [pybullet_robot_envs/__init__.py](pybullet_robot_envs/__init__.py). If you create a new environment and you want to register it as Gym environment, you can modify this file by adding a new `register( id=<id_env>, entry_point=path_to_import_env>)`. See [this](https://github.com/openai/gym/blob/master/docs/creating-environments.md) guide for detailed instruction.
 
-6. [Optional] Install the [OpenAI Baselines](https://github.com/openai/baselines) package to run the [RL Examples](#rl-examples) by doing:
+6. [Optional] Install the [OpenAI Baselines](https://github.com/openai/baselines) package to run some of the [RL Examples](#rl-examples) by doing:
     ```
     $ pip3 install git+https://github.com/openai/baselines.git
     ```
