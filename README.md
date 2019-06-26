@@ -70,6 +70,7 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
     ```
     $ pip3 install -r requirements.txt
     ```
+    **Note:** Installing the requirements will install also [Stable Baselines](https://github.com/hill-a/stable-baselines/).
 5. [Optional] Install the environments and register them as Gym environments by doing:
     ```
     $ pip3 install -e .
@@ -121,16 +122,16 @@ $ python pybullet_robot_envs/examples/test_envs/test_panda_push_gym_env.py
 
 
 ## RL Examples
-Run the following scripts to train and test the implemented environments with standard RL algorithms from [OpenAI Baselines](https://github.com/openai/baselines).
+Run the following scripts to train and test the implemented environments with standard RL algorithms from [OpenAI Baselines](https://github.com/openai/baselines) and [Stable Baselines](https://github.com/hill-a/stable-baselines/).
 
-**Note**: You need to run the `$ pip3 install git+https://github.com/openai/baselines.git` command, if not already done during the installation step.
+**Note**: You need to run the `$ pip3 install git+https://github.com/openai/baselines.git` command to run the examples with OpenAI Baselines, if not already done during the installation step. You should have automatically installed the Stable baselines when running `pip install -r requirements.txt`.
 
 You can find more examples in the repository [https://github.com/eleramp/robot-agents](https://github.com/eleramp/robot-agents) which is a Python-based framework composed of two main cores:
   - **robot_agents**: collection of scripts to train and test with different RL algorithms
   - **Evaluation**: scripts to easily setup and evaluate different experiments. You can define in one script a list of experiments by specifying for each one Gym-like environment and RL algorithm, and then evaluate their training or testing by running a single script.
 ##### iCubReach-v0
 
-* Train iCub to perform a *reach* task by using [DQN](https://github.com/openai/baselines/tree/master/baselines/deepq) (discrete action space):
+* Train iCub to perform a *reach* task by using **OpenAI baselines** implementation of [DQN](https://github.com/openai/baselines/tree/master/baselines/deepq) (discrete action space):
   ```
   $ python pybullet_robot_envs/examples/algos/train/baselines/icub_envs/train_deepq_reaching.py
   ```
@@ -152,7 +153,7 @@ You can find more examples in the repository [https://github.com/eleramp/robot-a
 
 ##### PandaReach-v0
 
-* Train panda to perform a *reach* task by using [DDPG](https://github.com/hill-a/stable-baselines) (stable_baselines install required) (continuous action space):
+* Train panda to perform a *reach* task by using **Stable Baselines** implementation of [DDPG](https://github.com/hill-a/stable-baselines/tree/master/stable_baselines/ddpg) (continuous action space):
   ```
   $ python pybullet_robot_envs/examples/algos/train/baselines/panda_envs/train_ddpg_reaching.py
   ```
