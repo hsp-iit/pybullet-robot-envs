@@ -1,8 +1,16 @@
+import os, inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+print(currentdir)
+parentdir = os.path.dirname(os.path.dirname(currentdir))
+os.sys.path.insert(0, parentdir)
+
+
 import pybullet as p
 import pybullet_data
 import time
 import os
 import math as m
+import robot_data
 
 # Open GUI and set pybullet_data in the path
 p.connect(p.GUI)
@@ -14,7 +22,6 @@ planeId = p.loadURDF("plane.urdf")
 # Set gravity for simulation
 p.setGravity(0,0,-9.8)
 
-# Add path to icub sdf models
 dir_path = os.path.dirname(os.path.realpath(__file__))
 for root, dirs, files in os.walk(os.path.dirname(dir_path)):
     for file in files:
@@ -22,7 +29,7 @@ for root, dirs, files in os.walk(os.path.dirname(dir_path)):
             print (root)
             p.setAdditionalSearchPath(root)
 
-pandaId = p.loadURDF("panda_arm.urdf")
+pandaId = p.loadURDF(os.path.join(robot_data.getDataPath(),"franka_description/robots/panda_arm_physics.urdf"))
 
 # set constraint between base_link and world
 cid = p.createConstraint(pandaId,-1,-1,-1,p.JOINT_FIXED,[0,0,0],[0,0,0],
