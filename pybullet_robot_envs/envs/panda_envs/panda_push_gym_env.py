@@ -41,7 +41,7 @@ class pandaPushGymEnv(gym.Env):
         self.action_dim = numControlledJoints
         self._isDiscrete = isDiscrete
         self._timeStep = 1./240.
-        self._useIK = useIK 
+        self._useIK = useIK
         self._urdfRoot = urdfRoot
         self._actionRepeat = actionRepeat
         self._observation = []
@@ -58,7 +58,7 @@ class pandaPushGymEnv(gym.Env):
         self._p = p
         self.fixedPositionObj = fixedPositionObj
         self.includeVelObs = includeVelObs
-        
+
         if self._renders:
           cid = p.connect(p.SHARED_MEMORY)
           if (cid<0):
@@ -66,7 +66,7 @@ class pandaPushGymEnv(gym.Env):
           p.resetDebugVisualizerCamera(2.5,90,-60,[0.52,-0.2,-0.33])
         else:
             p.connect(p.DIRECT)
-        
+
         #self.seed()
         # initialize simulation environment
         self.reset()
@@ -77,13 +77,13 @@ class pandaPushGymEnv(gym.Env):
 
         if (self._isDiscrete):
             self.action_space = spaces.Discrete(self._panda.getActionDimension())
-        
+
         else:
             #self.action_dim = 2 #self._panda.getActionDimension()
             self._action_bound = 1
             action_high = np.array([self._action_bound] * self.action_dim)
             self.action_space = spaces.Box(-action_high, action_high, dtype='float32')
-            
+
         self.viewer = None
 
 
@@ -98,11 +98,11 @@ class pandaPushGymEnv(gym.Env):
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
         self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625], useInverseKinematics= self._useIK, actionSpace = self.action_dim, includeVelObs = self.includeVelObs)
-        
+
 
         # Load table and object for simulation
         tableId = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/table.urdf"), useFixedBase=True)
-        
+
 
         table_info = p.getVisualShapeData(tableId,-1)[0]
         self._h_table =table_info[5][2] + table_info[3][2]
@@ -110,7 +110,7 @@ class pandaPushGymEnv(gym.Env):
         #limit panda workspace to table plane
         self._panda.workspace_lim[2][0] = self._h_table
         # Randomize start position of object and target.
-        
+
         #we take the target point
         self.obj_pose, self.target_pose = self._sample_pose()
         if (self.fixedPositionObj):
@@ -159,13 +159,13 @@ class pandaPushGymEnv(gym.Env):
 
     def step(self, action):
         if self._useIK:
-            #TO DO 
+            #TO DO
             return 0
 
         else:
             action = [float(i*0.05) for i in action]
             return self.step2(action)
-            
+
     def step2(self,action):
 
         for i in range(self._actionRepeat):
@@ -235,7 +235,7 @@ class pandaPushGymEnv(gym.Env):
 
 
     def _compute_reward(self):
-        
+
         reward = np.float(32.0)
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
         endEffAct = self._panda.getObservation()[0:3]
@@ -249,18 +249,6 @@ class pandaPushGymEnv(gym.Env):
             reward = np.float32(1000.0) + (100 - d2*80)
         return reward
 
-    """
-    def _sample_pose(self):
-        ws_lim = self._panda.workspace_lim
-        px,tx = np.random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(2))
-        py,ty = np.random.uniform(low=ws_lim[1][0], high=ws_lim[1][1], size=(2))
-        pz,tz = self._h_table, self._h_table
-        obj_pose = [px,py,pz]
-        tg_pose = [tx,ty,tz]
-
-        return obj_pose, tg_pose
-
-    """
 
     def _sample_pose(self):
         ws_lim = self._panda.workspace_lim
@@ -268,7 +256,7 @@ class pandaPushGymEnv(gym.Env):
         px2 = np.random.uniform(low=ws_lim[0][0]+0.005*np.random.rand(), high=ws_lim[0][1]-0.005*np.random.rand())
         py1 = np.random.uniform(low=ws_lim[1][0]+0.005*np.random.rand(), high=ws_lim[1][1]-0.005*np.random.rand())
         py2 = np.random.uniform(low=ws_lim[1][0]+0.005*np.random.rand(), high=ws_lim[1][1]-0.005*np.random.rand())
-       
+
         pz = 0.625
         pose1  = [px1,py1,pz]
         pose2 = [px2,py2,pz]
@@ -278,11 +266,5 @@ class pandaPushGymEnv(gym.Env):
 
 
     def _debugGUI(self):
-        #TO DO 
-        return 0 
-
-
-
-
-
-
+        #TO DO
+        return 0

@@ -28,8 +28,19 @@ register(
                  'isDiscrete':0,
                  'actionRepeat':1,
                  'renders':False,
-                 'maxSteps':1000,
-                 'dist_delta':0.03, 'numControlledJoints':2, 'fixedPositionObj':True, 'includeVelObs':True},
+                 'numControlledJoints':7, 'fixedPositionObj':False, 'includeVelObs':True},
+)
+
+register(
+        id='pandaPush-v0',
+        entry_point='pybullet_robot_envs.envs:pandaPushGymEnv',
+        max_episode_steps=1000,
+        kwargs={
+                 'useIK':0,
+                 'isDiscrete':0,
+                 'actionRepeat':1,
+                 'renders':False,
+                 'numControlledJoints':7, 'fixedPositionObj':False, 'includeVelObs':True},
 )
 
 # --------------------------- #
