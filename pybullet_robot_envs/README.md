@@ -16,17 +16,29 @@
 ## Robot environments
 ### iCub Env
 ### Panda Env
-In the environments related to panda you can control the robot only by acting on robot's joints.
-The `action space` has dimension 7 by default, but you can specify the number of joints to be used when you call one of the training scripts.
-BE CAREFUL to use the same number of joints when you call the test scripts.
-The main  differences between the environments consists of the reward function.
+- `Action space`: joints space
+- `Action space dimensions`: 7 DOF maximum (the no. of joints can be specified when calling the training script) 
+    - **Note**: use the same number of joints when calling the test scripts.
+-  `Observation space`: 
+   - joint positions
+   - end-effector pose
+   - end-effector velocity
+
 ## Task environments
 
+Thw different task environments concerning the same robot differ mostly for:
+  - the extended observations provided;
+  - the reward function.
+  
 ### iCub Reach Env
 ### iCub Push Env
 
 ### Panda Reach Env
-In this environment the rewad function has been modeled in the following way:
+In this environment the rewad function is given by:
+- the distance between the end-effector and the desired position
+- plus a bonus when the end-effector is close to the desired position
+
+Here is the code used to compute the reward function:
 
 ```python
 reward = np.float(32.0)
