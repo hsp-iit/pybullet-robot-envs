@@ -34,6 +34,12 @@ Thw different task environments concerning the same robot differ mostly for:
 ### iCub Push Env
 
 ### Panda Reach Env
+
+#### Observation space
+- Panda's observation space
+- plus object position and orientation
+
+#### Reward function
 In this environment the rewad function is given by:
 - the distance between the end-effector and the desired position
 - plus a bonus when the end-effector is close to the desired position
@@ -52,3 +58,11 @@ if d <= self._target_dist_min:
 ```
 
 ### Panda Push Env
+
+#### Observation space
+- Panda's observation space
+- plus object position and orientation
+
+#### Reward function
+Coming soon...
+```
