@@ -26,7 +26,7 @@
 
 ## Task environments
 
-Thw different task environments concerning the same robot differ mostly for:
+The different task environments concerning the same robot differ mostly for:
   - the extended observations provided;
   - the reward function.
   
