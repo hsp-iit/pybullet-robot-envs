@@ -7,6 +7,7 @@ from gym import spaces
 from gym.utils import seeding
 import numpy as np
 import time
+import math as m
 import pybullet as p
 from icub_env import iCubEnv
 import pybullet_data
@@ -35,7 +36,8 @@ class iCubPushGymEnv(gym.Env):
                  useOrientation=0,
                  rnd_obj_pose=1,
                  renders=False,
-                 maxSteps = 1000):
+                 maxSteps = 2000,
+                 reward_type = 1):
 
         self._control_arm=control_arm
         self._isDiscrete = isDiscrete
@@ -55,6 +57,7 @@ class iCubPushGymEnv(gym.Env):
         self._h_table = []
         self._target_dist_min = 0.03
         self._rnd_obj_pose = rnd_obj_pose
+        self._reward_type = reward_type
 
         # Initialize PyBullet simulator
         self._p = p
@@ -62,7 +65,7 @@ class iCubPushGymEnv(gym.Env):
           self._cid = p.connect(p.SHARED_MEMORY)
           if (self._cid<0):
              self._cid = p.connect(p.GUI)
-          p.resetDebugVisualizerCamera(2,-10,-45,[0.3,0.5,-0.0])
+          p.resetDebugVisualizerCamera(2.5,90,-60,[0.0,-0.0,-0.0])
         else:
             self._cid = p.connect(p.DIRECT)
 
@@ -102,18 +105,15 @@ class iCubPushGymEnv(gym.Env):
 
         ## Load table and object for simulation
         self._tableId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [0.85, 0.0, 0.0])
-        table_info = p.getVisualShapeData(self._tableId,-1)[0]
-        self._h_table =table_info[5][2] + table_info[3][2]
 
         #limit iCub workspace to table plane
+        table_info = p.getVisualShapeData(self._tableId,-1)[0]
+        self._h_table =table_info[5][2] + table_info[3][2]
         self._icub.workspace_lim[2][0] = self._h_table
 
         # Randomize start position of object
         obj_pose, self._tg_pose = self._sample_pose()
         self._objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"),obj_pose)
-
-        #limit iCub workspace to table plane
-        self._icub.workspace_lim[2][0] = self._h_table
 
         self._debugGUI()
         p.setGravity(0,0,-9.8)
@@ -122,6 +122,10 @@ class iCubPushGymEnv(gym.Env):
             p.stepSimulation()
 
         self._observation = self.getExtendedObservation()
+
+        self._init_dist_hand_obj = goal_distance(np.array(self._observation[0:3]), np.array(obj_pose))
+        self._max_dist_obj_tg = goal_distance(np.array(obj_pose), np.array(self._tg_pose))
+
         return np.array(self._observation)
 
     def getExtendedObservation(self):
@@ -132,8 +136,12 @@ class iCubPushGymEnv(gym.Env):
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
         objEuler = p.getEulerFromQuaternion(objOrn) #roll, pitch, yaw
 
+        objLVel, objAVel = p.getBaseVelocity(self._objID)
+
         self._observation.extend(list(objPos))
         self._observation.extend(list(objEuler))
+        self._observation.extend(list(objLVel))
+        self._observation.extend(list(objAVel))
 
         # relative object position wrt hand c.o.m. frame
         invHandPos, invHandOrn = p.invertTransform(self._observation[:3], p.getQuaternionFromEuler(self._observation[3:6]))
@@ -144,6 +152,11 @@ class iCubPushGymEnv(gym.Env):
         objEulerInHand = p.getEulerFromQuaternion(objOrnInHand)
         self._observation.extend(list(objPosInHand))
         self._observation.extend(list(objEulerInHand))
+
+        relLVel = np.array(objAVel) - np.array(self._observation[6:9])
+        self._observation.extend(list(relLVel))
+
+        self._observation.extend(list(self._tg_pose))
 
         return np.array(self._observation)
 
@@ -172,9 +185,7 @@ class iCubPushGymEnv(gym.Env):
 
         elif self._useIK:
 
-            dv = 0.01
             realPos = [a*0.003 for a in action[:3]]
-
             realOrn = []
             if self.action_space.shape[-1] is 6:
                 realOrn = [a*0.01 for a in action[3:]]
@@ -201,9 +212,6 @@ class iCubPushGymEnv(gym.Env):
 
         done = self._termination()
         reward = self._compute_reward()
-
-        #print("reward")
-        #print(reward)
 
         return self._observation, np.array(reward), np.array(done), {}
 
@@ -252,6 +260,10 @@ class iCubPushGymEnv(gym.Env):
 
         if d <= self._target_dist_min:
             self.terminated = 1
+            print('------------->>> success!')
+            print('final reward')
+            print(self._compute_reward())
+
         return (d <= self._target_dist_min)
 
     def _compute_reward(self):
@@ -263,21 +275,35 @@ class iCubPushGymEnv(gym.Env):
         objPos, _ = p.getBasePositionAndOrientation(self._objID)
         d1 = goal_distance(np.array(handPos), np.array(objPos))
         d2 = goal_distance(np.array(objPos), np.array(self._tg_pose))
-        #print("distance")
-        #print(d1)
 
-        reward = -d1 - d2
-        if d2 <= self._target_dist_min:
-            reward = np.float32(1000.0)
+        if self._reward_type is 0:
+            reward = -d1 -d2
+            if d2 <= self._target_dist_min:
+                reward += np.float32(1000.0)
+        #normalized reward
+        elif self._reward_type is 1:
+            
+            rew1 = 0.125
+            rew2 = 0.25
+            if d1 > 0.06:
+                reward = rew1 * (1 - d1/self._init_dist_hand_obj)
+                #print("reward 1 ", reward)
+            else:
+                reward = rew1 * (1 - d1/self._init_dist_hand_obj) + rew2 * (1 - d2/self._max_dist_obj_tg)
+                #print("reward 2 ", reward)
 
+            if d2 <= self._target_dist_min:
+                reward += np.float32(1000.0)
+
+            if d2 <= self._target_dist_min:
+                reward += np.float32(100.0)
         return reward
 
     def _sample_pose(self):
         ws_lim = self._icub.workspace_lim
         if self._rnd_obj_pose:
-            px1, px2 = self.np_random.uniform(low=ws_lim[0][0]+0.05*self.np_random.rand(), high=ws_lim[0][1]-0.005*self.np_random.rand(), size=(2))
-            py1 = self.np_random.uniform(low=ws_lim[1][1]-0.005*self.np_random.rand(), high=0.5*(ws_lim[1][0]+ws_lim[1][1]), size=(1))
-            py2 = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=0.5*(ws_lim[1][0]+ws_lim[1][1]), size=(1))
+            px1, px2 = self.np_random.uniform(low=ws_lim[0][0]+0.08*self.np_random.rand(), high=ws_lim[0][1]-0.005*self.np_random.rand(), size=(2))
+            py1, py2 = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand(), size=(2))
         else:
             px1, px2 = ws_lim[0][0] + 0.6*(ws_lim[0][1]-ws_lim[0][0]), ws_lim[0][0] + 0.2*(ws_lim[0][1]-ws_lim[0][0])
             py1, py2 = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0]), ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
