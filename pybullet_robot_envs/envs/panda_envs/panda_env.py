@@ -32,15 +32,15 @@ class pandaEnv:
     def reset(self):
 
         self.pandaId = p.loadURDF(self.urdfRootPath, basePosition = self.basePosition, useFixedBase = self.useFixedBase)
-        
+
         for i in range(self.actionSpace):
             p.resetJointState(self.pandaId, i, 0)
             p.setJointMotorControl2(self.pandaId, i, p.POSITION_CONTROL,targetPosition=0,targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
 
     def getJointsRanges(self):
         #to-be-defined
-        return 0 
-    
+        return 0
+
 
     def getActionDimension(self):
         if self.useInverseKinematics == 1:
@@ -53,7 +53,7 @@ class pandaEnv:
         return len(self.getObservation())
 
     def getObservation(self):
-        observation = []   
+        observation = []
         state = p.getLinkState(self.pandaId, self.endEffLink, computeLinkVelocity = 1)
         pos = state[0]
         orn = state[1]
@@ -76,7 +76,7 @@ class pandaEnv:
 
         if(self.useInverseKinematics):
             print("Inverse Kinematic")
-            #TO BE DEFINED            
+            #TO BE DEFINED
         else:
 
             assert len(action)==self.actionSpace, ('number of motor commands differs from number of motor to control',len(action))
@@ -84,7 +84,7 @@ class pandaEnv:
             for a in range(len(action)):
 
                 curr_motor_pos = p.getJointState(self.pandaId, a)[0]
-                new_motor_pos = curr_motor_pos + action[a] #supposed to be a delta 
+                new_motor_pos = curr_motor_pos + action[a] #supposed to be a delta
 
                 p.setJointMotorControl2(self.pandaId,
                                         a,
@@ -94,5 +94,3 @@ class pandaEnv:
                                         positionGain=0.25,
                                         velocityGain=0.75,
                                         force=100)
-
-    

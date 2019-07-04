@@ -85,7 +85,10 @@ def main(argv):
 
     discreteAction = 0
     rend = False
-    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0, isDiscrete=discreteAction, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
+    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
+        isDiscrete=discreteAction, numControlledJoints = numControlledJoints,
+        fixedPositionObj = fixed, includeVelObs = True)
+    
     n_actions = pandaenv.action_space.shape[-1]
     param_noise = None
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))

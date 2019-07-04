@@ -1,8 +1,8 @@
 import os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-print ("current_dir=" + currentdir)
 os.sys.path.insert(0,currentdir)
 
+from collections import OrderedDict
 import math as m
 import gym
 from gym import spaces
@@ -26,7 +26,10 @@ def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
     return np.linalg.norm(goal_a - goal_b, axis = -1)
 
-class pandaPushGymEnv(gym.Env):
+
+#inherit from different class
+class pandaPushGymEnvHER(gym.GoalEnv):
+
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
 
@@ -36,7 +39,10 @@ class pandaPushGymEnv(gym.Env):
                  actionRepeat = 1,
                  renders = False,
                  maxSteps = 1000,
-                 dist_delta = 0.03, numControlledJoints = 7, fixedPositionObj = True, includeVelObs = True):
+                 dist_delta = 0.03,
+                 numControlledJoints = 7,
+                 fixedPositionObj = True,
+                 includeVelObs = True):
 
         self.action_dim = numControlledJoints
         self._isDiscrete = isDiscrete
@@ -58,6 +64,7 @@ class pandaPushGymEnv(gym.Env):
         self._p = p
         self.fixedPositionObj = fixedPositionObj
         self.includeVelObs = includeVelObs
+        
 
         if self._renders:
           cid = p.connect(p.SHARED_MEMORY)
@@ -69,11 +76,23 @@ class pandaPushGymEnv(gym.Env):
 
         # self.seed()
         # initialize simulation environment
-        self.reset()
+        self._observation = self.reset()
 
-        observationDim = len(self._observation)
-        observation_high = np.array([largeValObservation] * observationDim)
-        self.observation_space = spaces.Box(-observation_high, observation_high, dtype='float32')
+        observation_dim = len(self._observation['observation'])
+        
+        self.observation_space = spaces.Dict({
+
+            'observation': spaces.Box(-largeValObservation, largeValObservation, shape=(observation_dim,), dtype=np.float32),
+            
+            #the archieved goal is the position reached with the object in space
+            'achieved_goal': spaces.Box(-largeValObservation, largeValObservation, shape=(3,), dtype=np.float32),
+            
+            #the desired goal is the desired position in space
+            'desired_goal': spaces.Box(-largeValObservation, largeValObservation, shape=(3,), dtype=np.float32)
+            
+            })
+
+        print(self.observation_space)
 
         if (self._isDiscrete):
             self.action_space = spaces.Discrete(self._panda.getActionDimension())
@@ -82,7 +101,7 @@ class pandaPushGymEnv(gym.Env):
             #self.action_dim = 2 #self._panda.getActionDimension()
             self._action_bound = 1
             action_high = np.array([self._action_bound] * self.action_dim)
-            self.action_space = spaces.Box(-action_high, action_high, dtype='float32')
+            self.action_space = spaces.Box(-action_high, action_high, dtype=np.float32)
 
         self.viewer = None
 
@@ -94,12 +113,10 @@ class pandaPushGymEnv(gym.Env):
         p.setTimeStep(self._timeStep)
         self._envStepCounter = 0
 
-
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
         self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625], 
             useInverseKinematics= self._useIK, actionSpace = self.action_dim, includeVelObs = self.includeVelObs)
-
 
         # Load table and object for simulation
         tableId = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/table.urdf"), useFixedBase=True)
@@ -128,14 +145,15 @@ class pandaPushGymEnv(gym.Env):
         for _ in range(10):
             p.stepSimulation()
 
-        self._observation = self.getExtendedObservation()
-        return np.array(self._observation)
+        #we take the dimension of the observation 
+    
+        return self.getExtendedObservation()
 
 
     def getExtendedObservation(self):
 
         #get robot observations
-        self._observation = self._panda.getObservation()
+        observation = self._panda.getObservation()
         #read EndEff position/velocity
         #endEffState = p.getLinkState(self._panda.pandaId, self._panda.endEffLink, computeLinkVelocity = 1)
         #endEffPos = endEffState[0]
@@ -145,21 +163,33 @@ class pandaPushGymEnv(gym.Env):
         #endEffLinkVelL = endEffState[6]
         #endEffLinkVelA = endEffState[7]
 
-        #get object position in space
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
+        obj_pos, obj_orn = p.getBasePositionAndOrientation(self._objID)
 
         #invEndEffPos, invEndEffOrn = p.invertTransform(endEffPos, endEffOrn)
         #endEffEul = p.getEulerFromQuaternion(endEffOrn)
 
         #objPosInEndEff, objOrnInEndEff = p.multiplyTransforms(invEndEffPos, invEndEffOrn,
         #objPos, objOrn)
-        
-        self._observation.extend(list(objPos))
-        self._observation.extend(list(objOrn))
-        
-        #target position
+
+        list_obj_pos = list(obj_pos)
+        list_obj_orn = list(obj_orn)
+
+        #object velocity
+        obj_vel, obj_vel_ang = p.getBaseVelocity(self._objID)
+
+        observation.extend(list_obj_pos)
+        observation.extend(list_obj_orn)
+        observation.extend(list(obj_vel))
+        observation.extend(list(obj_vel_ang))
+
+        #object target position
         observation.extend(list(self.target_pose))
-        return self._observation
+
+        return OrderedDict([
+            ('observation', np.asarray(observation.copy())),
+            ('achieved_goal', np.asarray(list_obj_pos.copy())),
+            ('desired_goal', np.asarray(list(self.target_pose).copy()))
+            ])
 
 
     def step(self, action):
@@ -176,22 +206,18 @@ class pandaPushGymEnv(gym.Env):
         for i in range(self._actionRepeat):
             self._panda.applyAction(action)
             p.stepSimulation()
-
-            if self._termination():
-                break
-
             self._envStepCounter += 1
 
         if self._renders:
             time.sleep(self._timeStep)
 
         self._observation = self.getExtendedObservation()
-
-        reward = self._compute_reward()
-
-        done = self._termination()
-
-        return np.array(self._observation), np.array([reward]), np.array(done), {}
+        reward = self.compute_reward(self._observation ['achieved_goal'], self._observation ['desired_goal'], None)
+        #if the reward is zero done = TRUE   
+        done = reward == 0
+        info = {'is_success': done}
+        done = done or self._envStepCounter >= self._maxSteps
+        return self._observation, reward, done, info
 
 
 
@@ -222,7 +248,7 @@ class pandaPushGymEnv(gym.Env):
         rgb_array = rgb_array[:, :, :3]
         return rgb_array
 
-
+    #####------DEPRECATED
     def _termination(self):
 
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
@@ -234,26 +260,22 @@ class pandaPushGymEnv(gym.Env):
 
         if (self.terminated or self._envStepCounter > self._maxSteps):
             self._observation = self.getExtendedObservation()
-            return [True]
+            return True
 
-        return [False]
+        return False
+    #####-------END
 
+    def compute_reward(self, achieved_goal, desired_goal, info):
 
-    def _compute_reward(self):
-
-        reward = np.float(32.0)
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        endEffAct = self._panda.getObservation()[0:3]
-        d1 = goal_distance(np.array(endEffAct), np.array(objPos))
-        d2 = goal_distance(np.array(objPos), np.array(self.target_pose))
-        reward = - d1 - d2
-        #print("--------")
-        #print(reward)
-        #print("--------")
-        if d2 <= self._target_dist_min:
-            reward = np.float32(1000.0) + (100 - d2*80)
-        return reward
-
+        #evaluating the distance
+        d = goal_distance(np.array(achieved_goal), np.array(desired_goal))
+        if d <= self._target_dist_min:
+            #reward = 0, good boy
+            return 0
+        else:
+            #negative reward, objective not achieved
+            return -1
+        
 
     def _sample_pose(self):
         ws_lim = self._panda.workspace_lim
