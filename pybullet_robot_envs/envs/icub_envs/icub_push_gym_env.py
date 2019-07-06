@@ -282,10 +282,10 @@ class iCubPushGymEnv(gym.Env):
                 reward += np.float32(1000.0)
         #normalized reward
         elif self._reward_type is 1:
-            
+
             rew1 = 0.125
             rew2 = 0.25
-            if d1 > 0.06:
+            if d1 > 0.1:
                 reward = rew1 * (1 - d1/self._init_dist_hand_obj)
                 #print("reward 1 ", reward)
             else:
@@ -295,20 +295,28 @@ class iCubPushGymEnv(gym.Env):
             if d2 <= self._target_dist_min:
                 reward += np.float32(1000.0)
 
-            if d2 <= self._target_dist_min:
-                reward += np.float32(100.0)
         return reward
 
     def _sample_pose(self):
-        ws_lim = self._icub.workspace_lim
-        if self._rnd_obj_pose:
-            px1, px2 = self.np_random.uniform(low=ws_lim[0][0]+0.08*self.np_random.rand(), high=ws_lim[0][1]-0.005*self.np_random.rand(), size=(2))
-            py1, py2 = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand(), size=(2))
-        else:
-            px1, px2 = ws_lim[0][0] + 0.6*(ws_lim[0][1]-ws_lim[0][0]), ws_lim[0][0] + 0.2*(ws_lim[0][1]-ws_lim[0][0])
-            py1, py2 = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0]), ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
 
+        ws_lim = self._icub.workspace_lim
+
+        px1 = ws_lim[0][0] + 0.6*(ws_lim[0][1]-ws_lim[0][0])
+        py1 = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
         pz = self._h_table
+
+        px2, py2 = px1, py1
+        if self._rnd_obj_pose:
+
+            while goal_distance(np.array([px1,py1,pz]), np.array([px2,py2,pz])) < self._target_dist_min:
+                px2 = self.np_random.uniform(low=ws_lim[0][0]+0.08*self.np_random.rand(), high=ws_lim[0][1]-0.005*self.np_random.rand())
+                py2 = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand())
+
+        else:
+            px2 = ws_lim[0][0] + 0.6*(ws_lim[0][1]-ws_lim[0][0]), ws_lim[0][0] + 0.2*(ws_lim[0][1]-ws_lim[0][0])
+            py2 = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0]), ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
+
+
         pose1  = [px1,py1,pz]
         pose2 = [px2,py2,pz]
 
