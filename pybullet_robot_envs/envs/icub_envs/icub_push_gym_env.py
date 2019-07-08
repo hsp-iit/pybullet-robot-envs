@@ -313,8 +313,8 @@ class iCubPushGymEnv(gym.Env):
                 py2 = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand())
 
         else:
-            px2 = ws_lim[0][0] + 0.6*(ws_lim[0][1]-ws_lim[0][0]), ws_lim[0][0] + 0.2*(ws_lim[0][1]-ws_lim[0][0])
-            py2 = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0]), ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
+            px2 = ws_lim[0][0] + 0.2*(ws_lim[0][1]-ws_lim[0][0])
+            py2 = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
 
 
         pose1  = [px1,py1,pz]
