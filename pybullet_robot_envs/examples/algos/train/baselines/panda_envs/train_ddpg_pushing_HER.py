@@ -33,7 +33,7 @@ normalize_returns = True
 timesteps = 10000000
 policy_name = "pushing_policy"
 discreteAction = 0
-rend = True
+rend = False
 env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
         isDiscrete=discreteAction, numControlledJoints = numControlledJoints,
         fixedPositionObj = fixed, includeVelObs = True)
