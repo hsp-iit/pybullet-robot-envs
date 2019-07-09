@@ -242,11 +242,9 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         d = goal_distance(np.array(achieved_goal), np.array(desired_goal))
         if d <= self._target_dist_min:
             #reward = 0, good boy
-            print("done")
             return 0
         else:
             #negative reward, objective not achieved
-            print("neg")
             return -1
 
 
