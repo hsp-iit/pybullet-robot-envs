@@ -128,20 +128,14 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         # Randomize start position of object and target.
 
         #we take the target point
-
+        self.obj_pose, self.target_pose = self._sample_pose()
         if (self.fixedPositionObj):
             #we use a fixed starting position for the cube
-            self.obj_pose = [0.7,0.0,0.64]
-            self.target_pose = [0.5,0.3,0.64]
-            self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
-            self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
+            self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = [0.7,0.0,0.64])
         else:
-            self.obj_pose, self.target_pose = self._sample_pose()
             self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition= self.obj_pose)
-            #useful to see where is the taget point
-            self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
-
-
+        #useful to see where is the taget point
+        self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), self.target_pose)
 
         self._debugGUI()
         p.setGravity(0,0,-9.8)
@@ -242,11 +236,9 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         d = goal_distance(np.array(achieved_goal), np.array(desired_goal))
         if d <= self._target_dist_min:
             #reward = 0, good boy
-            print("done")
             return 0
         else:
             #negative reward, objective not achieved
-            print("neg")
             return -1
 
 

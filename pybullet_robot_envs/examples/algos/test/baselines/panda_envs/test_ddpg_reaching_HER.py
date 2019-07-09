@@ -1,4 +1,3 @@
-#add parent dir to find package. Only needed for source code build, pip install doesn't need it.
 import os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 #print(currentdir)
@@ -18,7 +17,7 @@ model_class = DDPG  # works also with SAC and DDPG
 
 numControlledJoints = 7
 # -p
-fixed = True
+fixed = False
 # -o
 normalize_observations = False
 # -g
@@ -34,15 +33,19 @@ timesteps = 10000000
 policy_name = "pushing_policy"
 discreteAction = 0
 rend = True
+
 env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
         isDiscrete=discreteAction, numControlledJoints = numControlledJoints,
         fixedPositionObj = fixed, includeVelObs = True)
 
-# Available strategies (cf paper): future, final, episode, random
 goal_selection_strategy = 'future' # equivalent to GoalSelectionStrategy.FUTURE
 # Wrap the model
-model = HER('LnMlpPolicy', env, model_class, n_sampled_goal=4, goal_selection_strategy=goal_selection_strategy,
-                                                verbose=1)
-# Train the model
-model.learn(timesteps)
-model.save("../policies/HERPolicy")
+model = HER.load("../policies/HERPolicy", env=env)
+
+obs = env.reset()
+
+for _ in range(10000):
+    action, _ = model.predict(obs)
+    obs, reward, done, _ = env.step(action)
+    if done:
+        obs = env.reset()
