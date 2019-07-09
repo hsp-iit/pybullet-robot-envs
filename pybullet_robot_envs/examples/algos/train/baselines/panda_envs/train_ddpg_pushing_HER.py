@@ -30,7 +30,7 @@ memory_limit = 1000000
 # -r
 normalize_returns = True
 # -t
-timesteps = 100
+timesteps = 6000000
 policy_name = "pushing_policy"
 discreteAction = 0
 rend = False
