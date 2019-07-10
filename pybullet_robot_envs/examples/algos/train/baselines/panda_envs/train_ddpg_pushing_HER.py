@@ -11,6 +11,18 @@ from stable_baselines import HER, DQN, SAC, DDPG
 from stable_baselines.her import GoalSelectionStrategy, HERGoalEnvWrapper
 from envs.panda_envs.panda_push_gym_env_HER import pandaPushGymEnvHER
 import robot_data
+import tensorflow as tf
+from stable_baselines.ddpg.policies import FeedForwardPolicy
+
+
+
+class CustomPolicy(FeedForwardPolicy):
+    def __init__(self, *args, **kwargs):
+        super(CustomPolicy, self).__init__(*args, **kwargs,
+                                           net_arch=[256,256,256],
+                                           layer_norm=False,
+                                           act_fun=tf.nn.relu,
+                                           feature_extraction="mlp")
 
 model_class = DDPG  # works also with SAC and DDPG
 
@@ -41,7 +53,10 @@ env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=
 # Available strategies (cf paper): future, final, episode, random
 goal_selection_strategy = 'future' # equivalent to GoalSelectionStrategy.FUTURE
 # Wrap the model
-model = HER('LnMlpPolicy', env, model_class, n_sampled_goal=4, goal_selection_strategy=goal_selection_strategy,
+
+#policy_kwargs=dict(net_arch=[256,256,256], layer_norm=False,act_fun=tf.nn.relu)
+
+model = HER(CustomPolicy, env, model_class, n_sampled_goal=4, goal_selection_strategy=goal_selection_strategy,
                                                 verbose=1)
 # Train the model
 model.learn(timesteps)
