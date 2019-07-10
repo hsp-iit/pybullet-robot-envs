@@ -19,7 +19,7 @@ from stable_baselines.ddpg.policies import FeedForwardPolicy
 class CustomPolicy(FeedForwardPolicy):
     def __init__(self, *args, **kwargs):
         super(CustomPolicy, self).__init__(*args, **kwargs,
-                                           net_arch=[256,256,256],
+                                           layers=[256,256,256],
                                            layer_norm=False,
                                            act_fun=tf.nn.relu,
                                            feature_extraction="mlp")
