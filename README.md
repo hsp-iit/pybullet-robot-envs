@@ -82,12 +82,6 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
       ```
     where `iCubReach-v0` is the environment id. You can check the available environment ids in the file [pybullet_robot_envs/__init__.py](pybullet_robot_envs/__init__.py). If you create a new environment and you want to register it as Gym environment, you can modify this file by adding a new `register( id=<id_env>, entry_point=path_to_import_env>)`. See [this](https://github.com/openai/gym/blob/master/docs/creating-environments.md) guide for detailed instruction.
 
-6. [Optional] Install the [OpenAI Baselines](https://github.com/openai/baselines) package to run some of the [RL Examples](#rl-examples) by doing:
-    ```
-    $ pip3 install git+https://github.com/openai/baselines.git
-    ```
-
-
 ### Testing
 You can test your installation by running the following basic robot simulations on PyBullet:
 ```
@@ -122,25 +116,24 @@ $ python pybullet_robot_envs/examples/test_envs/test_panda_push_gym_env.py
 
 
 ## RL Examples
-Run the following scripts to train and test the implemented environments with standard RL algorithms from [OpenAI Baselines](https://github.com/openai/baselines) and [Stable Baselines](https://github.com/hill-a/stable-baselines/).
-
-**Note**: You need to run the `$ pip3 install git+https://github.com/openai/baselines.git` command to run the examples with OpenAI Baselines, if not already done during the installation step. You should have automatically installed the Stable baselines when running `pip install -r requirements.txt`.
+Run the following scripts to train and test the implemented environments with standard DDPG algorithm from [Stable Baselines](https://github.com/hill-a/stable-baselines/).
 
 You can find more examples in the repository [https://github.com/eleramp/robot-agents](https://github.com/eleramp/robot-agents) which is a Python-based framework composed of two main cores:
   - **robot_agents**: collection of scripts to train and test with different RL algorithms
   - **Evaluation**: scripts to easily setup and evaluate different experiments. You can define in one script a list of experiments by specifying for each one Gym-like environment and RL algorithm, and then evaluate their training or testing by running a single script.
-##### iCubReach-v0
 
-* Train iCub to perform a *reach* task by using **OpenAI baselines** implementation of [DQN](https://github.com/openai/baselines/tree/master/baselines/deepq) (discrete action space):
+##### iCubPush-v0
+
+* Train iCub to perform a *push* task by using **Stable Baselines** implementation of [DDPG](https://github.com/hill-a/stable-baselines/tree/master/stable_baselines/ddpg) (continuous action space):
   ```
-  $ python pybullet_robot_envs/examples/algos/train/baselines/icub_envs/train_deepq_reaching.py
+  $ python pybullet_robot_envs/examples/algos/train/baselines/icub_envs/train_ddpg_pushing.py
   ```
-  The trained model is saved as *.pkl* in the `../pybullet_logs/icubreach_deepq` folder, together with some log files, as *tensorboard* files.
+  The trained model is saved as *.pkl* in the `../pybullet_logs/icubpush_ddpg` folder, together with some log files, as *tensorboard* files.
 
 * Track the learning process with tensorboard:
   1. Run tensorboard by specifying the log directory:
       ```
-      $ tensorboard --logdir ../pybullet_logs/icubreach_deepq
+      $ tensorboard --logdir ../pybullet_logs/icubpush_ddpg
         TensorBoard 1.13.1 at <url>:6006 (Press CTRL+C to quit)
       ```
   2. Enter the `<url>:6006` into the web browser and track the mean reward per episode
@@ -148,7 +141,7 @@ You can find more examples in the repository [https://github.com/eleramp/robot-a
 
 * Test the trained model on episodes of 1000 timestamps:
   ```
-  $ python pybullet_robot_envs/examples/algos/test/baselines/icub_envs/test_deepq_reaching.py
+  $ python pybullet_robot_envs/examples/algos/test/baselines/icub_envs/test_ddpg_pushing.py
   ```
 
 ##### PandaReach-v0

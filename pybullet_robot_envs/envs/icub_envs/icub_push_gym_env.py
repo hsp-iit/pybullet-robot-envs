@@ -153,8 +153,8 @@ class iCubPushGymEnv(gym.Env):
         self._observation.extend(list(objPosInHand))
         self._observation.extend(list(objEulerInHand))
 
-        relLVel = np.array(objAVel) - np.array(self._observation[6:9])
-        self._observation.extend(list(relLVel))
+        #relLVel = np.array(objAVel) - np.array(self._observation[6:9])
+        #self._observation.extend(list(relLVel))
 
         self._observation.extend(list(self._tg_pose))
 
