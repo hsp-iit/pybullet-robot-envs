@@ -17,7 +17,7 @@ model_class = DDPG  # works also with SAC and DDPG
 
 numControlledJoints = 7
 # -p
-fixed = False
+fixed = True
 # -o
 normalize_observations = False
 # -g

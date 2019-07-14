@@ -59,7 +59,7 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         self._cam_pitch = -40
         self._h_table = []
         self._target_dist_max = 0.3
-        self._target_dist_min = 0.1
+        self._target_dist_min = 0.15
         self._p = p
         self.fixedPositionObj = fixedPositionObj
         self.includeVelObs = includeVelObs
@@ -131,8 +131,8 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
         if (self.fixedPositionObj):
             #we use a fixed starting position for the cube
-            self.obj_pose = [0.7,0.0,0.64]
-            self.target_pose = [0.5,0.3,0.64]
+            self.obj_pose = [0.6,0.1,0.64]
+            self.target_pose = [0.4,0.45,0.64]
             self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
             self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
         else:
