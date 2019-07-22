@@ -26,6 +26,10 @@ class CustomPolicy(FeedForwardPolicy):
                                            act_fun=tf.nn.relu,
                                            feature_extraction="lnmlp")
 
+
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 model_class = DDPG  # works also with SAC and DDPG
 
 # -j
