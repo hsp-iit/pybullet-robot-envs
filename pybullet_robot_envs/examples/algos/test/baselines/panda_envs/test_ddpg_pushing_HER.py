@@ -40,7 +40,7 @@ env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=
 
 goal_selection_strategy = 'future' # equivalent to GoalSelectionStrategy.FUTURE
 # Wrap the model
-model = HER.load("../policies/HERPolicy", env=env)
+model = HER.load("../policies/pushing_fixed_HER.pkl", env=env)
 
 obs = env.reset()
 

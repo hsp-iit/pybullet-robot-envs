@@ -24,15 +24,14 @@ class CustomPolicy(FeedForwardPolicy):
                                            layers=[128,128,128],
                                            layer_norm=False,
                                            act_fun=tf.nn.relu,
-                                           feature_extraction="mlp")
+                                           feature_extraction="lnmlp")
 
 model_class = DDPG  # works also with SAC and DDPG
 
 # -j
-
 numControlledJoints = 7
 # -p
-fixed = True
+fixed = False
 # -o
 normalize_observations = False
 # -g
@@ -62,6 +61,6 @@ model = HER(CustomPolicy, env, model_class, n_sampled_goal=4, goal_selection_str
             verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER", buffer_size=1000000,batch_size=256,
             random_exploration=0.3, action_noise=action_noise)
 # Train the model
-model = HER.load("../policies/HERPolicy", env=env)
+model = HER.load("../policies/pushing_fixed_HER.pkl", env=env)
 model.learn(timesteps)
 model.save("../policies/HERPolicy")
