@@ -58,9 +58,9 @@ action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=floa
 # Wrap the model
 
 model = HER(CustomPolicy, env, model_class, n_sampled_goal=4, goal_selection_strategy=goal_selection_strategy,
-            verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER", buffer_size=1000000,batch_size=256,
+            verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_RANDOM", buffer_size=1000000,batch_size=256,
             random_exploration=0.3, action_noise=action_noise)
 # Train the model
-model = HER.load("../policies/pushing_fixed_HER.pkl", env=env)
+#model = HER.load("../policies/pushing_fixed_HER.pkl", env=env)
 model.learn(timesteps)
-model.save("../policies/HERPolicy")
+model.save("../policies/pushing_random_HER.pkl")

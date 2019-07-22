@@ -23,7 +23,7 @@ class pandaEnv:
         self.useSimulation = 1
         self.basePosition = basePosition
         self.useFixedBase = useFixedBase
-        self.workspace_lim = [[0.2,0.60],[-0.60,0.60],[0,0.40]]
+        self.workspace_lim = [[0.35,0.60],[-0.60,0.60],[0,0.40]]
         self.endEffLink = 8
         self.actionSpace = actionSpace
         self.includeVelObs = includeVelObs
