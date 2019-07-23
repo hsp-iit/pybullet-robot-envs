@@ -251,9 +251,16 @@ class pandaPushGymEnvHER(gym.GoalEnv):
     def _sample_pose(self):
         ws_lim = self._panda.workspace_lim
         px1= np.random.uniform(low=ws_lim[0][0]+0.005*np.random.rand(), high=ws_lim[0][1]-0.005*np.random.rand())
-        px2 = np.random.uniform(low=ws_lim[0][0]+0.005*np.random.rand(), high=ws_lim[0][1]-0.005*np.random.rand())
         py1 = np.random.uniform(low=ws_lim[1][0]+0.005*np.random.rand(), high=ws_lim[1][1]-0.005*np.random.rand())
-        py2 = np.random.uniform(low=ws_lim[1][0]+0.005*np.random.rand(), high=ws_lim[1][1]-0.005*np.random.rand())
+
+        if px1 < 0.45:
+            px2 = px1 + np.random.uniform(0.1,0.2)
+        else:
+            px2 =  px1 - np.random.uniform(0.1,0.2)
+        if py1 < 0:
+            py2 = py1 + np.random.uniform(0.2,0.45)
+        else:
+            py2 = py1 - np.random.uniform(0.2,0.45)
 
         pz = 0.625
         pose1  = [px1,py1,pz]

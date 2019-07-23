@@ -12,17 +12,17 @@ from stable_baselines.her import GoalSelectionStrategy, HERGoalEnvWrapper
 from envs.panda_envs.panda_push_gym_env_HER import pandaPushGymEnvHER
 import robot_data
 import tensorflow as tf
-from stable_baselines.ddpg.policies import FeedForwardPolicy
+from stable_baselines.common.policies import MlpLnLstmPolicy
 from stable_baselines.ddpg.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
 import numpy as np
 
 
 
-class CustomPolicy(FeedForwardPolicy):
+class CustomPolicy(MlpLnLstmPolicy):
     def __init__(self, *args, **kwargs):
         super(CustomPolicy, self).__init__(*args, **kwargs,
                                            layers=[128,128,128],
-                                           layer_norm=False,
+                                               layer_norm=False,
                                            act_fun=tf.nn.relu,
                                            feature_extraction="lnmlp")
 
@@ -38,13 +38,13 @@ normalize_observations = False
 # -g
 gamma = 0.9
 # -b
-#batch_size = 16
+batch_size = 16
 # -m
 memory_limit = 1000000
 # -r
 normalize_returns = True
 # -t
-timesteps = 10000000
+timesteps = 3000000
 policy_name = "pushing_policy"
 discreteAction = 0
 rend = False
