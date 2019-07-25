@@ -258,9 +258,9 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         else:
             px2 =  px1 - np.random.uniform(0.1,0.2)
         if py1 < 0:
-            py2 = py1 + np.random.uniform(0.2,0.45)
+            py2 = py1 + np.random.uniform(0.2,0.3)
         else:
-            py2 = py1 - np.random.uniform(0.2,0.45)
+            py2 = py1 - np.random.uniform(0.2,0.3)
 
         pz = 0.625
         pose1  = [px1,py1,pz]
