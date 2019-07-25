@@ -97,7 +97,7 @@ class pandaPushGymEnv(gym.Env):
 
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
-        self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625], 
+        self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625],
             useInverseKinematics= self._useIK, actionSpace = self.action_dim, includeVelObs = self.includeVelObs)
 
 
@@ -153,12 +153,12 @@ class pandaPushGymEnv(gym.Env):
 
         #objPosInEndEff, objOrnInEndEff = p.multiplyTransforms(invEndEffPos, invEndEffOrn,
         #objPos, objOrn)
-        
+
         self._observation.extend(list(objPos))
         self._observation.extend(list(objOrn))
-        
+
         #target position
-        observation.extend(list(self.target_pose))
+        self._observation.extend(list(self.target_pose))
         return self._observation
 
 

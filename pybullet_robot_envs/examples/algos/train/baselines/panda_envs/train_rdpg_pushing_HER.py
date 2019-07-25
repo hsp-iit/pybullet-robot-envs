@@ -12,19 +12,17 @@ from stable_baselines.her import GoalSelectionStrategy, HERGoalEnvWrapper
 from envs.panda_envs.panda_push_gym_env_HER import pandaPushGymEnvHER
 import robot_data
 import tensorflow as tf
-from stable_baselines.common.policies import MlpLnLstmPolicy
+from stable_baselines.common.policies import MlpLstmPolicy
 from stable_baselines.ddpg.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
 import numpy as np
 
 
 
-class CustomPolicy(MlpLnLstmPolicy):
+class CustomPolicy(MlpLstmPolicy):
     def __init__(self, *args, **kwargs):
         super(CustomPolicy, self).__init__(*args, **kwargs,
                                            layers=[128,128,128],
-                                               layer_norm=False,
-                                           act_fun=tf.nn.relu,
-                                           feature_extraction="lnmlp")
+                                           act_fun=tf.nn.relu)
 
 
 model_class = DDPG  # works also with SAC and DDPG
