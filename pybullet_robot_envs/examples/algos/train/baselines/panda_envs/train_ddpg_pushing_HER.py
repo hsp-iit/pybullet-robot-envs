@@ -65,6 +65,7 @@ def main():
     # Train the model
     for i in range(5):
         model.learn(timesteps)
+        print("Saving Policy" + str(i))
         model.save("../policies/pushing_random_HER"+str(i))
         model = HER.load("../policies/pushing_random_HER"+str(i), env=env)
 
