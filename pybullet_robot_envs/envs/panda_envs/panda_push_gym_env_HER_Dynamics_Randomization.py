@@ -28,7 +28,7 @@ def goal_distance(goal_a, goal_b):
 
 
 #inherit from different class
-class pandaPushGymEnvHER(gym.GoalEnv):
+class pandaPushGymEnvHERRand(gym.GoalEnv):
 
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
@@ -42,13 +42,14 @@ class pandaPushGymEnvHER(gym.GoalEnv):
                  dist_delta = 0.03,
                  numControlledJoints = 7,
                  fixedPositionObj = True,
-                 includeVelObs = True,
-                 object_position=0):
+                 includeVelObs = True):
 
-        self.object_position = object_position
         self.action_dim = numControlledJoints
         self._isDiscrete = isDiscrete
-        self._timeStep = 1./240.
+        #Randomizing of time step done in reset function
+        self._param_lambda = 1/np.random.uniform(125,1000)
+        self._timeStep = (1.0/240.0) + np.random.exponential(self._param_lambda)
+
         self._useIK = useIK
         self._urdfRoot = urdfRoot
         self._actionRepeat = actionRepeat
@@ -108,11 +109,15 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
 
     def reset(self):
-        p.resetSimulation()
-        p.setPhysicsEngineParameter(numSolverIterations=150)
-        p.setTimeStep(self._timeStep)
-        self._envStepCounter = 0
 
+        #The Dynamics Randomization must be done here
+        #Selection of lambda
+        #It will be used at aech timestep to generate a delta T (simulation of delay)
+        p.resetSimulation()
+        self._timeStep = (1.0/240.0) + np.random.exponential(self._param_lambda)
+        p.setPhysicsEngineParameter(fixedTimeStep=self._timeStep , numSolverIterations=150)
+
+        self._envStepCounter = 0
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
         self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625],
@@ -132,34 +137,27 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         #we take the target point
 
         if (self.fixedPositionObj):
-            if(self.object_position==0):
-                #we have completely fixed position
-                self.obj_pose = [0.6,0.1,0.64]
-                self.target_pose = [0.4,0.45,0.64]
-                self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
-                self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
-
-            elif(self.object_position==1):
-                #we have completely fixed position
-                self.obj_pose = [np.random.uniform(0.4,0.6),np.random.uniform(0,0.2),0.64]
-                self.target_pose = [np.random.uniform(0.3,0.5),np.random.uniform(0.35,0.55),0.64]
-                self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
-                self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
-
-            elif(self.object_position==2):
-                #we have completely fixed position
-                self.obj_pose = [np.random.uniform(0.3,0.7),np.random.uniform(-0.2,0.2),0.64]
-                self.target_pose = [np.random.uniform(0.3,0.6),np.random.uniform(0.35,0.55),0.64]
-                self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
-                self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
-
-            elif(self.object_position==3):
-                print("")
+            #we use a fixed starting position for the cube
+            self.obj_pose = [0.6,0.1,0.64]
+            self.target_pose = [0.4,0.45,0.64]
+            self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
+            self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
         else:
             self.obj_pose, self.target_pose = self._sample_pose()
             self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition= self.obj_pose)
             #useful to see where is the taget point
             self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
+
+        # Randomizing the physics of the object...
+        currentMass = np.random.uniform(0.1,0.4)
+        currentFriction = np.random.uniform(0.1,0.7)
+        currentDamping = np.random.uniform(0.01,0.2)
+        p.changeDynamics(self._objID, linkIndex=-1, mass=currentMass, lateralFriction=currentFriction,
+                        linearDamping=currentDamping)
+
+        # Randomizing the physics of the robot... (only joints damping and controller gains)
+        for i in range(7):
+            p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping=np.random.uniform(0.25,20))
 
 
 
@@ -201,6 +199,8 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
 
     def step(self, action):
+
+
         if self._useIK:
             #TO DO
             return 0
@@ -225,6 +225,7 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         done = reward == 0
         info = {'is_success': done}
         done = done or self._envStepCounter >= self._maxSteps
+
         return self._observation, reward, done, info
 
 

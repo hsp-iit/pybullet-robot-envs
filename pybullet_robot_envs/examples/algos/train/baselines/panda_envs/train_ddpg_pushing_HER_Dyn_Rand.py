@@ -9,7 +9,7 @@ print(parentdir)
 
 from stable_baselines import HER, DQN, SAC, DDPG
 from stable_baselines.her import GoalSelectionStrategy, HERGoalEnvWrapper
-from envs.panda_envs.panda_push_gym_env_HER import pandaPushGymEnvHER
+from envs.panda_envs.panda_push_gym_env_HER_Dynamics_Randomization import pandaPushGymEnvHERRand
 from stable_baselines.common.vec_env import SubprocVecEnv
 import robot_data
 import tensorflow as tf
@@ -34,10 +34,6 @@ def main():
     numControlledJoints = 7
     # -p
     fixed = True
-
-    #0 completely fixed, 1 slightly random radius, 2 big random radius,
-    object_position = 1
-
     # -o
     normalize_observations = False
     # -g
@@ -49,13 +45,13 @@ def main():
     # -r
     normalize_returns = True
     # -t
-    timesteps = 4000000
+    timesteps = 1000000
     policy_name = "pushing_policy"
     discreteAction = 0
     rend = False
-    env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
+    env = pandaPushGymEnvHERRand(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
             isDiscrete=discreteAction, numControlledJoints = numControlledJoints,
-            fixedPositionObj = fixed, includeVelObs = True, object_position=object_position)
+            fixedPositionObj = fixed, includeVelObs = True)
 
     # Available strategies (cf paper): future, final, episode, random
     goal_selection_strategy = 'future' # equivalent to GoalSelectionStrategy.FUTURE
@@ -64,26 +60,17 @@ def main():
     # Wrap the model
 
     model = HER(CustomPolicy, env, model_class, n_sampled_goal=8, goal_selection_strategy=goal_selection_strategy,
-                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1", buffer_size=1000000,batch_size=256,
+                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_FIXED_PHASES_DYN_RAND", buffer_size=1000000,batch_size=256,
                 random_exploration=0.3, action_noise=action_noise)
 
-
-    model = HER.load("../policies/pushing_HER_PHASE_1.pkl", env=env, n_sampled_goal=8,
-    goal_selection_strategy=goal_selection_strategy,
-    tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1",
-    buffer_size=1000000,batch_size=256,
-    random_exploration=0.3, action_noise=action_noise)
-    print("begin")
-    model.learn(timesteps,log_interval=100)
-    print("Saving Policy PHASE_1")
-    model.save("../policies/pushing_HER_PHASE_1")
-    #from i=1 to 5
-    """
-    for i in range(1,6):
+    # Train the model starting from a previous policy
+    model.learn(10)
+    model = HER.load("../policies/pushing_fixed_HER.pkl", env=env)
+    for i in range(5):
         model.learn(timesteps)
         print("Saving Policy" + str(i))
-        model.save("../policies/pushing_HER_PHASE_"+str(i))
+        model.save("../policies/pushing_fixed_HER_Dyn_Rand"+str(i))
         model = HER.load("../policies/pushing_fixed_HER_Dyn_Rand"+str(i), env=env)
-    """
+
 if __name__ == "__main__":
     main()
