@@ -23,10 +23,12 @@ class pandaEnv:
         self.useSimulation = 1
         self.basePosition = basePosition
         self.useFixedBase = useFixedBase
-        self.workspace_lim = [[0.3,0.60],[-0.3,0.3],[0,0.40]]
+        self.workspace_lim = [[0.3,0.60],[-0.3,0.3],[0,1]]
+        self.workspace_lim_endEff = [[0.1,0.70],[-0.4,0.4],[0.65,1]]
         self.endEffLink = 8
         self.actionSpace = actionSpace
         self.includeVelObs = includeVelObs
+        self.numJoints = 7
         self.reset()
 
     def reset(self):
@@ -35,7 +37,11 @@ class pandaEnv:
 
         for i in range(self.actionSpace):
             p.resetJointState(self.pandaId, i, 0)
-            p.setJointMotorControl2(self.pandaId, i, p.POSITION_CONTROL,targetPosition=0,targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
+            p.setJointMotorControl2(self.pandaId, i, p.POSITION_CONTROL,targetPosition=0,targetVelocity=0.0,
+            positionGain=0.25, velocityGain=0.75, force=50)
+        if self.useInverseKinematics:
+            self.endEffPos = [0.4,0,0.85] # x,y,z
+            self.endEffOrn = [0.3,0.4,0.35] # roll,pitch,yaw
 
     def getJointsRanges(self):
         #to-be-defined
@@ -75,10 +81,48 @@ class pandaEnv:
     def applyAction(self, action):
 
         if(self.useInverseKinematics):
-            print("Inverse Kinematic")
-            #TO BE DEFINED
-        else:
+            assert len(action)>=3, ('number of motor commands differs from ',len(action))
+            assert len(action)<=6, ('number of motor commands differs from ',len(action))
 
+            dx, dy, dz = action[:3]
+
+            self.endEffPos[0] = min(self.workspace_lim_endEff[0][1], max(self.workspace_lim_endEff[0][0], self.workspace_lim_endEff[0] + dx))
+            self.endEffPos[1] = min(self.workspace_lim_endEff[1][1], max(self.workspace_lim_endEff[1][0], self.workspace_lim_endEff[1] + dx))
+            self.endEffPos[2] = min(self.workspace_lim_endEff[2][1], max(self.workspace_lim_endEff[2][0], self.workspace_lim_endEff[2] + dx))
+
+            if not self.useOrientation:
+                quat_orn = p.getQuaternionFromEuler(self.handOrn)
+
+            elif len(action) is 6:
+                droll, dpitch, dyaw = action[3:]
+                self.endEffOrn[0] = min(m.pi, max(-m.pi, self.endEffOrn[0] + droll))
+                self.endEffOrn[1] = min(m.pi, max(-m.pi, self.endEffOrn[1] + dpitch))
+                self.endEffOrn[2] = min(m.pi, max(-m.pi, self.endEffOrn[2] + dyaw))
+                quat_orn = p.getQuaternionFromEuler(self.endEffOrn)
+
+            else:
+                quat_orn = p.getLinkState(self.pandaId, self.endEffLink)[5]
+
+            jointPoses = p.calculateInverseKinematics(self.pandaId, self.endEffLink, self.endEffPos, quat_orn)
+
+            if (self.useSimulation):
+                    for i in range(self.numJoints):
+                        jointInfo = p.getJointInfo(self.pandaId, i)
+                        if jointInfo[3] > -1:
+                            p.setJointMotorControl2(bodyUniqueId=self.pandaId,
+                                                    jointIndex=i,
+                                                    controlMode=p.POSITION_CONTROL,
+                                                    targetPosition=jointPoses[i],
+                                                    targetVelocity=0,
+                                                    positionGain=0.25,
+                                                    velocityGain=0.75,
+                                                    force=50)
+            else:
+                for i in range(self.numJoints):
+                    p.resetJointState(self.pandaId, i, jointPoses[i])
+
+
+        else:
             assert len(action)==self.actionSpace, ('number of motor commands differs from number of motor to control',len(action))
 
             for a in range(len(action)):
