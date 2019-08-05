@@ -35,7 +35,7 @@ class pandaEnv:
 
         self.pandaId = p.loadURDF(self.urdfRootPath, basePosition = self.basePosition, useFixedBase = self.useFixedBase)
 
-        for i in range(self.actionSpace):
+        for i in range(self.numJoints):
             p.resetJointState(self.pandaId, i, 0)
             p.setJointMotorControl2(self.pandaId, i, p.POSITION_CONTROL,targetPosition=0,targetVelocity=0.0,
             positionGain=0.25, velocityGain=0.75, force=50)

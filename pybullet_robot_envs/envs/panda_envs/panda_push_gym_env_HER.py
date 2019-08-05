@@ -40,13 +40,13 @@ class pandaPushGymEnvHER(gym.GoalEnv):
                  renders = False,
                  maxSteps = 1000,
                  dist_delta = 0.03,
-                 numControlledJoints = 7,
+                 action_space = 7,
                  fixedPositionObj = True,
                  includeVelObs = True,
                  object_position=0):
 
         self.object_position = object_position
-        self.action_dim = numControlledJoints
+        self.action_dim = action_space
         self._isDiscrete = isDiscrete
         self._timeStep = 1./240.
         self._useIK = useIK

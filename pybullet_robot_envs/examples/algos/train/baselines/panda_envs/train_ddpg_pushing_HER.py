@@ -32,7 +32,7 @@ class CustomPolicy(FeedForwardPolicy):
 
 best_mean_reward, n_steps = -np.inf, 0
 log_dir="../pybullet_logs/panda_push_ddpg/stable_baselines/"
-log_dir_policy = '../policies/pushing_HER_PHASE_0'
+log_dir_policy = '../policies/pushing_HER_PHASE_1'
 
 
 def callback(_locals, _globals):
@@ -60,13 +60,13 @@ def callback(_locals, _globals):
 def main():
     global log_dir
     model_class = DDPG  # works also with SAC and DDPG
-    numControlledJoints = 7
+    action_space = 7
     fixed = True
     #0 completely fixed, 1 slightly random radius, 2 big random radius,
     object_position = 1
     normalize_observations = False
     gamma = 0.9
-    memory_limit = 1000000
+    memory_limit = 7000000
     normalize_returns = True
     timesteps = 1000000
     policy_name = "pushing_policy"
@@ -76,7 +76,7 @@ def main():
 
 
     env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
-            isDiscrete=discreteAction, numControlledJoints = numControlledJoints,
+            isDiscrete=discreteAction, action_space = action_space,
             fixedPositionObj = fixed, includeVelObs = True, object_position=object_position)
 
     env = Monitor(env, log_dir, allow_early_resets=True)
@@ -87,20 +87,20 @@ def main():
     # Wrap the model
 
     model = HER(CustomPolicy, env, model_class, n_sampled_goal=8, goal_selection_strategy=goal_selection_strategy,
-                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_0", buffer_size=1000000,batch_size=256,
+                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1_4Layers", buffer_size=1000000,batch_size=256,
                 random_exploration=0.3, action_noise=action_noise)
 
     load_policy = True
     if (load_policy):
-        model = HER.load("../policies/pushing_HER_PHASE_0.pkl", env=env, n_sampled_goal=8,
+        model = HER.load("../policies/pushing_HER_PHASE_1.pkl", env=env, n_sampled_goal=8,
         goal_selection_strategy=goal_selection_strategy,
-        tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1_4Layers",
+        tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1_4Layers/NewLimit",
         buffer_size=1000000,batch_size=256,random_exploration=0.3, action_noise=action_noise)
 
     print("Training Phase")
     model.learn(timesteps,log_interval=100, callback= callback)
     print("Saving Policy PHASE_1")
-    model.save("../policies/pushing_HER_PHASE_1")
+    model.save("../policies/pushing_HER_PHASE_1_4Layers")
 
 if __name__ == "__main__":
     main()
