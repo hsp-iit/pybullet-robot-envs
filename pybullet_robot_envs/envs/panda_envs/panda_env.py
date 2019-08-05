@@ -13,7 +13,7 @@ import math as m
 
 class pandaEnv:
 
-    def __init__(self, urdfRootPath=robot_data.getDataPath(), timeStep=0.01, useInverseKinematics=0, basePosition=[-0.6,-0.4,0.625], useFixedBase= True, actionSpace = 7, includeVelObs = True):
+    def __init__(self, urdfRootPath=robot_data.getDataPath(), timeStep=0.01, useInverseKinematics=0, basePosition=[-0.6,-0.4,0.625], useFixedBase= True, action_space = 7, includeVelObs = True):
 
         self.urdfRootPath = os.path.join(urdfRootPath, "franka_description/robots/panda_arm_physics.urdf")
         self.timeStep = timeStep
@@ -26,7 +26,7 @@ class pandaEnv:
         self.workspace_lim = [[0.3,0.60],[-0.3,0.3],[0,1]]
         self.workspace_lim_endEff = [[0.1,0.70],[-0.4,0.4],[0.65,1]]
         self.endEffLink = 8
-        self.actionSpace = actionSpace
+        self.action_space = action_space
         self.includeVelObs = includeVelObs
         self.numJoints = 7
         self.reset()
@@ -49,10 +49,7 @@ class pandaEnv:
 
 
     def getActionDimension(self):
-        if self.useInverseKinematics == 1:
-            return 6
-        else:
-            return self.actionSpace #p.getactionSpace(self.pandaId)
+            return self.action_space
 
 
     def getObservationDimension(self):
@@ -81,8 +78,8 @@ class pandaEnv:
     def applyAction(self, action):
 
         if(self.useInverseKinematics):
-            assert len(action)>=3, ('number of motor commands differs from ',len(action))
-            assert len(action)<=6, ('number of motor commands differs from ',len(action))
+            assert len(action)>=3, ('IK dim differs from ',len(action))
+            assert len(action)<=6, ('IK dim differs from ',len(action))
 
             dx, dy, dz = action[:3]
 
@@ -123,7 +120,7 @@ class pandaEnv:
 
 
         else:
-            assert len(action)==self.actionSpace, ('number of motor commands differs from number of motor to control',len(action))
+            assert len(action)==self.action_space, ('number of motor commands differs from number of motor to control',len(action))
 
             for a in range(len(action)):
 
