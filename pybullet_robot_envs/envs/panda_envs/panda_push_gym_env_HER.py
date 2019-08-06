@@ -202,8 +202,12 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
     def step(self, action):
         if self._useIK:
-            #TO DO
-            return 0
+            realPos = [a*0.003 for a in action[:3]]
+            realOrn = []
+            if self.action_space.shape[-1] is 6:
+                realOrn = [a*0.01 for a in action[3:]]
+
+            return self.step2(realPos+realOrn)
 
         else:
             action = [float(i*0.05) for i in action]

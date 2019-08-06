@@ -7,7 +7,7 @@ os.sys.path.insert(0, parentdir)
 print(parentdir)
 
 
-from stable_baselines import HER, DQN, SAC, DDPG
+from stable_baselines import HER, DQN, SAC, DDPG, TD3
 from stable_baselines.her import GoalSelectionStrategy, HERGoalEnvWrapper
 from envs.panda_envs.panda_push_gym_env_HER import pandaPushGymEnvHER
 from stable_baselines.common.vec_env import SubprocVecEnv
@@ -17,15 +17,15 @@ from stable_baselines.bench import Monitor
 
 import robot_data
 import tensorflow as tf
-from stable_baselines.ddpg.policies import FeedForwardPolicy
+from stable_baselines.td3.policies import FeedForwardPolicy
 from stable_baselines.ddpg.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise, AdaptiveParamNoiseSpec
 import numpy as np
 
 
 
-class CustomPolicy(FeedForwardPolicy):
+class CustomTD3Policy(FeedForwardPolicy):
     def __init__(self, *args, **kwargs):
-        super(CustomPolicy, self).__init__(*args, **kwargs,
+        super(CustomTD3Policy, self).__init__(*args, **kwargs,
                                            layers=[256,256,256],
                                            layer_norm=False,
                                            act_fun=tf.nn.relu,
@@ -33,7 +33,7 @@ class CustomPolicy(FeedForwardPolicy):
 
 best_mean_reward, n_steps = -np.inf, 0
 log_dir="../pybullet_logs/panda_push_ddpg/stable_baselines/"
-log_dir_policy = '../policies/pushing_HER_PHASE_1'
+log_dir_policy = '../policies/PUSHING_TD3+HER_FIXED_POSITION'
 
 
 def callback(_locals, _globals):
@@ -60,16 +60,16 @@ def callback(_locals, _globals):
 
 def main():
     global log_dir
-    model_class = DDPG  # works also with SAC and DDPG
+    model_class = TD3  # works also with SAC and DDPG
     action_space = 7
     fixed = True
     #0 completely fixed, 1 slightly random radius, 2 big random radius,
-    object_position = 1
+    object_position = 0
     normalize_observations = False
     gamma = 0.9
     memory_limit = 1000000
     normalize_returns = True
-    timesteps = 2000000
+    timesteps = 700000
     policy_name = "pushing_policy"
     discreteAction = 0
     rend = False
@@ -87,21 +87,21 @@ def main():
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))
     # Wrap the model
 
-    model = HER(CustomPolicy, env, model_class, n_sampled_goal=8, goal_selection_strategy=goal_selection_strategy,
-                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1", buffer_size=1000000,batch_size=256,
+    model = HER(CustomTD3Policy, env, model_class, n_sampled_goal=8, goal_selection_strategy=goal_selection_strategy,
+                verbose=1,tensorboard_log="../pybullet_logs/panda_push_TD3/stable_baselines/PUSHING_TD3+HER_FIXED_POSITION", buffer_size=1000000,batch_size=256,
                 random_exploration=0.3, action_noise=action_noise)
 
-    load_policy = True
+    load_policy = False
     if (load_policy):
-        model = HER.load("../policies/pushing_HER_PHASE_1.pkl", env=env, n_sampled_goal=8,
+        model = HER.load("../policies/pushing_TD3_HER_PHASE_1.pkl", env=env, n_sampled_goal=8,
         goal_selection_strategy=goal_selection_strategy,
-        tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1",
+        tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/PUSHING_TD3+HER_FIXED_POSITION",
         buffer_size=1000000,batch_size=256,random_exploration=0.3, action_noise=action_noise)
 
     print("Training Phase")
-    model.learn(timesteps,log_interval=100, callback= callback)
+    model.learn(timesteps,log_interval=100, callback = callback)
     print("Saving Policy PHASE_1")
-    model.save("../policies/pushing_HER_PHASE_1")
+    model.save("../policies/PUSHING_TD3+HER_FIXED_POSITION")
 
 if __name__ == "__main__":
     main()

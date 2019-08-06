@@ -15,7 +15,7 @@ model_class = DDPG  # works also with SAC and DDPG
 
 # -j
 
-numControlledJoints = 7
+action_space = 7
 # -p
 fixed = True
 # -o
@@ -35,7 +35,7 @@ discreteAction = 0
 rend = True
 
 env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
-        isDiscrete=discreteAction, numControlledJoints = numControlledJoints,
+        isDiscrete=discreteAction, action_space = action_space,
         fixedPositionObj = fixed, includeVelObs = True, object_position=1)
 
 goal_selection_strategy = 'future' # equivalent to GoalSelectionStrategy.FUTURE

@@ -83,9 +83,9 @@ class pandaEnv:
 
             dx, dy, dz = action[:3]
 
-            self.endEffPos[0] = min(self.workspace_lim_endEff[0][1], max(self.workspace_lim_endEff[0][0], self.workspace_lim_endEff[0] + dx))
-            self.endEffPos[1] = min(self.workspace_lim_endEff[1][1], max(self.workspace_lim_endEff[1][0], self.workspace_lim_endEff[1] + dx))
-            self.endEffPos[2] = min(self.workspace_lim_endEff[2][1], max(self.workspace_lim_endEff[2][0], self.workspace_lim_endEff[2] + dx))
+            self.endEffPos[0] = min(self.workspace_lim_endEff[0][1], max(self.workspace_lim_endEff[0][0], self.endEffPos[0] + dx))
+            self.endEffPos[1] = min(self.workspace_lim_endEff[1][1], max(self.workspace_lim_endEff[1][0], self.endEffPos[1] + dx))
+            self.endEffPos[2] = min(self.workspace_lim_endEff[2][1], max(self.workspace_lim_endEff[2][0], self.endEffPos[2] + dx))
 
             if not self.useOrientation:
                 quat_orn = p.getQuaternionFromEuler(self.handOrn)
