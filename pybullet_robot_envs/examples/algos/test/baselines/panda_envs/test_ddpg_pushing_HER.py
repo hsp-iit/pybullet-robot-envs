@@ -29,18 +29,18 @@ memory_limit = 1000000
 # -r
 normalize_returns = True
 # -t
-timesteps = 1000000
+timesteps = 100000
 policy_name = "pushing_policy"
 discreteAction = 0
 rend = True
 
 env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
         isDiscrete=discreteAction, action_space = action_space,
-        fixedPositionObj = fixed, includeVelObs = True, object_position=1)
+        fixedPositionObj = fixed, includeVelObs = True, object_position=0)
 
 goal_selection_strategy = 'future' # equivalent to GoalSelectionStrategy.FUTURE
 # Wrap the model
-model = HER.load("../policies/pushing_HER_PHASE_1.pkl", env=env)
+model = HER.load("../policies/pushing_DDPG_HER_PHASE_1best_model.pkl", env=env)
 
 obs = env.reset()
 
