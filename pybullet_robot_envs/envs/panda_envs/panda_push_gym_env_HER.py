@@ -15,12 +15,18 @@ import random
 import pybullet_data
 import robot_data
 from pkg_resources import parse_version
+import csv
 
 
 largeValObservation = 100
 
 RENDER_HEIGHT = 720
 RENDER_WIDTH = 960
+
+#used in save_data_test
+test_steps = 0
+test_done = False
+
 
 def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
@@ -43,7 +49,10 @@ class pandaPushGymEnvHER(gym.GoalEnv):
                  action_space = 7,
                  fixedPositionObj = True,
                  includeVelObs = True,
-                 object_position=0):
+                 object_position=0,
+                 test_phase = False,
+                 alg = 'ddpg' ,
+                 max_episode_steps = 1000):
 
         self.object_position = object_position
         self.action_dim = action_space
@@ -65,6 +74,9 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         self._p = p
         self.fixedPositionObj = fixedPositionObj
         self.includeVelObs = includeVelObs
+        self.test_phase = test_phase
+        self.alg = alg
+        self.max_episode_steps = max_episode_steps
 
 
         if self._renders:
@@ -108,6 +120,16 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
 
     def reset(self):
+
+
+        if (self.test_phase):
+            global test_steps,test_done
+            if (test_steps != 0 ):
+                self.save_data_test()
+                test_steps = 0
+
+
+
         p.resetSimulation()
         p.setPhysicsEngineParameter(numSolverIterations=150)
         p.setTimeStep(self._timeStep)
@@ -141,15 +163,15 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
             elif(self.object_position==1):
                 #we have completely fixed position
-                self.obj_pose = [np.random.uniform(0.4,0.6),np.random.uniform(0,0.2),0.64]
-                self.target_pose = [np.random.uniform(0.3,0.5),np.random.uniform(0.35,0.55),0.64]
+                self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
+                self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
                 self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
                 self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
 
             elif(self.object_position==2):
                 #we have completely fixed position
-                self.obj_pose = [np.random.uniform(0.3,0.7),np.random.uniform(-0.2,0.2),0.64]
-                self.target_pose = [np.random.uniform(0.3,0.6),np.random.uniform(0.35,0.55),0.64]
+                self.obj_pose = [np.random.uniform(0.4,0.6),np.random.uniform(0,0.2),0.64]
+                self.target_pose = [np.random.uniform(0.3,0.5),np.random.uniform(0.35,0.55),0.64]
                 self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
                 self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
 
@@ -201,6 +223,17 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
 
     def step(self, action):
+
+
+        #check if we are running a test
+        if(self.test_phase):
+            global test_steps, test_done
+            test_steps = test_steps + 1
+            if (test_steps == self.max_episode_steps):
+                test_done = False
+                self.reset()
+
+
         if self._useIK:
             realPos = [a*0.003 for a in action[:3]]
             realOrn = []
@@ -262,10 +295,12 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
     def compute_reward(self, achieved_goal, desired_goal, info):
 
+        global test_done
         #evaluating the distance
         d = goal_distance(np.array(achieved_goal), np.array(desired_goal))
         if d <= self._target_dist_min:
             #reward = 0, good boy
+            test_done = True
             return 0
         else:
             #negative reward, objective not achieved
@@ -291,8 +326,14 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         pose2 = [px2,py2,pz]
         return pose1, pose2
 
+    def save_data_test(done):
 
-
+        global test_steps, test_done
+        row = [test_steps, test_done]
+        with open('test_panda_push.csv'+ self.alg, 'a') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerow(row)
+            csvFile.close()
 
     def _debugGUI(self):
         #TO DO
