@@ -22,7 +22,7 @@ import numpy as np
 class CustomPolicy(FeedForwardPolicy):
     def __init__(self, *args, **kwargs):
         super(CustomPolicy, self).__init__(*args, **kwargs,
-                                           layers=[128,128,128],
+                                           layers=[256,256,256],
                                            layer_norm=False,
                                            act_fun=tf.nn.relu,
                                            feature_extraction="lnmlp")
@@ -59,18 +59,14 @@ def main():
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))
     # Wrap the model
 
-    model = HER(CustomPolicy, env, model_class, n_sampled_goal=8, goal_selection_strategy=goal_selection_strategy,
-                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_FIXED_PHASES_DYN_RAND", buffer_size=1000000,batch_size=256,
+    model = HER(CustomPolicy, env, model_class, n_sampled_goal=4, goal_selection_strategy=goal_selection_strategy,
+                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_FIXED_DYN_RAND", buffer_size=1000000,batch_size=256,
                 random_exploration=0.3, action_noise=action_noise)
 
     # Train the model starting from a previous policy
-    model.learn(10)
-    model = HER.load("../policies/pushing_fixed_HER.pkl", env=env)
-    for i in range(5):
-        model.learn(timesteps)
-        print("Saving Policy" + str(i))
-        model.save("../policies/pushing_fixed_HER_Dyn_Rand"+str(i))
-        model = HER.load("../policies/pushing_fixed_HER_Dyn_Rand"+str(i), env=env)
+    model.learn(timesteps)
+    print("Saving Policy")
+    model.save("../policies/pushing_fixed_HER_Dyn_Rand")
 
 if __name__ == "__main__":
     main()

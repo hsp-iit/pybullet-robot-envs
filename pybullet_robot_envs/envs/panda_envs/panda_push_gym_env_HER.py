@@ -326,11 +326,11 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         pose2 = [px2,py2,pz]
         return pose1, pose2
 
-    def save_data_test(done):
+    def save_data_test(self):
 
         global test_steps, test_done
         row = [test_steps, test_done]
-        with open('test_panda_push.csv'+ self.alg, 'a') as csvFile:
+        with open('test_panda_push_'+ self.alg+'.csv', 'a') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(row)
             csvFile.close()
