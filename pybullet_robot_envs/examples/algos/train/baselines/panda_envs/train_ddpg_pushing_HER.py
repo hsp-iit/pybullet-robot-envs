@@ -33,7 +33,7 @@ class CustomPolicy(FeedForwardPolicy):
 
 best_mean_reward, n_steps = -np.inf, 0
 log_dir="../pybullet_logs/panda_push_ddpg/stable_baselines/"
-log_dir_policy = '../policies/pushing_HER_PHASE_1'
+log_dir_policy = '../policies/pushing_DDPG_HER_PHASE_1'
 
 
 def callback(_locals, _globals):
@@ -69,7 +69,7 @@ def main():
     gamma = 0.9
     memory_limit = 1000000
     normalize_returns = True
-    timesteps = 2000000
+    timesteps = 3000000
     policy_name = "pushing_policy"
     discreteAction = 0
     rend = False
@@ -87,21 +87,21 @@ def main():
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))
     # Wrap the model
 
-    model = HER(CustomPolicy, env, model_class, n_sampled_goal=8, goal_selection_strategy=goal_selection_strategy,
-                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1", buffer_size=1000000,batch_size=256,
+    model = HER(CustomPolicy, env, model_class, n_sampled_goal=4, goal_selection_strategy=goal_selection_strategy,
+                verbose=1,tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/pushing_DDPG_HER_PHASE_1", buffer_size=1000000,batch_size=256,
                 random_exploration=0.3, action_noise=action_noise)
 
     load_policy = True
     if (load_policy):
-        model = HER.load("../policies/pushing_HER_PHASE_1.pkl", env=env, n_sampled_goal=8,
+        model = HER.load("../policies/pushing_DDPG_HER_PHASE_1.pkl", env=env, n_sampled_goal=4,
         goal_selection_strategy=goal_selection_strategy,
-        tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/DDPG+HER_PHASE_1",
+        tensorboard_log="../pybullet_logs/panda_push_ddpg/stable_baselines/pushing_DDPG_HER_PHASE_1",
         buffer_size=1000000,batch_size=256,random_exploration=0.3, action_noise=action_noise)
 
     print("Training Phase")
-    model.learn(timesteps,log_interval=100, callback= callback)
+    model.learn(timesteps,log_interval=100, callback = callback)
     print("Saving Policy PHASE_1")
-    model.save("../policies/pushing_HER_PHASE_1")
+    model.save("../policies/pushing_DDPG_HER_PHASE_1")
 
 if __name__ == "__main__":
     main()
