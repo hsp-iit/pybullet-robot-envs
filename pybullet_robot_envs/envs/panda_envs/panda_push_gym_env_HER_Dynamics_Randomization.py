@@ -15,6 +15,7 @@ import random
 import pybullet_data
 import robot_data
 from pkg_resources import parse_version
+import csv
 
 
 largeValObservation = 100
@@ -22,13 +23,18 @@ largeValObservation = 100
 RENDER_HEIGHT = 720
 RENDER_WIDTH = 960
 
+#used in save_data_test
+test_steps = 0
+test_done = False
+
+
 def goal_distance(goal_a, goal_b):
     assert goal_a.shape == goal_b.shape
     return np.linalg.norm(goal_a - goal_b, axis = -1)
 
 
 #inherit from different class
-class pandaPushGymEnvHERRand(gym.GoalEnv):
+class pandaPushGymEnvHER(gym.GoalEnv):
 
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
@@ -40,16 +46,19 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
                  renders = False,
                  maxSteps = 1000,
                  dist_delta = 0.03,
-                 numControlledJoints = 7,
+                 action_space = 7,
                  fixedPositionObj = True,
-                 includeVelObs = True):
+                 includeVelObs = True,
+                 object_position=0,
+                 test_phase = False,
+                 alg = 'ddpg' ,
+                 max_episode_steps = 1000):
 
-        self.action_dim = numControlledJoints
+        self.object_position = object_position
+        self.action_dim = action_space
         self._isDiscrete = isDiscrete
-        #Randomizing of time step done in reset function
         self._param_lambda = 1/np.random.uniform(125,1000)
         self._timeStep = (1.0/240.0) + np.random.exponential(self._param_lambda)
-
         self._useIK = useIK
         self._urdfRoot = urdfRoot
         self._actionRepeat = actionRepeat
@@ -66,6 +75,9 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
         self._p = p
         self.fixedPositionObj = fixedPositionObj
         self.includeVelObs = includeVelObs
+        self.test_phase = test_phase
+        self.alg = alg
+        self.max_episode_steps = max_episode_steps
 
 
         if self._renders:
@@ -110,18 +122,24 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
 
     def reset(self):
 
-        #The Dynamics Randomization must be done here
-        #Selection of lambda
-        #It will be used at aech timestep to generate a delta T (simulation of delay)
-        p.resetSimulation()
-        self._timeStep = (1.0/240.0) + np.random.exponential(self._param_lambda)
-        p.setPhysicsEngineParameter(fixedTimeStep=self._timeStep , numSolverIterations=150)
 
+        if (self.test_phase):
+            global test_steps,test_done
+            if (test_steps != 0 ):
+                self.save_data_test()
+                test_steps = 0
+
+
+
+        p.resetSimulation()
+        p.setPhysicsEngineParameter(numSolverIterations=150)
+        p.setTimeStep(self._timeStep)
         self._envStepCounter = 0
+
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
         self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625],
-            useInverseKinematics= self._useIK, actionSpace = self.action_dim, includeVelObs = self.includeVelObs)
+            useInverseKinematics= self._useIK, action_space = self.action_dim, includeVelObs = self.includeVelObs)
 
         # Load table and object for simulation
         tableId = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/table.urdf"), useFixedBase=True)
@@ -137,16 +155,36 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
         #we take the target point
 
         if (self.fixedPositionObj):
-            #we use a fixed starting position for the cube
-            self.obj_pose = [0.6,0.1,0.64]
-            self.target_pose = [0.4,0.45,0.64]
-            self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
-            self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
+            if(self.object_position==0):
+                #we have completely fixed position
+                self.obj_pose = [0.6,0.1,0.64]
+                self.target_pose = [0.4,0.45,0.64]
+                self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
+                self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
+
+            elif(self.object_position==1):
+                #we have completely fixed position
+                self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
+                self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
+                self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
+                self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
+
+            elif(self.object_position==2):
+                #we have completely fixed position
+                self.obj_pose = [np.random.uniform(0.4,0.6),np.random.uniform(0,0.2),0.64]
+                self.target_pose = [np.random.uniform(0.3,0.5),np.random.uniform(0.35,0.55),0.64]
+                self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
+                self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
+
+            elif(self.object_position==3):
+                print("")
         else:
             self.obj_pose, self.target_pose = self._sample_pose()
             self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition= self.obj_pose)
             #useful to see where is the taget point
             self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
+
+
 
         # Randomizing the physics of the object...
         currentMass = np.random.uniform(0.1,0.4)
@@ -158,8 +196,6 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
         # Randomizing the physics of the robot... (only joints damping and controller gains)
         for i in range(7):
             p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping=np.random.uniform(0.25,20))
-
-
 
         self._debugGUI()
         p.setGravity(0,0,-9.8)
@@ -201,9 +237,22 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
     def step(self, action):
 
 
+        #check if we are running a test
+        if(self.test_phase):
+            global test_steps, test_done
+            test_steps = test_steps + 1
+            if (test_steps == self.max_episode_steps):
+                test_done = False
+                self.reset()
+
+
         if self._useIK:
-            #TO DO
-            return 0
+            realPos = [a*0.003 for a in action[:3]]
+            realOrn = []
+            if self.action_space.shape[-1] is 6:
+                realOrn = [a*0.01 for a in action[3:]]
+
+            return self.step2(realPos+realOrn)
 
         else:
             action = [float(i*0.05) for i in action]
@@ -225,7 +274,6 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
         done = reward == 0
         info = {'is_success': done}
         done = done or self._envStepCounter >= self._maxSteps
-
         return self._observation, reward, done, info
 
 
@@ -259,10 +307,12 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
 
     def compute_reward(self, achieved_goal, desired_goal, info):
 
+        global test_done
         #evaluating the distance
         d = goal_distance(np.array(achieved_goal), np.array(desired_goal))
         if d <= self._target_dist_min:
             #reward = 0, good boy
+            test_done = True
             return 0
         else:
             #negative reward, objective not achieved
@@ -288,8 +338,14 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
         pose2 = [px2,py2,pz]
         return pose1, pose2
 
+    def save_data_test(self):
 
-
+        global test_steps, test_done
+        row = [test_steps, test_done]
+        with open('test_panda_push_'+ self.alg+'.csv', 'a') as csvFile:
+            writer = csv.writer(csvFile)
+            writer.writerow(row)
+            csvFile.close()
 
     def _debugGUI(self):
         #TO DO
