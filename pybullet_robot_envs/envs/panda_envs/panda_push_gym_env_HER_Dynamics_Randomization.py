@@ -34,7 +34,7 @@ def goal_distance(goal_a, goal_b):
 
 
 #inherit from different class
-class pandaPushGymEnvHER(gym.GoalEnv):
+class pandaPushGymEnvHERRand(gym.GoalEnv):
 
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
