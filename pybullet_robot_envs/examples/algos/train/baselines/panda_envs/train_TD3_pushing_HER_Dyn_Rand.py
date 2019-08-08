@@ -57,9 +57,11 @@ def callback(_locals, _globals):
     return True
 
 
-def main():
+def main(load_policy=False):
 
-    global log_dir
+    global log_dir, log_dir_policy
+    if (load_policy):
+          log_dir_policy = '../policies/PUSHING_TD3+HER_FIXED_POSITION_DYN_RAND_FROM_FIXED_PHYSICS'
     model_class = TD3  # works also with SAC and DDPG
     action_space = 7
     fixed = True
@@ -67,13 +69,15 @@ def main():
     gamma = 0.9
     memory_limit = 1000000
     normalize_returns = True
-    timesteps = 100
+    timesteps = 1500000
     discreteAction = 0
     rend = False
     env = pandaPushGymEnvHERRand(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
             isDiscrete=discreteAction, action_space = action_space,
             fixedPositionObj = fixed, includeVelObs = True)
 
+
+    env = Monitor(env, log_dir, allow_early_resets=True)
     # Available strategies (cf paper): future, final, episode, random
     goal_selection_strategy = 'future' # equivalent to GoalSelectionStrategy.FUTURE
     n_actions = env.action_space.shape[-1]
@@ -84,10 +88,16 @@ def main():
                 verbose=1,tensorboard_log="../pybullet_logs/panda_push_TD3/stable_baselines/TD3+HER_FIXED_DYN_RAND", buffer_size=1000000,batch_size=256,
                 random_exploration=0.3, action_noise=action_noise)
 
+    if (load_policy):
+        model = HER.load("../policies/USEFUL_POLICIES/PUSHING_TD3+HER_FIXED_POSITIONbest_model.pkl", env=env, n_sampled_goal=4,
+        goal_selection_strategy=goal_selection_strategy,
+        tensorboard_log="../pybullet_logs/panda_push_TD3/stable_baselines/TD3+HER_FIXED_DYN_RAND_FROM_FIXED_PHYSICS",
+        buffer_size=1000000,batch_size=256,random_exploration=0.3, action_noise=action_noise)
+
     # Train the model starting from a previous policy
     model.learn(timesteps, callback = callback )
-    print("Saving Policy")
     model.save("../policies/PUSHING_FIXED_TD3_DYN_RAND")
+    print("Finished train1")
 
 if __name__ == "__main__":
     main()

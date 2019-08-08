@@ -57,7 +57,7 @@ def callback(_locals, _globals):
     n_steps += 1
     return True
 
-def main():
+def main(load_policy=False):
     global log_dir
     model_class = TD3  # works also with SAC and DDPG
     action_space = 7
@@ -68,11 +68,9 @@ def main():
     gamma = 0.9
     memory_limit = 1000000
     normalize_returns = True
-    timesteps = 2000000
+    timesteps = 8000000
     discreteAction = 0
     rend = False
-
-
 
     env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
             isDiscrete=discreteAction, action_space = action_space,
@@ -89,14 +87,12 @@ def main():
                 verbose=1,tensorboard_log="../pybullet_logs/panda_push_TD3/stable_baselines/PUSHING_TD3+HER_FIXED_POSITION_PHASE_1", buffer_size=1000000,batch_size=256,
                 random_exploration=0.3, action_noise=action_noise)
 
-    load_policy = True
     if (load_policy):
-        model = HER.load("../policies/PUSHING_TD3+HER_FIXED_POSITIONbest_model.pkl", env=env, n_sampled_goal=4,
+        model = HER.load("../policies/USEFUL_POLICIES/PUSHING_TD3+HER_FIXED_POSITIONbest_model.pkl", env=env, n_sampled_goal=4,
         goal_selection_strategy=goal_selection_strategy,
         tensorboard_log="../pybullet_logs/panda_push_TD3/stable_baselines/PUSHING_TD3+HER_FIXED_POSITION_PHASE_1",
         buffer_size=1000000,batch_size=256,random_exploration=0.3, action_noise=action_noise)
 
-    print("Training Phase")
     model.learn(timesteps,log_interval=100, callback = callback)
     print("Saving Policy PHASE_1")
     model.save("../policies/PUSHING_TD3+HER_FIXED_POSITION_PHASE_1")
