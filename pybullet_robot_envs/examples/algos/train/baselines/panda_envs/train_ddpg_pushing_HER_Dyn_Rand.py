@@ -31,7 +31,7 @@ def main():
     model_class = DDPG  # works also with SAC and DDPG
 
     # -j
-    numControlledJoints = 7
+    action_space = 7
     # -p
     fixed = True
     # -o
@@ -50,7 +50,7 @@ def main():
     discreteAction = 0
     rend = False
     env = pandaPushGymEnvHERRand(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
-            isDiscrete=discreteAction, numControlledJoints = numControlledJoints,
+            isDiscrete=discreteAction, action_space = action_space,
             fixedPositionObj = fixed, includeVelObs = True)
 
     # Available strategies (cf paper): future, final, episode, random
