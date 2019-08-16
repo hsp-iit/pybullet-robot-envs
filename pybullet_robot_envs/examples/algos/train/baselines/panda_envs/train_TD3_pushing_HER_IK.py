@@ -40,7 +40,7 @@ def callback(_locals, _globals):
 
     global n_steps, best_mean_reward, log_dir
     # Print stats every 1000 calls
-    if (n_steps) % 1000 == 0:
+    if (n_steps) % 10000 == 0:
         # Evaluate policy training performance
         x, y = ts2xy(load_results(log_dir), 'timesteps')
         if len(x) > 0:
@@ -90,7 +90,7 @@ def main(load_policy=False):
     if (load_policy):
         model = HER.load("../policies/USEFUL_POLICIES/PUSHING_TD3+HER_FIXED_POSITIONbest_model.pkl", env=env, n_sampled_goal=4,
         goal_selection_strategy=goal_selection_strategy,
-        tensorboard_log="../pybullet_logs/panda_push_TD3/stable_baselines/PUSHING_TD3+HER_FIXED_POSITION_PHASE_1",
+        tensorboard_log="../pybullet_logs/panda_push_TD3/stable_baselines/PUSHING_TD3+HER_FIXED_POSITION_PHASE_1_IK",
         buffer_size=1000000,batch_size=256,random_exploration=0.3, action_noise=action_noise)
 
     model.learn(timesteps,log_interval=100, callback = callback)
@@ -98,4 +98,4 @@ def main(load_policy=False):
     model.save("../policies/PUSHING_TD3+HER_FIXED_POSITION_PHASE_1_IK")
 
 if __name__ == "__main__":
-    main()
+    main(False)
