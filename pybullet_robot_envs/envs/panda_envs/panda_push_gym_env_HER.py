@@ -162,14 +162,13 @@ class pandaPushGymEnvHER(gym.GoalEnv):
                 self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
 
             elif(self.object_position==1):
-                #we have completely fixed position
                 self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
-                self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
+                self.target_pose = [0.4,0.45,0.64]
+                #self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
                 self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
                 self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
 
             elif(self.object_position==2):
-                #we have completely fixed position
                 self.obj_pose = [np.random.uniform(0.4,0.6),np.random.uniform(0,0.2),0.64]
                 self.target_pose = [np.random.uniform(0.3,0.5),np.random.uniform(0.35,0.55),0.64]
                 self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)

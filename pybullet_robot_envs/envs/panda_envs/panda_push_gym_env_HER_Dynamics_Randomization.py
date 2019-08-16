@@ -52,7 +52,8 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
                  object_position=0,
                  test_phase = False,
                  alg = 'ddpg' ,
-                 max_episode_steps = 1000):
+                 max_episode_steps = 1000,
+                 type_physics = 0):
 
         self.object_position = object_position
         self.action_dim = action_space
@@ -78,6 +79,7 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
         self.test_phase = test_phase
         self.alg = alg
         self.max_episode_steps = max_episode_steps
+        self.type_physics = type_physics
 
 
         if self._renders:
@@ -165,7 +167,8 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
             elif(self.object_position==1):
                 #we have completely fixed position
                 self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
-                self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
+                self.target_pose = [0.4,0.45,0.64]
+                # self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
                 self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
                 self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
 
@@ -186,16 +189,29 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
 
 
 
-        # Randomizing the physics of the object...
-        currentMass = np.random.uniform(0.1,0.4)
-        currentFriction = np.random.uniform(0.1,0.7)
-        currentDamping = np.random.uniform(0.01,0.2)
-        p.changeDynamics(self._objID, linkIndex=-1, mass=currentMass, lateralFriction=currentFriction,
-                        linearDamping=currentDamping)
+        if self.type_physics==1:
+            # Randomizing the physics of the object...
+            self.currentMass = np.random.uniform(0.1,0.8)
+            self.currentFriction = np.random.uniform(0.1,0.7)
+            self.currentDamping = np.random.uniform(0.01,0.2)
+            p.changeDynamics(self._objID, linkIndex=-1, mass=self.currentMass, lateralFriction=self.currentFriction,
+                            linearDamping=self.currentDamping)
 
-        # Randomizing the physics of the robot... (only joints damping and controller gains)
-        for i in range(7):
-            p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping=np.random.uniform(0.25,20))
+            # Randomizing the physics of the robot... (only joints damping and controller gains)
+            for i in range(7):
+                p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping=np.random.uniform(0.25,20))
+
+        elif self.type_physics==2:
+            # Randomizing the physics of the object...
+            self.currentMass = 0.8
+            self.currentFriction = 0.2
+            self.currentDamping = 0.2
+            p.changeDynamics(self._objID, linkIndex=-1, mass=self.currentMass, lateralFriction=self.currentFriction,
+                            linearDamping=self.currentDamping)
+
+            # Randomizing the physics of the robot... (only joints damping and controller gains)
+            for i in range(7):
+                p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping= 0.25)
 
         self._debugGUI()
         p.setGravity(0,0,-9.8)
@@ -341,7 +357,7 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
     def save_data_test(self):
 
         global test_steps, test_done
-        row = [test_steps, test_done]
+        row = [test_steps, test_done, self.currentMass, self.currentFriction , self.currentDamping, self._timeStep]
         with open('test_panda_push_'+ self.alg+'.csv', 'a') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(row)
