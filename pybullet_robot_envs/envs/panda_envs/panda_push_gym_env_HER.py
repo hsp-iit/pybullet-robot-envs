@@ -52,7 +52,8 @@ class pandaPushGymEnvHER(gym.GoalEnv):
                  object_position=0,
                  test_phase = False,
                  alg = 'ddpg' ,
-                 max_episode_steps = 1000):
+                 max_episode_steps = 1000,
+                 keep_fixed_position = False):
 
         self.object_position = object_position
         self.action_dim = action_space
@@ -77,6 +78,10 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         self.test_phase = test_phase
         self.alg = alg
         self.max_episode_steps = max_episode_steps
+        self.keep_fixed_position = keep_fixed_position
+        self.ep_counter = -1
+        self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
+        self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
 
 
         if self._renders:
@@ -129,12 +134,12 @@ class pandaPushGymEnvHER(gym.GoalEnv):
                 test_steps = 0
 
 
-
         p.resetSimulation()
         p.setPhysicsEngineParameter(numSolverIterations=150)
         p.setTimeStep(self._timeStep)
         self._envStepCounter = 0
-
+        self.ep_counter = self.ep_counter + 1
+        print(self.ep_counter)
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
         self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625],
@@ -162,8 +167,14 @@ class pandaPushGymEnvHER(gym.GoalEnv):
                 self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
 
             elif(self.object_position==1):
-                self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
-                self.target_pose = [0.4,0.45,0.64]
+                if (self.keep_fixed_position):
+                    if (self.ep_counter == 100):
+                        self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
+                        self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
+                        self.ep_counter = -1
+                else:
+                    self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
+                    self.target_pose = self.target_pose = [0.4,0.45,0.64]
                 #self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
                 self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = self.obj_pose)
                 self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
