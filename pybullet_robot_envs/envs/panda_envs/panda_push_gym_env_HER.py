@@ -139,7 +139,6 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         p.setTimeStep(self._timeStep)
         self._envStepCounter = 0
         self.ep_counter = self.ep_counter + 1
-        print(self.ep_counter)
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
         self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625],
