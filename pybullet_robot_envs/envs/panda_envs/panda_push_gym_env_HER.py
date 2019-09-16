@@ -53,7 +53,8 @@ class pandaPushGymEnvHER(gym.GoalEnv):
                  test_phase = False,
                  alg = 'ddpg' ,
                  max_episode_steps = 1000,
-                 keep_fixed_position = False):
+                 keep_fixed_position = False,
+                 load_physics = False):
 
         self.object_position = object_position
         self.action_dim = action_space
@@ -80,8 +81,7 @@ class pandaPushGymEnvHER(gym.GoalEnv):
         self.max_episode_steps = max_episode_steps
         self.keep_fixed_position = keep_fixed_position
         self.ep_counter = -1
-        self.obj_pose = [np.random.uniform(0.5,0.6),np.random.uniform(0,0.1),0.64]
-        self.target_pose = [np.random.uniform(0.4,0.5),np.random.uniform(0.45,0.55),0.64]
+        self.load_physics = load_physics
 
 
         if self._renders:
@@ -194,7 +194,8 @@ class pandaPushGymEnvHER(gym.GoalEnv):
             self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
 
 
-
+        if(self.load_physics):
+            self.load_physics_params(0.71,0.41,0.35,20)
         self._debugGUI()
         p.setGravity(0,0,-9.8)
         # Let the world run for a bit
@@ -347,4 +348,15 @@ class pandaPushGymEnvHER(gym.GoalEnv):
 
     def _debugGUI(self):
         #TO DO
+        return 0
+
+
+    def load_physics_params(self, current_mass, current_friction, current_damping, linear_damping_robot):
+        self.currentMass = current_mass
+        self.currentFriction = current_friction
+        self.currentDamping = current_damping
+        p.changeDynamics(self._objID, linkIndex=-1, mass=self.currentMass, lateralFriction=self.currentFriction,
+                        linearDamping=self.currentDamping)
+        for i in range(7):
+            p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping=linear_damping_robot)
         return 0

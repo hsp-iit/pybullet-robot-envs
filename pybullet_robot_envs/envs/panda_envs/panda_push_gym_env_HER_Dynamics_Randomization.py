@@ -20,12 +20,12 @@ import csv
 
 largeValObservation = 100
 
-RENDER_HEIGHT = 720
-RENDER_WIDTH = 960
 
 #used in save_data_test
 test_steps = 0
 test_done = False
+success_counter = 0
+sim_count = 0
 
 
 def goal_distance(goal_a, goal_b):
@@ -53,13 +53,15 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
                  test_phase = False,
                  alg = 'ddpg' ,
                  max_episode_steps = 1000,
-                 type_physics = 0):
+                 type_physics = 1):
 
         self.object_position = object_position
         self.action_dim = action_space
         self._isDiscrete = isDiscrete
         self._param_lambda = 1/np.random.uniform(125,1000)
-        self._timeStep = (1.0/240.0) + np.random.exponential(self._param_lambda)
+
+        self._timeStep = (1.0/240.0)
+        #self._timeStep = (1.0/240.0) + np.random.exponential(self._param_lambda)
         self._useIK = useIK
         self._urdfRoot = urdfRoot
         self._actionRepeat = actionRepeat
@@ -80,6 +82,9 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
         self.alg = alg
         self.max_episode_steps = max_episode_steps
         self.type_physics = type_physics
+        self.currentMass = 0.2
+        self.currentFriction = 1.0
+        self.currentDamping  = 1.0
 
 
         if self._renders:
@@ -130,6 +135,8 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
             if (test_steps != 0 ):
                 self.save_data_test()
                 test_steps = 0
+            if sim_count >= 20 :
+                return 0
 
 
 
@@ -188,30 +195,41 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
             self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), basePosition= self.target_pose)
 
 
+        # Select the current physics of the environment:
+        # 1 : Standard Randomization
+        # 2 : Heavy Randomization (your policy will be broken)
 
         if self.type_physics==1:
-            # Randomizing the physics of the object...
+            # Standard Randomization
             self.currentMass = np.random.uniform(0.1,0.8)
             self.currentFriction = np.random.uniform(0.1,0.7)
             self.currentDamping = np.random.uniform(0.01,0.2)
             p.changeDynamics(self._objID, linkIndex=-1, mass=self.currentMass, lateralFriction=self.currentFriction,
                             linearDamping=self.currentDamping)
-
-            # Randomizing the physics of the robot... (only joints damping and controller gains)
             for i in range(7):
                 p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping=np.random.uniform(0.25,20))
 
         elif self.type_physics==2:
-            # Randomizing the physics of the object...
-            self.currentMass = 0.8
-            self.currentFriction = 0.2
-            self.currentDamping = 0.2
+            # Heavy Randomization
+            self.currentMass = np.random.uniform(0.1,2)
+            self.currentFriction = np.random.uniform(0.01,1.5)
+            self.currentDamping = np.random.uniform(0.01,3)
             p.changeDynamics(self._objID, linkIndex=-1, mass=self.currentMass, lateralFriction=self.currentFriction,
                             linearDamping=self.currentDamping)
-
-            # Randomizing the physics of the robot... (only joints damping and controller gains)
             for i in range(7):
-                p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping= 0.25)
+                p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping=np.random.uniform(0.1,50))
+
+
+        elif self.type_physics==3:
+            # Heavy Randomization
+            self.currentMass = 0.8
+            self.currentFriction = 0.6
+            self.currentDamping = 0.1
+            p.changeDynamics(self._objID, linkIndex=-1, mass=self.currentMass, lateralFriction=self.currentFriction,
+                            linearDamping=self.currentDamping)
+            for i in range(7):
+                p.changeDynamics(self._panda.pandaId, linkIndex=i, linearDamping = 20)
+
 
         self._debugGUI()
         p.setGravity(0,0,-9.8)
@@ -323,12 +341,13 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
 
     def compute_reward(self, achieved_goal, desired_goal, info):
 
-        global test_done
+        global test_done, success_counter
         #evaluating the distance
         d = goal_distance(np.array(achieved_goal), np.array(desired_goal))
         if d <= self._target_dist_min:
             #reward = 0, good boy
             test_done = True
+            success_counter = success_counter + 1
             return 0
         else:
             #negative reward, objective not achieved
@@ -356,8 +375,10 @@ class pandaPushGymEnvHERRand(gym.GoalEnv):
 
     def save_data_test(self):
 
-        global test_steps, test_done
-        row = [test_steps, test_done, self.currentMass, self.currentFriction , self.currentDamping, self._timeStep]
+        global test_steps, test_done,sim_count
+        sim_count = sim_count + 1
+        print(sim_count)
+        row = [test_steps, test_done, self.currentMass, self.currentFriction , self.currentDamping, self._timeStep, (success_counter/20)*100]
         with open('test_panda_push_'+ self.alg+'.csv', 'a') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(row)

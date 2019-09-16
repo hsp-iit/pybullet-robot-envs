@@ -41,7 +41,7 @@ class pandaReachGymEnv(gym.Env):
         self.action_dim = numControlledJoints
         self._isDiscrete = isDiscrete
         self._timeStep = 1./240.
-        self._useIK = useIK 
+        self._useIK = useIK
         self._urdfRoot = urdfRoot
         self._actionRepeat = actionRepeat
         self._observation = []
@@ -58,7 +58,7 @@ class pandaReachGymEnv(gym.Env):
         self._p = p
         self.fixedPositionObj = fixedPositionObj
         self.includeVelObs = includeVelObs
-        
+
         if self._renders:
           cid = p.connect(p.SHARED_MEMORY)
           if (cid<0):
@@ -66,7 +66,7 @@ class pandaReachGymEnv(gym.Env):
           p.resetDebugVisualizerCamera(2.5,90,-60,[0.52,-0.2,-0.33])
         else:
             p.connect(p.DIRECT)
-        
+
         #self.seed()
         # initialize simulation environment
         self.reset()
@@ -77,13 +77,13 @@ class pandaReachGymEnv(gym.Env):
 
         if (self._isDiscrete):
             self.action_space = spaces.Discrete(self._panda.getActionDimension())
-        
+
         else:
             #self.action_dim = 2 #self._panda.getActionDimension()
             self._action_bound = 1
             action_high = np.array([self._action_bound] * self.action_dim)
             self.action_space = spaces.Box(-action_high, action_high, dtype='float32')
-            
+
         self.viewer = None
 
 
@@ -98,11 +98,11 @@ class pandaReachGymEnv(gym.Env):
         p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
         # Load robot
         self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625], useInverseKinematics= self._useIK, actionSpace = self.action_dim, includeVelObs = self.includeVelObs)
-        
+
 
         # Load table and object for simulation
         tableId = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/table.urdf"), useFixedBase=True)
-        
+
 
         table_info = p.getVisualShapeData(tableId,-1)[0]
         self._h_table =table_info[5][2] + table_info[3][2]
@@ -116,7 +116,6 @@ class pandaReachGymEnv(gym.Env):
         else:
             self.target_pose = self._sample_pose()[0]
             self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition= self.target_pose, useFixedBase=True)
-        #self._targetID = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/domino/domino.urdf"), self.target_pose)
 
         self._debugGUI()
         p.setGravity(0,0,-9.8)
@@ -132,22 +131,7 @@ class pandaReachGymEnv(gym.Env):
 
         #get robot observations
         self._observation = self._panda.getObservation()
-        #read EndEff position/velocity
-        #endEffState = p.getLinkState(self._panda.pandaId, self._panda.endEffLink, computeLinkVelocity = 1)
-        #endEffPos = endEffState[0]
-        #endEffOrn = endEffState[1]
-        #endEffLinkPos = endEffState[4]
-        #endEffLinkOrn = endEffState[5]
-        #endEffLinkVelL = endEffState[6]
-        #endEffLinkVelA = endEffState[7]
-
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-
-        #invEndEffPos, invEndEffOrn = p.invertTransform(endEffPos, endEffOrn)
-        #endEffEul = p.getEulerFromQuaternion(endEffOrn)
-
-        #objPosInEndEff, objOrnInEndEff = p.multiplyTransforms(invEndEffPos, invEndEffOrn,
-        #objPos, objOrn)
 
         self._observation.extend(list(objPos))
         self._observation.extend(list(objOrn))
@@ -155,30 +139,14 @@ class pandaReachGymEnv(gym.Env):
 
 
     def step(self, action):
-
-        """
-        if (self._isDiscrete):
-            dv = 0.003
-            dv1 = 0.05
-            dx = [0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0][action]
-            dy = [0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0][action]
-            dz = [0, 0, 0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0][action]
-            droll = [0, 0, 0, 0, 0, 0, 0, -dv1, dv1, 0, 0, 0, 0][action]
-            dpitch = [0, 0, 0, 0, 0, 0, 0, 0, 0, -dv1, dv1, 0, 0][action]
-            dyaw = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -dv1, dv1][action]
-
-            realAction = [dx, dy, dz, droll, dpitch, dyaw]
-            return self.step2(realAction)
-
-        """
         if self._useIK:
-            #TO DO 
+            #TO DO
             return 0
 
         else:
             action = [float(i*0.05) for i in action]
             return self.step2(action)
-            
+
     def step2(self,action):
 
         for i in range(self._actionRepeat):
@@ -249,7 +217,7 @@ class pandaReachGymEnv(gym.Env):
 
 
     def _compute_reward(self):
-        
+
         reward = np.float(32.0)
         objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
         endEffAct = self._panda.getObservation()[0:3]
@@ -273,11 +241,5 @@ class pandaReachGymEnv(gym.Env):
 
 
     def _debugGUI(self):
-        #TO DO 
-        return 0 
-
-
-
-
-
-
+        #TO DO
+        return 0
