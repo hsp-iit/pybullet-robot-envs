@@ -37,7 +37,7 @@ A Reinforcement Learning based approach generally includes two basics modules: t
 
 Simulators are a useful resource to implement and test Reinforcement Learning algorithm on a robotic system before porting them to the real-world platform, in order to avoid any risk for the robot and the environment. [PyBullet](https://github.com/bulletphysics/bullet3) is a Python module for physics simulation for robotics, visual effect and reinforcement learning based on the Bullet Physics SDK. See [PyBullet Quickstart Guide](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#heading=h.2ye70wns7io3) for specific information. Its main features are:
 - It is possible to load **urdf/sdf** models;
-- Interactive OpenGl GUI;
+- Interactive OpenGL GUI;
 - It is possible to control robots (**forward/inverse dynamics and kinematics**);
 - Options in camera rendering;
 - RL framework:
