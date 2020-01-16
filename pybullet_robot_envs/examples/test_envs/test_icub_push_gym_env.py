@@ -8,7 +8,7 @@ print(currentdir)
 parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
-from pybullet_robot_envs.envs.icub_envs.icub_reach_gym_env import iCubReachGymEnv
+from pybullet_robot_envs.envs.icub_envs.icub_push_gym_env import iCubPushGymEnv
 from pybullet_robot_envs import robot_data
 
 import argparse
@@ -22,11 +22,11 @@ def main(args):
 
     use_IK = 1 if args.useIK else 0
 
-    env = iCubReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, control_arm=args.arm, useIK=use_IK,
-                         isDiscrete=0, useOrientation=1, rnd_obj_pose=1)
+    env = iCubPushGymEnv(renders=True, control_arm=args.arm, use_IK=use_IK,
+                         discrete_action=0, control_orientation=1, obj_pose_rnd_std=0.05)
     motorsIds = []
 
-    if (env._isDiscrete):
+    if (env._discrete_action):
         dv = 12
         motorsIds.append(env._p.addUserDebugParameter("lhPosX", -dv, dv, 0))
     elif use_IK:
@@ -40,16 +40,14 @@ def main(args):
 
     else:
         dv = 1
-        joints_idx = env._icub.motorIndices
+        joints_idx = env._robot._motor_idxs
 
         for j in joints_idx:
-            info = env._p.getJointInfo(env._icub.icubId,j)
+            info = env._p.getJointInfo(env._robot.robot_id, j)
             jointName = info[1]
             motorsIds.append(env._p.addUserDebugParameter(jointName.decode("utf-8"), -dv, dv, 0.0))
 
     done = False
-    #env._p.addUserDebugText('current hand position',[0,-0.5,1.4],[1.1,0,0])
-    #idx = env._p.addUserDebugText(' ',[0,-0.5,1.2],[1,0,0])
 
     for t in range(10000000):
         #env.render()
@@ -57,12 +55,11 @@ def main(args):
         for motorId in motorsIds:
             action.append(env._p.readUserDebugParameter(motorId))
 
-        action = int(action[0]) if env._isDiscrete else action
+        action = int(action[0]) if env._discrete_action else action
 
         state, reward, done, _ = env.step(action)
         if t%100==0:
             print("reward ", reward)
-            #env._p.addUserDebugText(' '.join(str(round(e,2)) for e in state[:6]),[0,-0.5,1.2],[1,0,0],replaceItemUniqueId=idx)
 
 if __name__ == '__main__':
     main(parser.parse_args())
