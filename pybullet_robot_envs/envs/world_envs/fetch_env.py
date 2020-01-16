@@ -67,10 +67,12 @@ class WorldFetchEnv:
         return p.getCollisionShapeData(self.obj_id, -1)[0]
 
     def get_observation_dimension(self):
-        return len(self.getObservation())
+        obs, _ = self.get_observation()
+        return len(obs)
 
     def get_observation(self):
         observation = []
+        observation_lim = []
 
         # get object position
         obj_pos, obj_orn = p.getBasePositionAndOrientation(self.obj_id)
@@ -78,7 +80,10 @@ class WorldFetchEnv:
 
         observation.extend(list(obj_pos))
         observation.extend(list(obj_euler))
-        return observation
+
+        observation_lim.extend([[-1, 1], [-1, 1], [-1, 1]])
+        observation_lim.extend([[0, 2*m.pi], [0, 2*m.pi], [0, 2*m.pi]])
+        return observation, observation_lim
 
     def set_obj_pose(self, new_pos, new_quat):
         p.resetBasePositionAndOrientation(self.obj_id, new_pos, new_quat)

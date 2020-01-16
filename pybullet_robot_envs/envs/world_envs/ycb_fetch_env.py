@@ -5,13 +5,14 @@ os.sys.path.insert(0, currentdir)
 import pybullet as p
 import pybullet_data
 
-from world_envs import WorldFetchEnv
+from pybullet_robot_envs.envs.world_envs.fetch_env import WorldFetchEnv
 import ycb_objects_models_sim
 from ycb_objects_models_sim import objects
 
 
 def get_ycb_objects_list():
     obj_list = [
+        'YcbMustardBottle',
         'YcbBanana',
         'YcbChipsCan',
         'YcbCrackerBox',
@@ -20,7 +21,6 @@ def get_ycb_objects_list():
         'YcbHammer',
         'YcbMasterChefCan',
         'YcbMediumClamp',
-        'YcbMustardBottle',
         'YcbPear',
         'YcbPottedMeatCan',
         'YcbPowerDrill',
