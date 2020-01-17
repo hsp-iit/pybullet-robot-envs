@@ -15,9 +15,8 @@ import math as m
 import pybullet as p
 
 from pybullet_robot_envs.envs.icub_envs.icub_env import iCubEnv
-from pybullet_robot_envs.envs.world_envs.ycb_fetch_env import get_ycb_objects_list, YcbWorldFetchEnv
+from pybullet_robot_envs.envs.world_envs.fetch_env import get_objects_list, WorldFetchEnv
 
-import pybullet_robot_envs.envs.utils
 from pybullet_robot_envs.envs.utils import goal_distance
 
 
@@ -31,7 +30,7 @@ class iCubPushGymEnv(gym.Env):
                  discrete_action=0,
                  control_arm='l',
                  control_orientation=0,
-                 obj_name=get_ycb_objects_list()[0],
+                 obj_name=get_objects_list()[1],
                  obj_pose_rnd_std=0,
                  tg_pose_rnd_std=0,
                  renders=False,
@@ -72,7 +71,7 @@ class iCubPushGymEnv(gym.Env):
                               control_orientation=self._control_orientation)
 
         # Load world environment
-        self._world = YcbWorldFetchEnv(obj_name=obj_name, obj_pose_rnd_std=obj_pose_rnd_std,
+        self._world = WorldFetchEnv(obj_name=obj_name, obj_pose_rnd_std=obj_pose_rnd_std,
                                     workspace_lim=self._robot._workspace_lim)
 
         # Define spaces
@@ -135,6 +134,10 @@ class iCubPushGymEnv(gym.Env):
         world_obs, _ = self._world.get_observation()
 
         self._tg_pose = self._sample_pose()
+
+        self.debug_gui()
+        p.stepSimulation()
+
         self._init_dist_hand_obj = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
         self._max_dist_obj_tg = goal_distance(np.array(world_obs[:3]), np.array(self._tg_pose))
 
@@ -165,6 +168,9 @@ class iCubPushGymEnv(gym.Env):
         self._observation.extend(list(obj_euler_in_hand))
         observation_lim.extend([[-1, 1], [-1, 1], [-1, 1]])
         observation_lim.extend([[0, 2*m.pi], [0, 2*m.pi], [0, 2*m.pi]])
+
+        self._observation.extend(self._tg_pose)
+        observation_lim.extend([[-1, 1], [-1, 1], [-1, 1]])
 
         return np.array(self._observation), observation_lim
 
@@ -305,3 +311,10 @@ class iCubPushGymEnv(gym.Env):
         pose = (px, py, pz)
 
         return pose
+
+    def debug_gui(self):
+        p.addUserDebugLine(self._tg_pose, [self._tg_pose[0] + 0.1, self._tg_pose[1], self._tg_pose[2]], [1, 0, 0])
+        p.addUserDebugLine(self._tg_pose, [self._tg_pose[0], self._tg_pose[1] + 0.1, self._tg_pose[2]], [0, 1, 0])
+        p.addUserDebugLine(self._tg_pose, [self._tg_pose[0], self._tg_pose[1], self._tg_pose[2] + 0.1], [0, 0, 1])
+
+

@@ -11,203 +11,176 @@ from gym import spaces
 from gym.utils import seeding
 import numpy as np
 import time
+import math as m
 import pybullet as p
-from icub_env import iCubEnv
-import pybullet_data
-import robot_data
 
-largeValObservation = 100
+from pybullet_robot_envs.envs.icub_envs.icub_env import iCubEnv
+from pybullet_robot_envs.envs.world_envs.ycb_fetch_env import get_ycb_objects_list, YcbWorldFetchEnv
 
-RENDER_HEIGHT = 720
-RENDER_WIDTH = 960
+from pybullet_robot_envs.envs.utils import goal_distance
 
-def goal_distance(goal_a, goal_b):
-    if not goal_a.shape == goal_b.shape:
-        raise AssertionError("shape of goals mismatch")
-    return np.linalg.norm(goal_a - goal_b, axis=-1)
 
 class iCubReachGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'],
-    'video.frames_per_second': 50 }
+                'video.frames_per_second': 50}
 
     def __init__(self,
-                 urdfRoot=robot_data.getDataPath(),
-                 actionRepeat=4,
-                 useIK=1,
-                 isDiscrete=0,
+                 action_repeat=4,
+                 use_IK=1,
+                 discrete_action=0,
                  control_arm='l',
-                 useOrientation=0,
-                 rnd_obj_pose=1,
+                 control_orientation=0,
+                 obj_name=get_ycb_objects_list()[0],
+                 obj_pose_rnd_std=0,
                  renders=False,
-                 maxSteps = 1000):
+                 max_steps=2000):
 
-        self._control_arm=control_arm
-        self._isDiscrete = isDiscrete
-        self._timeStep = 1./240.
-        self._useIK = 1 if self._isDiscrete else useIK
-        self._useOrientation = useOrientation
-        self._urdfRoot = urdfRoot
-        self._actionRepeat = actionRepeat
+        self._time_step = 1. / 240.
+
+        self._control_arm = control_arm
+        self._discrete_action = discrete_action
+        self._use_IK = 1 if self._discrete_action else use_IK
+        self._control_orientation = control_orientation
+        self._action_repeat = action_repeat
         self._observation = []
-        self._envStepCounter = 0
+        self._env_step_counter = 0
         self._renders = renders
-        self._maxSteps = maxSteps
+        self._max_steps = max_steps
+        self._last_frame_time = 0
         self.terminated = 0
-        self._cam_dist = 1.3
-        self._cam_yaw = 180
-        self._cam_pitch = -40
-        self._h_table = []
-        self._target_dist_min = 0.05
-        self._rnd_obj_pose = rnd_obj_pose
+
+        self._target_dist_min = 0.03
 
         # Initialize PyBullet simulator
         self._p = p
         if self._renders:
-          self._cid = p.connect(p.SHARED_MEMORY)
-          if (self._cid<0):
-             self._cid = p.connect(p.GUI)
-          p.resetDebugVisualizerCamera(2.5,90,-60,[0.0,-0.0,-0.0])
+            self._cid = p.connect(p.SHARED_MEMORY)
+            if (self._cid<0):
+                self._cid = p.connect(p.GUI)
+            p.resetDebugVisualizerCamera(2.5, 90, -60, [0.0, -0.0, -0.0])
         else:
             self._cid = p.connect(p.DIRECT)
+
+        # Load robot
+        self._robot = iCubEnv(use_IK=self._use_IK, control_arm=self._control_arm,
+                              control_orientation=self._control_orientation)
+
+        # Load world environment
+        self._world = YcbWorldFetchEnv(obj_name=obj_name, obj_pose_rnd_std=obj_pose_rnd_std,
+                                       workspace_lim=self._robot._workspace_lim)
+
+        # Define spaces
+        self.observation_space, self.action_space = self.create_spaces()
 
         # initialize simulation environment
         self.seed()
         self.reset()
 
-        observationDim = len(self._observation)
-        observation_high = np.array([largeValObservation] * observationDim)
-        self.observation_space = spaces.Box(-observation_high, observation_high, dtype='float32')
+    def create_spaces(self):
+        # Configure observation limits
+        obs, obs_lim = self.get_extended_observation()
+        observation_dim = len(obs)
 
-        if (self._isDiscrete):
-            self.action_space = spaces.Discrete(13) if self._icub.useOrientation else spaces.Discrete(7)
+        observation_low = []
+        observation_high = []
+        for el in obs_lim:
+            observation_low.extend([el[0]])
+            observation_high.extend([el[1]])
+
+        # Configure the observation space
+        observation_space = spaces.Box(np.array(observation_low), np.array(observation_high), dtype='float32')
+
+        # Configure action space
+        if self._discrete_action:
+            self.action_space = spaces.Discrete(13) if self._control_orientation else spaces.Discrete(7)
 
         else:
-            action_dim = self._icub.getActionDimension()
-            self._action_bound = 1
-            action_high = np.array([self._action_bound] * action_dim)
-            self.action_space = spaces.Box(-action_high, action_high, dtype='float32')
+            action_dim = self._robot.get_action_dim()
+            action_bound = 0.05
+            action_high = np.array([action_bound] * action_dim)
+            action_space = spaces.Box(-action_high, action_high, dtype='float32')
 
-        self.viewer = None
+        return observation_space, action_space
 
     def reset(self):
-
         self.terminated = 0
 
         p.resetSimulation()
         p.setPhysicsEngineParameter(numSolverIterations=150)
-        p.setTimeStep(self._timeStep)
-        self._envStepCounter = 0
+        p.setTimeStep(self._time_step)
+        self._env_step_counter = 0
 
-        p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"),[0,0,0])
+        self._robot.reset()
+        self._world.reset()
 
-        # Load robot
-        self._icub = iCubEnv(urdfRootPath=self._urdfRoot, timeStep=self._timeStep, useInverseKinematics=self._useIK,
-                             arm=self._control_arm, useOrientation=self._useOrientation)
+        # limit iCub workspace to table plane
+        self._robot._workspace_lim[2][0] = self._world.get_table_height()
 
-        ## Load table and object for simulation
-        self._tableId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [0.85, 0.0, 0.0])
-        table_info = p.getVisualShapeData(self._tableId,-1)[0]
-        self._h_table =table_info[5][2] + table_info[3][2]
+        p.setGravity(0, 0, -9.8)
 
-        #limit iCub workspace to table plane
-        self._icub.workspace_lim[2][0] = self._h_table
-
-        # Randomize start position of object
-        obj_pose = self._sample_pose()
-        self._objID = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"),obj_pose)
-
-        #limit iCub workspace to table plane
-        self._icub.workspace_lim[2][0] = self._h_table
-
-        self._debugGUI()
-        p.setGravity(0,0,-9.8)
         # Let the world run for a bit
-        for _ in range(10):
+        for _ in range(500):
             p.stepSimulation()
 
-        self._observation = self.getExtendedObservation()
+        self._robot.debug_gui()
+        self._world.debug_gui()
+
+        self._observation, _ = self.get_extended_observation()
         return np.array(self._observation)
 
-    def getExtendedObservation(self):
-        # get robot observation
-        self._observation = self._icub.getObservation()
+    def get_extended_observation(self):
+        self._observation = []
+        observation_lim = []
 
-        # get object position and transform it wrt hand c.o.m. frame
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        objEuler = p.getEulerFromQuaternion(objOrn) #roll, pitch, yaw
-
-        self._observation.extend(list(objPos))
-        self._observation.extend(list(objEuler))
+        # get observation form robot and world
+        robot_observation, robot_obs_lim = self._robot.get_observation()
+        world_observation, world_obs_lim = self._world.get_observation()
 
         # relative object position wrt hand c.o.m. frame
-        invHandPos, invHandOrn = p.invertTransform(self._observation[:3], p.getQuaternionFromEuler(self._observation[3:6]))
+        inv_hand_pos, inv_hand_orn = p.invertTransform(robot_observation[:3],
+                                                       p.getQuaternionFromEuler(robot_observation[3:6]))
+        obj_pos_in_hand, obj_orn_in_hand = p.multiplyTransforms(inv_hand_pos, inv_hand_orn, world_observation[:3],
+                                                                p.getQuaternionFromEuler(world_observation[3:6]))
+        obj_euler_in_hand = p.getEulerFromQuaternion(obj_orn_in_hand)
 
-        objPosInHand, objOrnInHand = p.multiplyTransforms(invHandPos, invHandOrn,
-                                                                objPos, objOrn)
+        self._observation.extend(list(robot_observation))
+        self._observation.extend(list(world_observation))
+        observation_lim.extend(robot_obs_lim)
+        observation_lim.extend(world_obs_lim)
 
-        objEulerInHand = p.getEulerFromQuaternion(objOrnInHand)
-        self._observation.extend(list(objPosInHand))
-        self._observation.extend(list(objEulerInHand))
+        self._observation.extend(list(obj_pos_in_hand))
+        self._observation.extend(list(obj_euler_in_hand))
+        observation_lim.extend([[-1, 1], [-1, 1], [-1, 1]])
+        observation_lim.extend([[0, 2*m.pi], [0, 2*m.pi], [0, 2*m.pi]])
 
-        return np.array(self._observation)
+        return np.array(self._observation), observation_lim
 
     def step(self, action):
-        ws_lim = self._icub.workspace_lim
-        if (self._isDiscrete):
 
-            dv = 0.003
-            if not self._icub.useOrientation:
-                dx = [0, -dv, dv, 0, 0, 0, 0][action]
-                dy = [0, 0, 0, -dv, dv, 0, 0][action]
-                dz = [0, 0, 0, 0, 0, -dv, dv][action]
-                realAction = [dx, dy, dz]
-            else:
-                dv1 = 0.005
-                dx = [0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0][action]
-                dy = [0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0, 0, 0][action]
-                dz = [0, 0, 0, 0, 0, -dv, dv, 0, 0, 0, 0, 0, 0][action]
-                droll = [0, 0, 0, 0, 0, 0, 0, -dv1, dv1, 0, 0, 0, 0][action]
-                dpitch = [0, 0, 0, 0, 0, 0, 0, 0, 0, -dv1, dv1, 0, 0][action]
-                dyaw = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -dv1, dv1][action]
-                #dz = - abs(dz) #force arm to go down
-                realAction = [dx, dy, dz, droll, dpitch, dyaw]
+        if self._renders:
+            # Sleep, otherwise the computation takes less time than real time,
+            # which will make the visualization like a fast-forward video.
+            time_spent = time.time() - self._last_frame_time
+            self._last_frame_time = time.time()
+            time_to_sleep = self._action_repeat * self._time_step - time_spent
 
-            return self.step2(realAction)
+            if time_to_sleep > 0:
+                time.sleep(time_to_sleep)
 
-        elif self._useIK:
-
-            dv = 0.01
-            realPos = [a*0.003 for a in action[:3]]
-
-            realOrn = []
-            if self.action_space.shape[-1] is 6:
-                realOrn = [a*0.01 for a in action[3:]]
-
-            return self.step2(realPos+realOrn)
-
-        else:
-            return self.step2([a*0.05 for a in action])
-
-    def step2(self, action):
-        for _ in range(self._actionRepeat):
-            self._icub.applyAction(action)
+        # execute action
+        for _ in range(self._action_repeat):
+            self._robot.apply_action(action)
             p.stepSimulation()
 
             if self._termination():
                 break
 
-            self._envStepCounter += 1
+            self._env_step_counter += 1
 
-        if self._renders:
-            time.sleep(self._timeStep)
-
-        self._observation = self.getExtendedObservation()
+        self._observation, _ = self.get_extended_observation()
 
         done = self._termination()
         reward = self._compute_reward()
-
-        #print("reward")
-        #print(reward)
 
         return self._observation, np.array(reward), np.array(done), {}
 
@@ -215,26 +188,33 @@ class iCubReachGymEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def render(self, mode="rgb_array", close=False):
-        ## TODO Check the behavior of this function
+    def render(self, mode="rgb_array"):
         if mode != "rgb_array":
           return np.array([])
 
-        base_pos,_ = self._p.getBasePositionAndOrientation(self._icub.icubId)
-        view_matrix = self._p.computeViewMatrixFromYawPitchRoll(
-            cameraTargetPosition=base_pos,
-            distance=self._cam_dist,
-            yaw=self._cam_yaw,
-            pitch=self._cam_pitch,
-            roll=0,
-            upAxisIndex=2)
-        proj_matrix = self._p.computeProjectionMatrixFOV(
-            fov=60, aspect=float(RENDER_WIDTH)/RENDER_HEIGHT,
-            nearVal=0.1, farVal=100.0)
-        (_, _, px, _, _) = self._p.getCameraImage(
-            width=RENDER_WIDTH, height=RENDER_HEIGHT, viewMatrix=view_matrix,
-            projectionMatrix=proj_matrix, renderer=self._p.ER_BULLET_HARDWARE_OPENGL)
-            #renderer=self._p.ER_TINY_RENDERER)
+        base_pos, _ = self._p.getBasePositionAndOrientation(self._robot.robot_id)
+
+        cam_dist = 1.3
+        cam_yaw = 180
+        cam_pitch = -40
+        RENDER_HEIGHT = 720
+        RENDER_WIDTH = 960
+
+        view_matrix = self._p.computeViewMatrixFromYawPitchRoll(cameraTargetPosition=base_pos,
+                                                                distance=cam_dist,
+                                                                yaw=cam_yaw,
+                                                                pitch=cam_pitch,
+                                                                roll=0,
+                                                                upAxisIndex=2)
+
+        proj_matrix = self._p.computeProjectionMatrixFOV(fov=60, aspect=float(RENDER_WIDTH)/RENDER_HEIGHT,
+                                                         nearVal=0.1, farVal=100.0)
+
+        (_, _, px, _, _) = self._p.getCameraImage(width=RENDER_WIDTH, height=RENDER_HEIGHT,
+                                                  viewMatrix=view_matrix,
+                                                  projectionMatrix=proj_matrix,
+                                                  renderer=self._p.ER_BULLET_HARDWARE_OPENGL)
+                                                  #renderer=self._p.ER_TINY_RENDERER)
 
         rgb_array = np.array(px, dtype=np.uint8)
         rgb_array = np.reshape(rgb_array, (RENDER_HEIGHT, RENDER_WIDTH, 4))
@@ -242,74 +222,31 @@ class iCubReachGymEnv(gym.Env):
         rgb_array = rgb_array[:, :, :3]
         return rgb_array
 
-    def __del__(self):
-        self._p.disconnect(self._cid)
-
     def _termination(self):
-
-        if (self.terminated or self._envStepCounter > self._maxSteps):
-            self._observation = self.getExtendedObservation()
+        if self.terminated or self._env_step_counter > self._max_steps:
             return np.float32(1.0)
 
-        handState = p.getLinkState(self._icub.icubId, self._icub.motorIndices[-1], computeLinkVelocity=0)
-        handPos = handState[0]
-        objPos, _ = p.getBasePositionAndOrientation(self._objID)
-        d = goal_distance(np.array(handPos), np.array(objPos))
+        robot_obs, _ = self._robot.get_observation()
+        world_obs, _ = self._world.get_observation()
+        d = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
 
         if d <= self._target_dist_min:
             self.terminated = 1
-        return (d <= self._target_dist_min)
+            print('------------->>> success!')
+            print('final reward')
+            print(self._compute_reward())
+
+        return d <= self._target_dist_min
 
     def _compute_reward(self):
 
-        reward = np.float32(0.0)
+        robot_obs, _ = self._robot.get_observation()
+        world_obs, _ = self._world.get_observation()
 
-        handState = p.getLinkState(self._icub.icubId, self._icub.motorIndices[-1], computeLinkVelocity=0)
-        handPos = handState[0]
-        objPos, _ = p.getBasePositionAndOrientation(self._objID)
-        d1 = goal_distance(np.array(handPos), np.array(objPos))
-        #print("distance")
-        #print(d1)
+        d = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
 
-        reward = -d1
-        if d1 <= self._target_dist_min:
-            reward = np.float32(100.0)
+        reward = -d
+        if d <= self._target_dist_min:
+            reward += np.float32(1000.0)
 
         return reward
-
-    def _sample_pose(self):
-        ws_lim = self._icub.workspace_lim
-        if self._rnd_obj_pose:
-            px = self.np_random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(1))
-            py = self.np_random.uniform(low=ws_lim[1][0]+0.005*self.np_random.rand(), high=ws_lim[1][1]-0.005*self.np_random.rand(), size=(1))
-        else:
-            px = ws_lim[0][0] + 0.5*(ws_lim[0][1]-ws_lim[0][0])
-            py = ws_lim[1][0] + 0.5*(ws_lim[1][1]-ws_lim[1][0])
-        pz = self._h_table
-        obj_pose = [px,py,pz]
-
-        return obj_pose
-
-    def _debugGUI(self):
-        ws = self._icub.workspace_lim
-        p1 = [ws[0][0],ws[1][0],ws[2][0]] # xmin,ymin
-        p2 = [ws[0][1],ws[1][0],ws[2][0]] # xmax,ymin
-        p3 = [ws[0][1],ws[1][1],ws[2][0]] # xmax,ymax
-        p4 = [ws[0][0],ws[1][1],ws[2][0]] # xmin,ymax
-
-        p.addUserDebugLine(p1,p2,lineColorRGB=[0,0,1],lineWidth=2.0,lifeTime=0)
-        p.addUserDebugLine(p2,p3,lineColorRGB=[0,0,1],lineWidth=2.0,lifeTime=0)
-        p.addUserDebugLine(p3,p4,lineColorRGB=[0,0,1],lineWidth=2.0,lifeTime=0)
-        p.addUserDebugLine(p4,p1,lineColorRGB=[0,0,1],lineWidth=2.0,lifeTime=0)
-
-        p.addUserDebugLine([0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
-        p.addUserDebugLine([0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
-        p.addUserDebugLine([0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_right_arm[-1])
-
-        p.addUserDebugLine([0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_left_arm[-1])
-        p.addUserDebugLine([0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_left_arm[-1])
-        p.addUserDebugLine([0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._icub.icubId, parentLinkIndex=self._icub.indices_left_arm[-1])
-
-        p.addUserDebugLine([0.0,0,0],[0.1,0,0],[1,0,0],parentObjectUniqueId=self._objID)
-        p.addUserDebugLine([0.0,0,0],[0,0.1,0],[0,1,0],parentObjectUniqueId=self._objID)
-        p.addUserDebugLine([0.0,0,0],[0,0,0.1],[0,0,1],parentObjectUniqueId=self._objID)
