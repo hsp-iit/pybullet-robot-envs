@@ -180,7 +180,17 @@ class iCubEnv:
             if not len(action) >= 3:
                 raise AssertionError('number of action commands must be minimum 3: (dx,dy,dz)', len(action))
 
-            dx, dy, dz = action[:3]
+            # transform the action command from COM coordinate to link coordinate
+            COM_t0_link_hand_pos = ()
+            if self._control_arm is 'r':
+                COM_t0_link_hand_pos = (0.064668, -0.0056, -0.022681)
+            else:
+                COM_t0_link_hand_pos = (-0.064768, -0.00563, -0.02266)
+
+            link_hand_pose = p.multiplyTransforms(action[:3], p.getQuaternionFromEuler(action[3:6]),
+                                                COM_t0_link_hand_pos, p.getQuaternionFromEuler((0, 0, 0)))
+
+            dx, dy, dz = link_hand_pose[:3]
 
             new_pos = [min(self._workspace_lim[0][1], max(self._workspace_lim[0][0], dx)),
                        min(self._workspace_lim[1][1], max(self._workspace_lim[1][0], dy)),
@@ -190,7 +200,7 @@ class iCubEnv:
                 new_quat_orn = p.getQuaternionFromEuler(self._home_hand_pose[3:6])
 
             elif len(action) >= 6:
-                droll, dpitch, dyaw = action[3:6]
+                droll, dpitch, dyaw = link_hand_pose[3:6]
 
                 new_eu_orn = [min(self.eu_lim[0][1], max(self.eu_lim[0][0], droll)),
                               min(self.eu_lim[1][1], max(self.eu_lim[1][0], dpitch)),
@@ -200,8 +210,6 @@ class iCubEnv:
 
             else:
                 new_quat_orn = p.getLinkState(self.robot_id, self._motor_idxs[-3])[5]
-
-            # transform from com to link frame of hand
 
             # compute joint positions with IK
             jointPoses = list(p.calculateInverseKinematics(self.robot_id, self._motor_idxs[-1], new_pos, new_quat_orn))

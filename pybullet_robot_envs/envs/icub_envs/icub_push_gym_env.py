@@ -75,7 +75,7 @@ class iCubPushGymEnv(gym.Env):
                                     workspace_lim=self._robot._workspace_lim)
 
         # Define spaces
-        self.observation_space, self.action_space = self.create_spaces()
+        self._observation_space, self._action_space = self.create_spaces()
 
         # initialize simulation environment
         self.seed()
@@ -186,9 +186,18 @@ class iCubPushGymEnv(gym.Env):
             if time_to_sleep > 0:
                 time.sleep(time_to_sleep)
 
-        # execute action
+        # set new action
+        new_action = np.clip(action, self._action_space.low, self._action_space.high)
         for _ in range(self._action_repeat):
-            self._robot.apply_action(action)
+
+            if self._use_IK:
+                robot_obs, _ = self._robot.get_observation()
+                if self._control_orientation:
+                    new_action = np.add(robot_obs[:6], new_action)
+                else:
+                    new_action = np.add(robot_obs[:3], new_action)
+
+            self._robot.apply_action(new_action)
             p.stepSimulation()
 
             if self._termination():
