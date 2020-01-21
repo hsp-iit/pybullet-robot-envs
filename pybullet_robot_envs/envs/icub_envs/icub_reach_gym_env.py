@@ -91,11 +91,11 @@ class iCubReachGymEnv(gym.Env):
         observation_space = spaces.Box(np.array(observation_low), np.array(observation_high), dtype='float32')
 
         # Configure action space
+        action_dim = self._robot.get_action_dim()
         if self._discrete_action:
-            self.action_space = spaces.Discrete(13) if self._control_orientation else spaces.Discrete(7)
+            self.action_space = spaces.Discrete(action_dim*2+1)
 
         else:
-            action_dim = self._robot.get_action_dim()
             action_bound = 0.05
             action_high = np.array([action_bound] * action_dim)
             action_space = spaces.Box(-action_high, action_high, dtype='float32')

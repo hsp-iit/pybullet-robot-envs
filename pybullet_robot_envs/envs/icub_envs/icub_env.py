@@ -5,10 +5,13 @@
 import os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(os.path.dirname(currentdir))
-os.sys.path.insert(0,parentdir)
+os.sys.path.insert(0, parentdir)
 
 import pybullet as p
 import robot_data
+
+import numpy as np
+import quaternion
 import math as m
 
 
@@ -47,6 +50,7 @@ class iCubEnv:
         self.reset()
 
     def reset(self):
+
         self.robot_id = p.loadSDF(os.path.join(robot_data.getDataPath(), "iCub/icub_fixed_model.sdf"))[0]
         assert self.robot_id is not None, "Failed to load the icub model"
 
@@ -63,27 +67,15 @@ class iCubEnv:
         # Set all joints initial values
         for count, i in enumerate(self._indices_torso):
             p.resetJointState(self.robot_id, i, self._home_pos_torso[count] / 180 * m.pi)
-            p.setJointMotorControl2(self.robot_id, i, p.POSITION_CONTROL,
-                                    targetPosition=self._home_pos_torso[count] / 180 * m.pi,
-                                    targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
 
         for count, i in enumerate(self._indices_head):
             p.resetJointState(self.robot_id, i, self._home_pos_head[count] / 180 * m.pi)
-            p.setJointMotorControl2(self.robot_id, i, p.POSITION_CONTROL,
-                                    targetPosition=self._home_pos_head[count] / 180 * m.pi,
-                                    targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
 
         for count, i in enumerate(self._indices_left_arm):
             p.resetJointState(self.robot_id, i, self._home_left_arm[count] / 180 * m.pi)
-            p.setJointMotorControl2(self.robot_id, i, p.POSITION_CONTROL,
-                                    targetPosition=self._home_left_arm[count]/180*m.pi,
-                                    targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
 
         for count, i in enumerate(self._indices_right_arm):
             p.resetJointState(self.robot_id, i, self._home_right_arm[count] / 180 * m.pi)
-            p.setJointMotorControl2(self.robot_id, i, p.POSITION_CONTROL,
-                                    targetPosition=self._home_right_arm[count] / 180 * m.pi,
-                                    targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
 
         self.ll, self.ul, self.jr, self.rs = self.get_joint_ranges()
 
@@ -116,10 +108,10 @@ class iCubEnv:
 
     def delete_simulated_robot(self):
         # Remove the robot from the simulation
-        p.removeBody(self._robot_id)
+        p.removeBody(self.robot_id)
 
     def get_joint_ranges(self):
-        lowerLimits, upperLimits, jointRanges, restPoses = [], [], [], []
+        lower_limits, upper_limits, joint_ranges, rest_poses = [], [], [], []
         for i in range(self._num_joints):
             jointInfo = p.getJointInfo(self.robot_id, i)
 
@@ -128,12 +120,12 @@ class iCubEnv:
                 jr = ul - ll
                 # For simplicity, assume resting state == initial state
                 rp = p.getJointState(self.robot_id, i)[0]
-                lowerLimits.append(ll)
-                upperLimits.append(ul)
-                jointRanges.append(jr)
-                restPoses.append(rp)
+                lower_limits.append(ll)
+                upper_limits.append(ul)
+                joint_ranges.append(jr)
+                lower_limits.append(rp)
 
-        return lowerLimits, upperLimits, jointRanges, restPoses
+        return lower_limits, upper_limits, joint_ranges, rest_poses
 
     def get_ws_lim(self):
         return self._workspace_lim
@@ -233,6 +225,7 @@ class iCubEnv:
                                                 controlMode=p.POSITION_CONTROL,
                                                 targetPosition=jointPoses[i],
                                                 targetVelocity=0,
+                                                maxVelocity=0.2,
                                                 positionGain=0.25,
                                                 velocityGain=0.75,
                                                 force=50)

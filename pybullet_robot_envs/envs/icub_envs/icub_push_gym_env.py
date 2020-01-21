@@ -74,6 +74,9 @@ class iCubPushGymEnv(gym.Env):
         self._world = WorldFetchEnv(obj_name=obj_name, obj_pose_rnd_std=obj_pose_rnd_std,
                                     workspace_lim=self._robot._workspace_lim)
 
+        # limit iCub workspace to table plane
+        self._robot._workspace_lim[2][0] = self._world.get_table_height()
+
         # Define spaces
         self._observation_space, self._action_space = self.create_spaces()
 
@@ -96,11 +99,10 @@ class iCubPushGymEnv(gym.Env):
         observation_space = spaces.Box(np.array(observation_low), np.array(observation_high), dtype='float32')
 
         # Configure action space
+        action_dim = self._robot.get_action_dim()
         if self._discrete_action:
-            self.action_space = spaces.Discrete(13) if self._control_orientation else spaces.Discrete(7)
-
+            self.action_space = spaces.Discrete(action_dim*2+1)
         else:
-            action_dim = self._robot.get_action_dim()
             action_bound = 0.05
             action_high = np.array([action_bound] * action_dim)
             action_space = spaces.Box(-action_high, action_high, dtype='float32')
@@ -118,8 +120,7 @@ class iCubPushGymEnv(gym.Env):
         self._robot.reset()
         self._world.reset()
 
-        # limit iCub workspace to table plane
-        self._robot._workspace_lim[2][0] = self._world.get_table_height()
+        self._tg_pose = self._sample_pose()
 
         p.setGravity(0, 0, -9.8)
 
@@ -129,14 +130,10 @@ class iCubPushGymEnv(gym.Env):
 
         self._robot.debug_gui()
         self._world.debug_gui()
+        self.debug_gui()
 
         robot_obs, _ = self._robot.get_observation()
         world_obs, _ = self._world.get_observation()
-
-        self._tg_pose = self._sample_pose()
-
-        self.debug_gui()
-        p.stepSimulation()
 
         self._init_dist_hand_obj = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
         self._max_dist_obj_tg = goal_distance(np.array(world_obs[:3]), np.array(self._tg_pose))
@@ -272,7 +269,7 @@ class iCubPushGymEnv(gym.Env):
         world_obs, _ = self._world.get_observation()
 
         d1 = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
-        d2 = goal_distance(np.array(robot_obs[:3]), np.array(self._tg_pose))
+        d2 = goal_distance(np.array(world_obs[:3]), np.array(self._tg_pose))
 
         if self._reward_type is 0:
             reward = -d1 - d2
