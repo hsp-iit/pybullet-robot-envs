@@ -1,5 +1,5 @@
 gym==0.12.5
-pybullet==2.5.0
+pybullet
 matplotlib
 pandas
 ruamel.yaml

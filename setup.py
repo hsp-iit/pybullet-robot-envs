@@ -20,7 +20,7 @@ for root, dirs, files in os.walk(hh):
       need_files.append(fn[1 + len(hh):])
 
 print("packages")
-print(find_packages('pybullet_robot_envs'))
+print(find_packages())
 print("-----")
 
 setup(
