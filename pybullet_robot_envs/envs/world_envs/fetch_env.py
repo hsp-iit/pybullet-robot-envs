@@ -45,7 +45,8 @@ class WorldFetchEnv:
         p.loadURDF(os.path.join(pybullet_data.getDataPath(), "plane.urdf"), [0, 0, 0])
 
         # Load table and object
-        table_id = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "table/table.urdf"), [0.85, 0.0, 0.0])
+        table_id = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "table/table.urdf"),
+                              basePosition=[0.85, 0.0, 0.0], useFixedBase=True)
 
         table_info = p.getCollisionShapeData(table_id, -1)[0]
         self._h_table = table_info[5][2] + table_info[3][2]/2
