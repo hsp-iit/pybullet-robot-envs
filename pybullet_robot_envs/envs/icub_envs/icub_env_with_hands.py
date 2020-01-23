@@ -8,7 +8,6 @@ parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
 import pybullet as p
-import robot_data
 from icub_model_pybullet import model_with_hands
 from pybullet_robot_envs.envs.icub_envs.icub_env import iCubEnv
 

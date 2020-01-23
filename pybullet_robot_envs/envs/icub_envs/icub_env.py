@@ -9,7 +9,6 @@ os.sys.path.insert(0, parentdir)
 
 import pybullet as p
 import icub_model_pybullet
-import robot_data
 
 import numpy as np
 import quaternion

@@ -17,7 +17,6 @@ import pybullet as p
 from panda_env import pandaEnv
 import random
 import pybullet_data
-import robot_data
 from pkg_resources import parse_version
 
 
@@ -34,7 +33,7 @@ class pandaReachGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
 
-    def __init__(self, urdfRoot=robot_data.getDataPath(),
+    def __init__(self, urdfRoot=[],
                  useIK = 0,
                  isDiscrete = 0,
                  actionRepeat = 1,

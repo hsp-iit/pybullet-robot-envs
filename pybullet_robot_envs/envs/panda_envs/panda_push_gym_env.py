@@ -15,8 +15,6 @@ import pybullet as p
 from pybullet_robot_envs.envs.panda_envs.panda_env import pandaEnv
 from pybullet_robot_envs.envs.world_envs.fetch_env import get_objects_list, WorldFetchEnv
 
-import pybullet_data
-import pybullet_robot_envs.robot_data
 from pkg_resources import parse_version
 
 from pybullet_robot_envs.envs.utils import goal_distance

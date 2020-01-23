@@ -14,7 +14,6 @@ import pybullet_data
 import time
 import os
 import math as m
-import robot_data
 
 
 def main():
