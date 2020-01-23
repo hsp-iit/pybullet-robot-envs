@@ -25,7 +25,7 @@ class pandaEnv:
         self.joint_action_space = joint_action_space
         self._include_vel_obs = includeVelObs
 
-        self._home_pos_joints = [0.98, 0.458, 0.31, -2.24, -0.30, 2.66, 2.32, 0.02, 0.02]
+        self._home_pos_joints = [0, -0.54, 0, -2.6, -0.30, 2, 1, 0.02, 0.02]
 
         self._num_dof = 7
         self.robot_id = None
@@ -51,7 +51,7 @@ class pandaEnv:
         self.ll, self.ul, self.jr, self.rs = self.get_joint_ranges()
 
         if self._use_IK:
-            self._home_endEff_pose = [0.6, 0, 1, m.pi, 0.,  0] # x,y,z,roll,pitch,yaw
+            self._home_endEff_pose = [0.6, 0, 1, m.pi, 0.,  0]  # x,y,z,roll,pitch,yaw
 
             self.apply_action(self._home_endEff_pose)
             p.stepSimulation()

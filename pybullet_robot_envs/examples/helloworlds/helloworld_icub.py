@@ -11,7 +11,7 @@ os.sys.path.insert(0, parentdir)
 
 import pybullet as p
 import pybullet_data
-import robot_data
+from icub_model_pybullet import model_with_hands
 import time
 import math as m
 
@@ -19,7 +19,9 @@ import math as m
 def main():
     # Open GUI and set pybullet_data in the path
     p.connect(p.GUI)
-    #p.setAdditionalSearchPath(pybullet_data.getDataPath())
+    p.resetSimulation()
+    p.setPhysicsEngineParameter(numSolverIterations=150)
+    p.setTimeStep(1/240.)
 
     # Load plane contained in pybullet_data
     p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"))
@@ -28,54 +30,53 @@ def main():
     p.setGravity(0,0,-9.8)
 
     # load robot model
-    robotIds = p.loadSDF(os.path.join(robot_data.getDataPath(), "iCub/icub_fixed_model.sdf"))
-    icubId = robotIds[0]
+    icubId = p.loadSDF(os.path.join(model_with_hands.get_data_path(), "icub_model_with_hands.sdf"))[0]
 
     # set constraint between base_link and world
-    p.createConstraint(icubId,-1,-1,-1,p.JOINT_FIXED,[0,0,0],[0,0,0],
-    						 [p.getBasePositionAndOrientation(icubId)[0][0],
-    						  p.getBasePositionAndOrientation(icubId)[0][1],
-    						  p.getBasePositionAndOrientation(icubId)[0][2]*1.2],
-    						 p.getBasePositionAndOrientation(icubId)[1])
+    p.createConstraint(icubId, -1, -1, -1, p.JOINT_FIXED, [0, 0, 0],
+                       parentFramePosition=[0, 0, 0],
+                       childFramePosition=[p.getBasePositionAndOrientation(icubId)[0][0],
+                                           p.getBasePositionAndOrientation(icubId)[0][1],
+                                           p.getBasePositionAndOrientation(icubId)[0][2] * 1.2],
+                       parentFrameOrientation=p.getBasePositionAndOrientation(icubId)[1])
 
-    ##init_pos for standing
-    # without FT_sensors
-    init_pos = [0]*15 + [-29.4, 28.8, 0, 44.59, 0, 0, 0, 0.47, 0, 0, -29.4, 30.4, 0, 44.59, 0, 0, 0]
+    # --- init_pos for standing --- #
+    home_pos_torso = [0.0, 0.0, 0.0]  # degrees
+    home_pos_head = [0.47, 0, 0]
+    home_left_arm = [-29.4, 28.8, 0, 44.59, 0, 0, 0]
+    home_right_arm = [-29.4, 30.4, 0, 44.59, 0, 0, 0]
+    home_left_hand = [0] * 20
+    home_right_hand = [0] * 20
 
-    # with FT_sensors
-    #init_pos = [0]*19 + [-29.4, 28.8, 0, 0, 44.59, 0, 0, 0, 0.47, 0, 0, -29.4, 30.4, 0, 0, 44.59, 0, 0, 0]
-
-    # all set to zero
-    #init_pos = [0]*p.getNumJoints(icubId)
+    init_pos = [0]*12 + home_pos_torso + home_left_arm + home_left_hand + home_pos_head + home_right_arm + home_right_hand
 
     # Load other objects
-    p.loadURDF(os.path.join(pybullet_data.getDataPath(),"table/table.urdf"), [1.1, 0.0, 0.0])
-    p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"), [0.5,0.0,0.8])
+    p.loadURDF(os.path.join(pybullet_data.getDataPath(), "table/table.urdf"), [1.1, 0.0, 0.0])
+    p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"), [0.5, 0.0, 0.8])
 
     # add debug slider
-    jointIds=[]
-    paramIds=[]
+    jointIds = []
+    paramIds = []
     joints_num = p.getNumJoints(icubId)
 
-    print("len init_pos ",len(init_pos))
-    print("len num joints", joints_num)
+    for i in range(joints_num):
+        p.resetJointState(icubId, i, init_pos[i]/180*m.pi)
 
-    for j in range (joints_num):
-    	info = p.getJointInfo(icubId,j)
-    	jointName = info[1]
-    	#jointType = info[2]
-    	jointIds.append(j)
-    	paramIds.append(p.addUserDebugParameter(jointName.decode("utf-8"), info[8], info[9], init_pos[j]/180*m.pi))
-
+    for i in range(joints_num):
+        info = p.getJointInfo(icubId, i)
+        jointName = info[1]
+        jointIds.append(i)
+        paramIds.append(p.addUserDebugParameter(jointName.decode("utf-8"), info[8], info[9], init_pos[i]/180*m.pi))
 
     while True:
-    	for i in range(joints_num):
-    		p.setJointMotorControl2(icubId, i, p.POSITION_CONTROL,
-    								targetPosition=p.readUserDebugParameter(i),
-    								targetVelocity=0.0, positionGain=0.25, velocityGain=0.75, force=50)
+        new_pos = []
+        for i in jointIds:
+            new_pos.append(p.readUserDebugParameter(i))
+        p.setJointMotorControlArray(icubId, jointIds, p.POSITION_CONTROL, targetPositions=new_pos, forces=[50]*joints_num)
 
-    	p.stepSimulation()
-    	time.sleep(0.01)
+        p.stepSimulation()
+        time.sleep(0.01)
+
 
 if __name__ == '__main__':
     main()

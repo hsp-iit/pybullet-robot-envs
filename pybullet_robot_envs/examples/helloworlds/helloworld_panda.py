@@ -16,33 +16,58 @@ import os
 import math as m
 import robot_data
 
-# Open GUI and set pybullet_data in the path
-p.connect(p.GUI)
-p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
-# Load plane contained in pybullet_data
-planeId = p.loadURDF("plane.urdf")
+def main():
+	# Open GUI and set pybullet_data in the path
+	p.connect(p.GUI)
+	p.resetSimulation()
+	p.setPhysicsEngineParameter(numSolverIterations=150)
+	p.setTimeStep(1/240.)
 
-# Set gravity for simulation
-p.setGravity(0,0,-9.8)
+	# Load plane contained in pybullet_data
+	planeId = p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"))
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-for root, dirs, files in os.walk(os.path.dirname(dir_path)):
-    for file in files:
-        if file.endswith('.urdf'):
-            print (root)
-            p.setAdditionalSearchPath(root)
+	# Set gravity for simulation
+	p.setGravity(0, 0, -9.8)
 
-pandaId = p.loadURDF(os.path.join(robot_data.getDataPath(),"franka_description/robots/panda_arm_physics.urdf"))
+	flags = p.URDF_ENABLE_CACHED_GRAPHICS_SHAPES | p.URDF_USE_SELF_COLLISION | p.URDF_USE_INERTIA_FROM_FILE
 
-# set constraint between base_link and world
-cid = p.createConstraint(pandaId,-1,-1,-1,p.JOINT_FIXED,[0,0,0],[0,0,0],
-						 [p.getBasePositionAndOrientation(pandaId)[0][0],
-						  p.getBasePositionAndOrientation(pandaId)[0][1],
-						  p.getBasePositionAndOrientation(pandaId)[0][2]*1.2],
-						 p.getBasePositionAndOrientation(pandaId)[1])
+	pandaId = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "franka_panda/panda.urdf"),
+						basePosition=[0.6, 0, 0.625], useFixedBase=True, flags=flags)
+
+	init_pos = [0, -0.54, 0, -2.6, -0.30, 2, 1, 0.02, 0.02]
+
+	# Load other objects
+	p.loadURDF(os.path.join(pybullet_data.getDataPath(), "table/table.urdf"), [1, 0.0, 0.0])
+	p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"), [1, 0.0, 0.8])
+
+	# add debug slider
+	jointIds = []
+	paramIds = []
+
+	# reset joints to home position
+	num_joints = p.getNumJoints(pandaId)
+	idx = 0
+	for i in range(num_joints):
+		jointInfo = p.getJointInfo(pandaId, i)
+		jointName = jointInfo[1]
+		jointType = jointInfo[2]
+
+		if jointType is p.JOINT_REVOLUTE or jointType is p.JOINT_PRISMATIC:
+			p.resetJointState(pandaId, i, init_pos[idx])
+			jointIds.append(i)
+			paramIds.append(p.addUserDebugParameter(jointName.decode("utf-8"), jointInfo[8], jointInfo[9], init_pos[idx]))
+			idx += 1
+
+	while True:
+		new_pos = []
+		for i in range(len(jointIds)):
+			new_pos.append(p.readUserDebugParameter(i))
+		p.setJointMotorControlArray(pandaId, jointIds, p.POSITION_CONTROL, targetPositions=new_pos, forces=[50]*len(jointIds))
+
+		p.stepSimulation()
+		time.sleep(0.01)
 
 
-while True:
-	p.stepSimulation()
-	time.sleep(0.01)
+if __name__ == '__main__':
+    main()

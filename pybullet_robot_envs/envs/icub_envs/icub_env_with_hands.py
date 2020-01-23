@@ -39,8 +39,8 @@ class iCubHandsEnv():
         self._home_left_arm = [-29.4, 40.0, 0, 70, 0, 0, 0]
         self._home_right_arm = [-29.4, 40.0, 0, 70, 0, 0, 0]
 
-        self._home_left_hand = [0,0.57,0.65,0.3,0,0.57,0.65,0.3,0,0.57,0.65,0.3,0,0.57,0.65,0.3,1.5,0.5,0.3,0.45] # [0 for i in self._indices_left_hand]
-        self._home_right_hand = [0 for i in self._indices_right_hand]
+        self._home_left_hand = [0,0.57,0.65,0.3,0,0.57,0.65,0.3,0,0.57,0.65,0.3,0,0.57,0.65,0.3,1.5,0.5,0.3,0.45] # [0] * len(self._indices_left_hand)
+        self._home_right_hand = [0] * len(self._indices_right_hand)
 
         self._home_hand_pose = []
         self._home_motor_pose = []
