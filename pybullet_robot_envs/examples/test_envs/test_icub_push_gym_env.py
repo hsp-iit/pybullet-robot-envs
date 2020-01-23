@@ -9,7 +9,6 @@ parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
 from pybullet_robot_envs.envs.icub_envs.icub_push_gym_env import iCubPushGymEnv
-from pybullet_robot_envs import robot_data
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -48,8 +47,6 @@ def main(args):
             motorsIds.append(env._p.addUserDebugParameter(jointName.decode("utf-8"), -dv, dv, 0.0))
 
     done = False
-    env._p.addUserDebugText('current joint position',[0,-0.5,1.4],[1,0,0])
-    idx = env._p.addUserDebugText(' ',[0,-0.5,1.3],[1,0,0])
     for t in range(10000000):
         #env.render()
         action = []
@@ -58,10 +55,9 @@ def main(args):
 
         action = int(action[0]) if env._discrete_action else action
 
-        state, reward, done, _ = env.step(action)
+        state, reward, done, info = env.step(action)
         if t%100==0:
             print("reward ", reward)
-            env._p.addUserDebugText(' '.join(str(round(e,2)) for e in state[16:36]),[0,-0.5,1.3],[1,0,0],replaceItemUniqueId=idx)
 
 if __name__ == '__main__':
     main(parser.parse_args())

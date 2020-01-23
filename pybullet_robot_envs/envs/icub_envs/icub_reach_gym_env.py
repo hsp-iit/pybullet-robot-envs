@@ -25,7 +25,7 @@ class iCubReachGymEnv(gym.Env):
                 'video.frames_per_second': 50}
 
     def __init__(self,
-                 action_repeat=4,
+                 action_repeat=1,
                  use_IK=1,
                  discrete_action=0,
                  control_arm='l',
@@ -43,6 +43,8 @@ class iCubReachGymEnv(gym.Env):
         self._control_orientation = control_orientation
         self._action_repeat = action_repeat
         self._observation = []
+        self._hand_pose = []
+
         self._env_step_counter = 0
         self._renders = renders
         self._max_steps = max_steps
@@ -58,6 +60,7 @@ class iCubReachGymEnv(gym.Env):
             if (self._cid<0):
                 self._cid = p.connect(p.GUI)
             p.resetDebugVisualizerCamera(2.5, 90, -60, [0.0, -0.0, -0.0])
+            p.configureDebugVisualizer(p.COV_ENABLE_SHADOWS, 0)
         else:
             self._cid = p.connect(p.DIRECT)
 
@@ -69,8 +72,11 @@ class iCubReachGymEnv(gym.Env):
         self._world = YcbWorldFetchEnv(obj_name=obj_name, obj_pose_rnd_std=obj_pose_rnd_std,
                                        workspace_lim=self._robot._workspace_lim)
 
+        # limit iCub workspace to table plane
+        self._robot._workspace_lim[2][0] = self._world.get_table_height()
+
         # Define spaces
-        self._observation_space, self._action_space = self.create_spaces()
+        self.observation_space, self.action_space = self.create_spaces()
 
         # initialize simulation environment
         self.seed()
@@ -93,10 +99,10 @@ class iCubReachGymEnv(gym.Env):
         # Configure action space
         action_dim = self._robot.get_action_dim()
         if self._discrete_action:
-            self.action_space = spaces.Discrete(action_dim*2+1)
+            action_space = spaces.Discrete(action_dim*2+1)
 
         else:
-            action_bound = 0.05
+            action_bound = 0.005
             action_high = np.array([action_bound] * action_dim)
             action_space = spaces.Box(-action_high, action_high, dtype='float32')
 
@@ -108,25 +114,30 @@ class iCubReachGymEnv(gym.Env):
         p.resetSimulation()
         p.setPhysicsEngineParameter(numSolverIterations=150)
         p.setTimeStep(self._time_step)
-        self._env_step_counter = 0
-
-        self._robot.reset()
-        self._world.reset()
-
-        # limit iCub workspace to table plane
-        self._robot._workspace_lim[2][0] = self._world.get_table_height()
 
         p.setGravity(0, 0, -9.8)
 
+        self._env_step_counter = 0
+
+        self._robot.reset()
+
         # Let the world run for a bit
-        for _ in range(500):
+        for _ in range(100):
             p.stepSimulation()
+
+        self._world.reset()
 
         self._robot.debug_gui()
         self._world.debug_gui()
 
-        self._observation, _ = self.get_extended_observation()
-        return np.array(self._observation)
+        # Let the world run for a bit
+        for _ in range(100):
+            p.stepSimulation()
+
+        if self._use_IK:
+            self._hand_pose = self._robot._home_hand_pose
+
+        return self.get_extended_observation()
 
     def get_extended_observation(self):
         self._observation = []
@@ -155,7 +166,8 @@ class iCubReachGymEnv(gym.Env):
 
         return np.array(self._observation), observation_lim
 
-    def step(self, action):
+    def apply_action(self, action):
+        # process action and send it to the robot
 
         if self._renders:
             # Sleep, otherwise the computation takes less time than real time,
@@ -168,30 +180,52 @@ class iCubReachGymEnv(gym.Env):
                 time.sleep(time_to_sleep)
 
         # set new action
-        new_action = np.clip(action, self._action_space.low, self._action_space.high)
+        action = np.clip(action, self.action_space.low, self.action_space.high)
         for _ in range(self._action_repeat):
+            robot_obs, _ = self._robot.get_observation()
 
             if self._use_IK:
-                robot_obs, _ = self._robot.get_observation()
-                if self._control_orientation:
-                    new_action = np.add(robot_obs[:6], new_action)
+
+                if not self._control_orientation:
+                    new_action = np.add(self._hand_pose[:3], action)
+
                 else:
-                    new_action = np.add(robot_obs[:3], new_action)
+                    new_action = np.add(self._hand_pose, action)
+
+                    new_action[3:6] = [
+                        min(self._robot._eu_lim[0][1], max(self._robot._eu_lim[0][0], new_action[3])),
+                        min(self._robot._eu_lim[1][1], max(self._robot._eu_lim[1][0], new_action[4])),
+                        min(self._robot._eu_lim[2][1], max(self._robot._eu_lim[2][0], new_action[5]))]
+
+                new_action[:3] = [
+                    min(self._robot._workspace_lim[0][1], max(self._robot._workspace_lim[0][0], new_action[0])),
+                    min(self._robot._workspace_lim[1][1], max(self._robot._workspace_lim[1][0], new_action[1])),
+                    min(self._robot._workspace_lim[2][1], max(self._robot._workspace_lim[2][0], new_action[2]))]
+
+                self._hand_pose = new_action
+
+            else:
+                new_action = np.add(robot_obs[-len(self._robot._motor_idxs):], action)
 
             self._robot.apply_action(new_action)
             p.stepSimulation()
+            time.sleep(self._time_step)
 
             if self._termination():
                 break
 
             self._env_step_counter += 1
 
-        self._observation, _ = self.get_extended_observation()
+    def step(self, action):
+        # apply action on the robot
+        self.apply_action(action)
+
+        obs, _ = self.get_extended_observation()
 
         done = self._termination()
         reward = self._compute_reward()
 
-        return self._observation, np.array(reward), np.array(done), {}
+        return obs, np.array(reward), np.array(done), {}
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)

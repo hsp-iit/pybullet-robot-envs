@@ -83,7 +83,7 @@ class iCubPushGymEnv(gym.Env):
         self._robot._workspace_lim[2][0] = self._world.get_table_height()
 
         # Define spaces
-        self._observation_space, self._action_space = self.create_spaces()
+        self.observation_space, self.action_space = self.create_spaces()
 
         # initialize simulation environment
         self.seed()
@@ -106,7 +106,7 @@ class iCubPushGymEnv(gym.Env):
         # Configure action space
         action_dim = self._robot.get_action_dim()
         if self._discrete_action:
-            self.action_space = spaces.Discrete(action_dim*2+1)
+            action_space = spaces.Discrete(action_dim*2+1)
         else:
             action_bound = 0.005
             action_high = np.array([action_bound] * action_dim)
@@ -154,8 +154,7 @@ class iCubPushGymEnv(gym.Env):
         self._init_dist_hand_obj = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
         self._max_dist_obj_tg = goal_distance(np.array(world_obs[:3]), np.array(self._tg_pose))
 
-        self._observation, _ = self.get_extended_observation()
-        return np.array(self._observation)
+        return self.get_extended_observation()
 
     def get_extended_observation(self):
         self._observation = []
@@ -187,7 +186,8 @@ class iCubPushGymEnv(gym.Env):
 
         return np.array(self._observation), observation_lim
 
-    def step(self, action):
+    def apply_action(self, action):
+        # process action and send it to the robot
 
         if self._renders:
             # Sleep, otherwise the computation takes less time than real time,
@@ -200,7 +200,7 @@ class iCubPushGymEnv(gym.Env):
                 time.sleep(time_to_sleep)
 
         # set new action
-        action = np.clip(action, self._action_space.low, self._action_space.high)
+        action = np.clip(action, self.action_space.low, self.action_space.high)
         for _ in range(self._action_repeat):
             robot_obs, _ = self._robot.get_observation()
 
@@ -216,9 +216,10 @@ class iCubPushGymEnv(gym.Env):
                                        min(self._robot._eu_lim[1][1], max(self._robot._eu_lim[1][0], new_action[4])),
                                        min(self._robot._eu_lim[2][1], max(self._robot._eu_lim[2][0], new_action[5]))]
 
-                new_action[:3] = [min(self._robot._workspace_lim[0][1], max(self._robot._workspace_lim[0][0], new_action[0])),
-                                  min(self._robot._workspace_lim[1][1], max(self._robot._workspace_lim[1][0], new_action[1])),
-                                  min(self._robot._workspace_lim[2][1], max(self._robot._workspace_lim[2][0], new_action[2]))]
+                new_action[:3] = [
+                    min(self._robot._workspace_lim[0][1], max(self._robot._workspace_lim[0][0], new_action[0])),
+                    min(self._robot._workspace_lim[1][1], max(self._robot._workspace_lim[1][0], new_action[1])),
+                    min(self._robot._workspace_lim[2][1], max(self._robot._workspace_lim[2][0], new_action[2]))]
 
                 self._hand_pose = new_action
 
@@ -233,6 +234,11 @@ class iCubPushGymEnv(gym.Env):
                 break
 
             self._env_step_counter += 1
+
+    def step(self, action):
+
+        # apply action on the robot
+        self.apply_action(action)
 
         self._observation, _ = self.get_extended_observation()
 
@@ -344,7 +350,7 @@ class iCubPushGymEnv(gym.Env):
             px = np.clip(px, x_min, x_max)
 
             py = py + noise[1]
-            py = np.clip(py, self._ws_lim[1][0], self._ws_lim[1][1])
+            py = np.clip(py, self._world._ws_lim[1][0], self._world._ws_lim[1][1])
 
         pose = (px, py, pz)
 
