@@ -15,7 +15,9 @@ import math as m
 import pybullet as p
 
 from pybullet_robot_envs.envs.icub_envs.icub_env import iCubEnv
+from pybullet_robot_envs.envs.icub_envs.icub_env_with_hands import iCubHandsEnv
 from pybullet_robot_envs.envs.world_envs.fetch_env import get_objects_list, WorldFetchEnv
+from pybullet_robot_envs.envs.world_envs.ycb_fetch_env import get_ycb_objects_list, YcbWorldFetchEnv
 
 from pybullet_robot_envs.envs.utils import goal_distance
 
@@ -25,7 +27,7 @@ class iCubPushGymEnv(gym.Env):
                 'video.frames_per_second': 50}
 
     def __init__(self,
-                 action_repeat=4,
+                 action_repeat=1,
                  use_IK=1,
                  discrete_action=0,
                  control_arm='l',
@@ -45,6 +47,8 @@ class iCubPushGymEnv(gym.Env):
         self._control_orientation = control_orientation
         self._action_repeat = action_repeat
         self._observation = []
+        self._hand_pose = []
+
         self._env_step_counter = 0
         self._renders = renders
         self._max_steps = max_steps
@@ -63,6 +67,7 @@ class iCubPushGymEnv(gym.Env):
             if (self._cid<0):
                 self._cid = p.connect(p.GUI)
             p.resetDebugVisualizerCamera(2.5, 90, -60, [0.0, -0.0, -0.0])
+            p.configureDebugVisualizer(p.COV_ENABLE_SHADOWS, 0)
         else:
             self._cid = p.connect(p.DIRECT)
 
@@ -103,7 +108,7 @@ class iCubPushGymEnv(gym.Env):
         if self._discrete_action:
             self.action_space = spaces.Discrete(action_dim*2+1)
         else:
-            action_bound = 0.05
+            action_bound = 0.005
             action_high = np.array([action_bound] * action_dim)
             action_space = spaces.Box(-action_high, action_high, dtype='float32')
 
@@ -117,15 +122,23 @@ class iCubPushGymEnv(gym.Env):
         p.setTimeStep(self._time_step)
         self._env_step_counter = 0
 
+        p.setGravity(0, 0, -9.8)
+
         self._robot.reset()
+        # Let the world run for a bit
+        for _ in range(100):
+            p.stepSimulation()
+
         self._world.reset()
+        # Let the world run for a bit
+        for _ in range(100):
+            p.stepSimulation()
 
         self._tg_pose = self._sample_pose()
 
-        p.setGravity(0, 0, -9.8)
 
         # Let the world run for a bit
-        for _ in range(500):
+        for _ in range(100):
             p.stepSimulation()
 
         self._robot.debug_gui()
@@ -134,6 +147,9 @@ class iCubPushGymEnv(gym.Env):
 
         robot_obs, _ = self._robot.get_observation()
         world_obs, _ = self._world.get_observation()
+
+        if self._use_IK:
+            self._hand_pose = self._robot._home_hand_pose
 
         self._init_dist_hand_obj = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
         self._max_dist_obj_tg = goal_distance(np.array(world_obs[:3]), np.array(self._tg_pose))
@@ -184,18 +200,34 @@ class iCubPushGymEnv(gym.Env):
                 time.sleep(time_to_sleep)
 
         # set new action
-        new_action = np.clip(action, self._action_space.low, self._action_space.high)
+        action = np.clip(action, self._action_space.low, self._action_space.high)
         for _ in range(self._action_repeat):
+            robot_obs, _ = self._robot.get_observation()
 
             if self._use_IK:
-                robot_obs, _ = self._robot.get_observation()
-                if self._control_orientation:
-                    new_action = np.add(robot_obs[:6], new_action)
+
+                if not self._control_orientation:
+                    new_action = np.add(self._hand_pose[:3], action)
+
                 else:
-                    new_action = np.add(robot_obs[:3], new_action)
+                    new_action = np.add(self._hand_pose, action)
+
+                    new_action[3:6] = [min(self._robot._eu_lim[0][1], max(self._robot._eu_lim[0][0], new_action[3])),
+                                       min(self._robot._eu_lim[1][1], max(self._robot._eu_lim[1][0], new_action[4])),
+                                       min(self._robot._eu_lim[2][1], max(self._robot._eu_lim[2][0], new_action[5]))]
+
+                new_action[:3] = [min(self._robot._workspace_lim[0][1], max(self._robot._workspace_lim[0][0], new_action[0])),
+                                  min(self._robot._workspace_lim[1][1], max(self._robot._workspace_lim[1][0], new_action[1])),
+                                  min(self._robot._workspace_lim[2][1], max(self._robot._workspace_lim[2][0], new_action[2]))]
+
+                self._hand_pose = new_action
+
+            else:
+                new_action = np.add(robot_obs[-len(self._robot._motor_idxs):], action)
 
             self._robot.apply_action(new_action)
             p.stepSimulation()
+            time.sleep(self._time_step)
 
             if self._termination():
                 break
