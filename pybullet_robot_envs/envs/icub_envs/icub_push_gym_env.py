@@ -72,7 +72,7 @@ class iCubPushGymEnv(gym.Env):
             self._cid = p.connect(p.DIRECT)
 
         # Load robot
-        self._robot = iCubEnv(use_IK=self._use_IK, control_arm=self._control_arm,
+        self._robot = iCubHandsEnv(use_IK=self._use_IK, control_arm=self._control_arm,
                               control_orientation=self._control_orientation)
 
         # Load world environment
@@ -360,7 +360,7 @@ class iCubPushGymEnv(gym.Env):
 
         return pose
 
-    def _debug_gui(self):
+    def debug_gui(self):
         p.addUserDebugLine(self._tg_pose, [self._tg_pose[0] + 0.1, self._tg_pose[1], self._tg_pose[2]], [1, 0, 0])
         p.addUserDebugLine(self._tg_pose, [self._tg_pose[0], self._tg_pose[1] + 0.1, self._tg_pose[2]], [0, 1, 0])
         p.addUserDebugLine(self._tg_pose, [self._tg_pose[0], self._tg_pose[1], self._tg_pose[2] + 0.1], [0, 0, 1])
