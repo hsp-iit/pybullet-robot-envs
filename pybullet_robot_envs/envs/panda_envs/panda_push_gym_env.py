@@ -41,7 +41,7 @@ class pandaPushGymEnv(gym.Env):
                  renders=False,
                  max_steps=1000,
                  dist_delta=0.03, joint_action_space=7,
-                 obj_pose_rnd_std=0, tg_pose_rnd_std=0,
+                 obj_pose_rnd_std=0, tg_pose_rnd_std=0.2,
                  includeVelObs=True):
 
         self._timeStep = 1. / 240.
@@ -123,20 +123,29 @@ class pandaPushGymEnv(gym.Env):
         p.setTimeStep(self._timeStep)
         self._env_step_counter = 0
 
-        self._robot.reset()
-        self._world.reset()
-
-        self._target_pose = self._sample_pose()
-
         p.setGravity(0, 0, -9.8)
 
+        self._robot.reset()
         # Let the world run for a bit
-        for _ in range(500):
+        for _ in range(100):
             p.stepSimulation()
+
+        self._world.reset()
+        # Let the world run for a bit
+        for _ in range(100):
+            p.stepSimulation()
+
+        world_obs, _ = self._world.get_observation()
+
+        self._target_pose = self._sample_pose(world_obs[:3])
 
         self._robot.debug_gui()
         self._world.debug_gui()
-        self._debug_gui()
+        self.debug_gui()
+
+        # Let the world run for a bit
+        for _ in range(100):
+            p.stepSimulation()
 
         self._observation = self.get_extended_observation()
         return np.array(self._observation)
@@ -258,31 +267,35 @@ class pandaPushGymEnv(gym.Env):
             reward = np.float32(1000.0) + (100 - d2*80)
         return reward
 
-    def _sample_pose(self):
+    def _sample_pose(self, obj_pos):
+
         # ws_lim = self._ws_lim
         x_min = self._world._ws_lim[0][0] + 0.064668
         x_max = self._world._ws_lim[0][1] - 0.05
 
-        px = x_min + 0.2 * (x_max - x_min)
-        py = self._world._ws_lim[1][0] + 0.5 * (self._world._ws_lim[1][1] - self._world._ws_lim[1][0])
-        pz = self._world.get_table_height()
+        px = obj_pos[0] + 0.05
+        py = obj_pos[1] + 0.05
+        pz = obj_pos[2]
+
+        px = np.clip(px, x_min, x_max)
+        py = np.clip(py, self._world._ws_lim[1][0], self._world._ws_lim[1][1])
 
         if self._tg_pose_rnd_std > 0:
             # Add a Gaussian noise to position
             mu, sigma = 0, self._tg_pose_rnd_std
             noise = np.random.normal(mu, sigma, 2)
 
-            px = px + noise[0]
+            px = obj_pos[0] + noise[0]
             px = np.clip(px, x_min, x_max)
 
-            py = py + noise[1]
-            py = np.clip(py, self._ws_lim[1][0], self._ws_lim[1][1])
+            py = obj_pos[1] + noise[1]
+            py = np.clip(py, self._world._ws_lim[1][0], self._world._ws_lim[1][1])
 
         pose = (px, py, pz)
 
         return pose
 
-    def _debug_gui(self):
+    def debug_gui(self):
         p.addUserDebugLine(self._target_pose, [self._target_pose[0] + 0.1, self._target_pose[1], self._target_pose[2]], [1, 0, 0])
         p.addUserDebugLine(self._target_pose, [self._target_pose[0], self._target_pose[1] + 0.1, self._target_pose[2]], [0, 1, 0])
         p.addUserDebugLine(self._target_pose, [self._target_pose[0], self._target_pose[1], self._target_pose[2] + 0.1], [0, 0, 1])

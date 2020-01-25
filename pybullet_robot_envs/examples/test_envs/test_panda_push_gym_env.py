@@ -9,7 +9,6 @@ parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
 from pybullet_robot_envs.envs.panda_envs.panda_push_gym_env import pandaPushGymEnv
-from pybullet_robot_envs import robot_data
 import pybullet_data
 
 
