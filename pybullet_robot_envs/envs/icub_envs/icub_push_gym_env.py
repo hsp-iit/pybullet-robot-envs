@@ -154,7 +154,8 @@ class iCubPushGymEnv(gym.Env):
         self._init_dist_hand_obj = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
         self._max_dist_obj_tg = goal_distance(np.array(world_obs[:3]), np.array(self._tg_pose))
 
-        return self.get_extended_observation()
+        obs, _ = self.get_extended_observation()
+        return obs
 
     def get_extended_observation(self):
         self._observation = []
