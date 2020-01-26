@@ -17,7 +17,6 @@ import pybullet as p
 from pybullet_robot_envs.envs.icub_envs.icub_env import iCubEnv
 from pybullet_robot_envs.envs.icub_envs.icub_push_gym_env import iCubPushGymEnv
 from pybullet_robot_envs.envs.world_envs.fetch_env import get_objects_list, WorldFetchEnv
-from pybullet_robot_envs.envs.world_envs.ycb_fetch_env import get_ycb_objects_list, YcbWorldFetchEnv
 
 from pybullet_robot_envs.envs.utils import goal_distance
 
