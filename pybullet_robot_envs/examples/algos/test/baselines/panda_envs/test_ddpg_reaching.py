@@ -8,7 +8,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(currentdir)))))
 os.sys.path.insert(0, parentdir)
 print(parentdir)
-from envs.panda_envs.panda_push_gym_env import pandaPushGymEnv
+from envs.panda_envs.panda_reach_gym_env import pandaReachGymEnv
 
 
 from stable_baselines.ddpg.policies import MlpPolicy
@@ -72,7 +72,7 @@ def main(argv):
 
     model = DDPG.load(policy_name)
 
-    pandaenv = pandaPushGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=0, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
+    pandaenv = pandaReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=0, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
     obs = pandaenv.reset()
     while True:
         action, _states = model.predict(obs)

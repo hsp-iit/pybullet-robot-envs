@@ -90,7 +90,7 @@ def main():
 
     # save model
     print("Saving model.pkl to ",log_dir)
-    act.save(log_dir+"/final_model.pkl")
+    model.save(log_dir+"/final_model.pkl")
 
 if __name__ == '__main__':
   main()
