@@ -3,12 +3,11 @@
 # LGPL-2.1+ license. See the accompanying LICENSE file for details.
 
 import os, inspect
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+from os import path
 #print(currentdir)
-parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(currentdir)))))
+parentdir =path.abspath(path.join(__file__ ,"../../../../../.."))
 os.sys.path.insert(0, parentdir)
 print(parentdir)
-
 
 from envs.panda_envs.panda_reach_gym_env import pandaReachGymEnv
 from stable_baselines import logger
@@ -115,7 +114,7 @@ def main(argv):
     model.learn(total_timesteps=timesteps)
 
     print("Saving model to panda.pkl")
-    model.save("../pybullet_logs/pandareach_ddpg/policies"+ policy_name)
+    model.save("../pybullet_logs/pandareach_ddpg/"+ policy_name)
 
     del model # remove to demonstrate saving and loading
 

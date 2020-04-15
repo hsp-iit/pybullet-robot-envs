@@ -3,9 +3,10 @@
 # LGPL-2.1+ license. See the accompanying LICENSE file for details.
 
 import os, inspect
+from os import path
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 #print(currentdir)
-parentdir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(currentdir)))))
+parentdir =path.abspath(path.join(__file__ ,"../../../../../.."))
 os.sys.path.insert(0, parentdir)
 print(parentdir)
 from envs.panda_envs.panda_reach_gym_env import pandaReachGymEnv
@@ -34,7 +35,7 @@ def main(argv):
     # -j
     numControlledJoints = 7
     # -n
-    policy_name = "pushing_policy"
+    policy_name = "reaching_policy"
 
     # COMMAND LINE PARAMS MANAGEMENT:
     try:
@@ -70,7 +71,7 @@ def main(argv):
     print(colored("------","red"))
     print(colored("Launch the script with -h for further info","red"))
 
-    model = DDPG.load(policy_name)
+    model = DDPG.load("../../../train/baselines/pybullet_logs/pandareach_ddpg/"+ policy_name)
 
     pandaenv = pandaReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=True, useIK=0, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
     obs = pandaenv.reset()
