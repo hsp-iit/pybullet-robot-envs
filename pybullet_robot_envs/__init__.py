@@ -8,14 +8,14 @@ register(
         id='iCubReach-v0',
         entry_point='pybullet_robot_envs.envs:iCubReachGymEnv',
         max_episode_steps=1000,
-        kwargs={ 'useIK':1, 'isDiscrete':0, 'control_arm':'l', 'useOrientation':0, 'rnd_obj_pose':1, 'maxSteps':1000},
+        kwargs={ 'useIK':1, 'isDiscrete':0, 'control_arm':'l', 'useOrientation':0, 'rnd_obj_pose':1, 'maxSteps':1000, 'renders': True},
 )
 
 register(
         id='iCubPush-v0',
         entry_point='pybullet_robot_envs.envs:iCubPushGymEnv',
         max_episode_steps=1000,
-        kwargs={ 'useIK':1, 'isDiscrete':0, 'control_arm':'l', 'useOrientation':0, 'rnd_obj_pose':1, 'maxSteps':1000, 'reward_type':0},
+        kwargs={ 'useIK':1, 'isDiscrete':0, 'control_arm':'l', 'useOrientation':0, 'rnd_obj_pose':1, 'maxSteps':1000, 'reward_type':0, 'renders': True},
 )
 
 
@@ -27,7 +27,7 @@ register(
                  'useIK':0,
                  'isDiscrete':0,
                  'actionRepeat':1,
-                 'renders':False,
+                 'renders':True,
                  'numControlledJoints':7, 'fixedPositionObj':False, 'includeVelObs':True},
 )
 
@@ -39,7 +39,7 @@ register(
                  'useIK':0,
                  'isDiscrete':0,
                  'actionRepeat':1,
-                 'renders':False,
+                 'renders':True,
                  'numControlledJoints':7, 'fixedPositionObj':False, 'includeVelObs':True},
 )
 

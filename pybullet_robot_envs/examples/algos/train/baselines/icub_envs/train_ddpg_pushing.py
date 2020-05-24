@@ -90,9 +90,8 @@ def main():
     model.learn(total_timesteps=500000, seed=seed, callback=callback)
 
     # save model
-    print("Saving model.pkl to ", log_dir)
-    model.save(log_dir + "/final_model.pkl")
-
+    print("Saving model.pkl to ",log_dir)
+    model.save(log_dir+"/final_model.pkl")
 
 if __name__ == '__main__':
     main()
