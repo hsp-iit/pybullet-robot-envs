@@ -1,0 +1,5809 @@
+<sdf version='1.7'>
+  <world name='default'>
+    <model name='iCubGazeboV2_5'>
+      <link name='base_link'>
+        <inertial>
+          <pose>0.024882 0.000104 -0.044081 0 -0 0</pose>
+          <mass>5.09143</mass>
+          <inertia>
+            <ixx>0.0249124</ixx>
+            <ixy>-1.55458e-05</ixy>
+            <ixz>0.00170968</ixz>
+            <iyy>0.0139679</iyy>
+            <iyz>5.93488e-06</iyz>
+            <izz>0.0202112</izz>
+          </inertia>
+        </inertial>
+        <collision name='base_link_fixed_joint_lump__root_link_collision'>
+          <pose>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__root_link_visual'>
+          <pose>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hip_pitch' type='revolute'>
+        <pose>0 -0 -0 0 -0 0</pose>
+        <parent>base_link</parent>
+        <child>l_hip_1</child>
+        <axis>
+          <xyz>-0 -1 0</xyz>
+          <limit>
+            <lower>-0.785398</lower>
+            <upper>2.33874</upper>
+            <effort>55.5</effort>
+            <velocity>5.1</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hip_1'>
+        <pose>0.006452 -0.026 -0.119913 0 -0 3.14159</pose>
+        <inertial>
+          <pose>-0.000511 0.038092 -8.3e-05 1.5708 -0 1.5708</pose>
+          <mass>0.919725</mass>
+          <inertia>
+            <ixx>0.000404539</ixx>
+            <ixy>1.18502e-06</ixy>
+            <ixz>-9.64514e-07</ixz>
+            <iyy>0.000573315</iyy>
+            <iyz>-1.06028e-06</iyz>
+            <izz>0.000578982</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_hip_1_collision'>
+          <pose>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_hip_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_hip_1_visual'>
+          <pose>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_hip_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hip_roll' type='revolute'>
+        <pose>0 0 -0 0 -0 0</pose>
+        <parent>l_hip_1</parent>
+        <child>l_hip_2</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <limit>
+            <lower>-0.349066</lower>
+            <upper>2.0944</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hip_2'>
+        <pose>0.006452 -0.0701 -0.119913 0 -0 3.14159</pose>
+        <inertial>
+          <pose>-0.001106 1.7e-05 -0.044574 1.5708 -0 1.5708</pose>
+          <mass>0.415987</mass>
+          <inertia>
+            <ixx>0.000475741</ixx>
+            <ixy>2.89355e-07</ixy>
+            <ixz>-6.72876e-08</ixz>
+            <iyy>0.000279828</iyy>
+            <iyz>6.7417e-06</iyz>
+            <izz>0.000307828</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_hip_2_collision'>
+          <pose>0.042851 -0.0701 0.151913 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_hip_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_hip_2_visual'>
+          <pose>0.042851 -0.0701 0.151913 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_hip_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_leg_ft_sensor' type='fixed'>
+        <pose>0 -0 0 0 -0 0</pose>
+        <parent>l_hip_2</parent>
+        <child>l_hip_3</child>
+        <axis>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hip_3'>
+        <pose>0.007282 -0.070175 -0.194213 -3.14159 -0 3.14159</pose>
+        <inertial>
+          <pose>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
+          <mass>0.126212</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>2.67901e-07</ixy>
+            <ixz>-4.41463e-09</ixz>
+            <iyy>0.01</iyy>
+            <iyz>3.32338e-08</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_hip_3_collision'>
+          <pose>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_upper_thigh_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_hip_3_visual'>
+          <pose>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_upper_thigh_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hip_yaw' type='revolute'>
+        <pose>-0 -0 -0 0 -0 0</pose>
+        <parent>l_hip_3</parent>
+        <child>l_upper_leg</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1.39626</lower>
+            <upper>1.39626</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_upper_leg'>
+        <pose>0.007282 -0.070175 -0.208613 0 -0 3.14159</pose>
+        <inertial>
+          <pose>0.003387 0.000102 -0.078916 1.5708 -0 1.5708</pose>
+          <mass>1.8084</mass>
+          <inertia>
+            <ixx>0.00648513</ixx>
+            <ixy>-0.000124211</ixy>
+            <ixz>-3.97399e-06</ixz>
+            <iyy>0.00146251</iyy>
+            <iyz>-0.000136818</iyz>
+            <izz>0.00647619</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_upper_leg_collision'>
+          <pose>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_upper_leg_visual'>
+          <pose>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_knee' type='revolute'>
+        <pose>-0 0 0 0 -0 0</pose>
+        <parent>l_upper_leg</parent>
+        <child>l_lower_leg</child>
+        <axis>
+          <xyz>-0 -1 0</xyz>
+          <limit>
+            <lower>-2.16421</lower>
+            <upper>0.0698132</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_lower_leg'>
+        <pose>0.007282 -0.070175 -0.354438 0 -0 3.14159</pose>
+        <inertial>
+          <pose>0.001 0.003497 -0.088567 1.5708 -0 1.5708</pose>
+          <mass>1.4724</mass>
+          <inertia>
+            <ixx>0.00423699</ixx>
+            <ixy>-0.000239615</ixy>
+            <ixz>6.76166e-05</ixz>
+            <iyy>0.00152221</iyy>
+            <iyz>-0.000233143</iyz>
+            <izz>0.00457007</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_lower_leg_collision'>
+          <pose>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_lower_leg_visual'>
+          <pose>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_ankle_pitch' type='revolute'>
+        <pose>-0 0 0 0 -0 0</pose>
+        <parent>l_lower_leg</parent>
+        <child>l_ankle_1</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-0.610865</lower>
+            <upper>0.610865</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_ankle_1'>
+        <pose>0.007282 -0.070175 -0.554938 0 -0 3.14159</pose>
+        <inertial>
+          <pose>0.015153 0.000902 4.2e-05 1.5708 -0 1.5708</pose>
+          <mass>0.6798</mass>
+          <inertia>
+            <ixx>0.000404474</ixx>
+            <ixy>-1.13226e-06</ixy>
+            <ixz>3.04665e-05</ixz>
+            <iyy>0.000447887</iyy>
+            <iyz>2.57266e-06</iyz>
+            <izz>0.000307603</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_ankle_1_collision'>
+          <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_ankle_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_ankle_1_visual'>
+          <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_ankle_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_ankle_roll' type='revolute'>
+        <pose>-0 0 0 0 -0 0</pose>
+        <parent>l_ankle_1</parent>
+        <child>l_ankle_2</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <limit>
+            <lower>-0.436332</lower>
+            <upper>0.436332</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_ankle_2'>
+        <pose>0.007282 -0.070175 -0.554938 0 -0 3.14159</pose>
+        <inertial>
+          <pose>0.001145 4e-06 -0.03852 1.5708 -0 1.5708</pose>
+          <mass>0.265122</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-4.74606e-08</ixy>
+            <ixz>4.94571e-08</ixz>
+            <iyy>0.01</iyy>
+            <iyz>-4.29975e-06</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_ankle_2_collision'>
+          <pose>0.043682 -0.070175 0.587138 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_foot_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_ankle_2_visual'>
+          <pose>0.043682 -0.070175 0.587138 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_foot_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_foot_ft_sensor' type='fixed'>
+        <pose>0 0 -0 0 -0 0</pose>
+        <parent>l_ankle_2</parent>
+        <child>l_foot</child>
+        <axis>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_foot'>
+        <pose>0.010782 -0.070175 -0.615438 -3.14159 -0 3.14159</pose>
+        <inertial>
+          <pose>0.033667 -0.005374 -0.001164 -1.5708 -0 -1.5708</pose>
+          <mass>0.382968</mass>
+          <inertia>
+            <ixx>0.00121242</ixx>
+            <ixy>-3.69533e-07</ixy>
+            <ixz>5.79273e-05</ixz>
+            <iyy>0.00141712</iyy>
+            <iyz>-7.64972e-06</iyz>
+            <izz>0.000273846</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_foot_collision'>
+          <pose>0.03 -0.005 0.014 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.16 0.072 0.001</size>
+            </box>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='l_foot_visual'>
+          <pose>0.047209 0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_sole_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <velocity_decay/>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hip_pitch' type='revolute'>
+        <pose>0 0 -0 0 -0 0</pose>
+        <parent>base_link</parent>
+        <child>r_hip_1</child>
+        <axis>
+          <xyz>-0 -1 0</xyz>
+          <limit>
+            <lower>-0.785398</lower>
+            <upper>2.33874</upper>
+            <effort>55.5</effort>
+            <velocity>5.1</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hip_1'>
+        <pose>0.006452 0.026 -0.119913 0 -0 3.14159</pose>
+        <inertial>
+          <pose>-0.000515 -0.038075 -7.1e-05 1.5708 -0 1.5708</pose>
+          <mass>0.919978</mass>
+          <inertia>
+            <ixx>0.000404268</ixx>
+            <ixy>-1.26852e-06</ixy>
+            <ixz>1.11055e-06</ixz>
+            <iyy>0.000574741</iyy>
+            <iyz>-7.69474e-07</iyz>
+            <izz>0.000580025</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_hip_1_collision'>
+          <pose>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_hip_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_hip_1_visual'>
+          <pose>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_hip_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hip_roll' type='revolute'>
+        <pose>-0 -0 -0 0 -0 0</pose>
+        <parent>r_hip_1</parent>
+        <child>r_hip_2</child>
+        <axis>
+          <xyz>-1 0 -0</xyz>
+          <limit>
+            <lower>-0.349066</lower>
+            <upper>2.0944</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hip_2'>
+        <pose>0.006452 0.0701 -0.119913 0 -0 3.14159</pose>
+        <inertial>
+          <pose>-0.000932 8e-06 -0.044809 1.5708 -0 1.5708</pose>
+          <mass>0.413242</mass>
+          <inertia>
+            <ixx>0.00046914</ixx>
+            <ixy>-4.76597e-08</ixy>
+            <ixz>7.12496e-08</ixz>
+            <iyy>0.000277108</iyy>
+            <iyz>3.3401e-06</iyz>
+            <izz>0.000303891</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_hip_2_collision'>
+          <pose>0.042851 0.0701 0.151913 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_hip_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_hip_2_visual'>
+          <pose>0.042851 0.0701 0.151913 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_hip_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_leg_ft_sensor' type='fixed'>
+        <pose>-0 -0 -0 0 -0 0</pose>
+        <parent>r_hip_2</parent>
+        <child>r_hip_3</child>
+        <axis>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hip_3'>
+        <pose>0.007388 0.070086 -0.194213 -3.14159 -0 3.14159</pose>
+        <inertial>
+          <pose>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
+          <mass>0.126212</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>2.67901e-07</ixy>
+            <ixz>-4.41463e-09</ixz>
+            <iyy>0.01</iyy>
+            <iyz>3.32338e-08</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_hip_3_collision'>
+          <pose>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_upper_thigh_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_hip_3_visual'>
+          <pose>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_upper_thigh_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hip_yaw' type='revolute'>
+        <pose>0 -0 -0 0 -0 0</pose>
+        <parent>r_hip_3</parent>
+        <child>r_upper_leg</child>
+        <axis>
+          <xyz>0 -0 -1</xyz>
+          <limit>
+            <lower>-1.39626</lower>
+            <upper>1.39626</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_upper_leg'>
+        <pose>0.007388 0.070086 -0.208613 0 -0 3.14159</pose>
+        <inertial>
+          <pose>0.0034 -2.9e-05 -0.078954 1.5708 -0 1.5708</pose>
+          <mass>1.8035</mass>
+          <inertia>
+            <ixx>0.00647751</ixx>
+            <ixy>0.000129579</ixy>
+            <ixz>5.48205e-06</ixz>
+            <iyy>0.00145938</iyy>
+            <iyz>-0.000136613</iyz>
+            <izz>0.00646721</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_upper_leg_collision'>
+          <pose>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_upper_leg_visual'>
+          <pose>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_knee' type='revolute'>
+        <pose>0 0 0 0 -0 0</pose>
+        <parent>r_upper_leg</parent>
+        <child>r_lower_leg</child>
+        <axis>
+          <xyz>-0 -1 0</xyz>
+          <limit>
+            <lower>-2.16421</lower>
+            <upper>0.0698132</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_lower_leg'>
+        <pose>0.007388 0.070086 -0.354438 0 -0 3.14159</pose>
+        <inertial>
+          <pose>0.001236 -0.003513 -0.088794 1.5708 -0 1.5708</pose>
+          <mass>1.472</mass>
+          <inertia>
+            <ixx>0.00423993</ixx>
+            <ixy>0.000228815</ixy>
+            <ixz>-5.55646e-05</ixz>
+            <iyy>0.00152095</iyy>
+            <iyz>-0.000264133</iyz>
+            <izz>0.00457359</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_lower_leg_collision'>
+          <pose>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_lower_leg_visual'>
+          <pose>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_ankle_pitch' type='revolute'>
+        <pose>0 0 0 0 -0 0</pose>
+        <parent>r_lower_leg</parent>
+        <child>r_ankle_1</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-0.610865</lower>
+            <upper>0.610865</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_ankle_1'>
+        <pose>0.007388 0.070086 -0.554938 0 -0 3.14159</pose>
+        <inertial>
+          <pose>0.015144 -0.000869 4.2e-05 1.5708 -0 1.5708</pose>
+          <mass>0.6803</mass>
+          <inertia>
+            <ixx>0.000404619</ixx>
+            <ixy>7.49819e-07</ixy>
+            <ixz>-3.01349e-05</ixz>
+            <iyy>0.000448634</iyy>
+            <iyz>2.57267e-06</iyz>
+            <izz>0.000308236</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_ankle_1_collision'>
+          <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_ankle_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_ankle_1_visual'>
+          <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_ankle_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_ankle_roll' type='revolute'>
+        <pose>0 0 0 0 -0 0</pose>
+        <parent>r_ankle_1</parent>
+        <child>r_ankle_2</child>
+        <axis>
+          <xyz>-1 0 -0</xyz>
+          <limit>
+            <lower>-0.436332</lower>
+            <upper>0.436332</upper>
+            <effort>37</effort>
+            <velocity>7.64</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_ankle_2'>
+        <pose>0.007388 0.070086 -0.554938 0 -0 3.14159</pose>
+        <inertial>
+          <pose>0.001145 4e-06 -0.03852 1.5708 -0 1.5708</pose>
+          <mass>0.265122</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-4.74606e-08</ixy>
+            <ixz>4.94571e-08</ixz>
+            <iyy>0.01</iyy>
+            <iyz>-4.29975e-06</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_ankle_2_collision'>
+          <pose>0.043788 0.070086 0.587138 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_foot_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_ankle_2_visual'>
+          <pose>0.043788 0.070086 0.587138 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_foot_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_foot_ft_sensor' type='fixed'>
+        <pose>-0 0 -0 0 -0 0</pose>
+        <parent>r_ankle_2</parent>
+        <child>r_foot</child>
+        <axis>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_foot'>
+        <pose>0.010888 0.070086 -0.615438 -3.14159 -0 3.14159</pose>
+        <inertial>
+          <pose>0.0336 0.005372 -0.001147 -1.5708 -0 -1.5708</pose>
+          <mass>0.382866</mass>
+          <inertia>
+            <ixx>0.00120946</ixx>
+            <ixy>3.74585e-07</ixy>
+            <ixz>-5.78759e-05</ixz>
+            <iyy>0.00141439</iyy>
+            <iyz>-7.80325e-06</iyz>
+            <izz>0.000273599</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_foot_collision'>
+          <pose>0.03 0.005 0.014 0 -0 0</pose>
+          <geometry>
+            <box>
+              <size>0.16 0.072 0.001</size>
+            </box>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='r_foot_visual'>
+          <pose>0.047209 -0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_sole_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <velocity_decay/>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='torso_pitch' type='revolute'>
+        <pose>0 -0 -0 0 -0 0</pose>
+        <parent>base_link</parent>
+        <child>torso_1</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <limit>
+            <lower>-0.349066</lower>
+            <upper>1.22173</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='torso_1'>
+        <pose>0 0.027046 0 1.5708 0 -1.5708</pose>
+        <inertial>
+          <pose>0.027092 0.029148 -0.00044 0 -0 0</pose>
+          <mass>0.67144</mass>
+          <inertia>
+            <ixx>0.00040911</ixx>
+            <ixy>-1.04522e-06</ixy>
+            <ixz>-1.02516e-06</ixz>
+            <iyy>0.000384141</iyy>
+            <iyz>6.50708e-06</iyz>
+            <izz>0.000299445</izz>
+          </inertia>
+        </inertial>
+        <collision name='torso_1_collision'>
+          <pose>0.027046 0.032 0.0364 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_lap_belt_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='torso_1_visual'>
+          <pose>0.027046 0.032 0.0364 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_lap_belt_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='torso_roll' type='revolute'>
+        <pose>-0 0 -0 0 -0 0</pose>
+        <parent>torso_1</parent>
+        <child>torso_2</child>
+        <axis>
+          <xyz>0 0 -1</xyz>
+          <limit>
+            <lower>-0.523599</lower>
+            <upper>0.523599</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='torso_2'>
+        <pose>0.057345 -0 0.032 1.5708 0 -1.5708</pose>
+        <inertial>
+          <pose>-0.000114 0.036153 0.057096 0 -0 0</pose>
+          <mass>0.425685</mass>
+          <inertia>
+            <ixx>0.000829234</ixx>
+            <ixy>2.37006e-08</ixy>
+            <ixz>9.25231e-08</ixz>
+            <iyy>0.000436517</iyy>
+            <iyz>-1.74814e-07</iyz>
+            <izz>0.000604802</izz>
+          </inertia>
+        </inertial>
+        <collision name='torso_2_collision'>
+          <pose>0 0.1433 0.038653 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_lap_belt_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='torso_2_visual'>
+          <pose>0 0.1433 0.038653 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_lap_belt_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='torso_yaw' type='revolute'>
+        <pose>0 0 -0 0 -0 0</pose>
+        <parent>torso_2</parent>
+        <child>chest</child>
+        <axis>
+          <xyz>0 -1 0</xyz>
+          <limit>
+            <lower>-0.872665</lower>
+            <upper>0.872665</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='chest'>
+        <pose>-0.005497 0 0.082 1.5708 0 -1.5708</pose>
+        <inertial>
+          <pose>0.000189 0.073091 -0.047238 0 -0 0</pose>
+          <mass>7.638</mass>
+          <inertia>
+            <ixx>0.0430325</ixx>
+            <ixy>2.91075e-05</ixy>
+            <ixz>0.000181985</ixz>
+            <iyy>0.0440836</iyy>
+            <iyz>-0.000429106</iyz>
+            <izz>0.0260563</izz>
+          </inertia>
+        </inertial>
+        <collision name='chest_collision'>
+          <pose>0 0.0928 -0.024189 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='chest_visual'>
+          <pose>0 0.0928 -0.024189 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_shoulder_pitch' type='revolute'>
+        <pose>0 0 -0 0 -0 0</pose>
+        <parent>chest</parent>
+        <child>l_shoulder_1</child>
+        <axis>
+          <xyz>0.965926 0 0.258819</xyz>
+          <limit>
+            <lower>-1.66679</lower>
+            <upper>0.174533</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_shoulder_1'>
+        <pose>-0.013467 -0.120016 0.1748 1.5708 0 -1.5708</pose>
+        <inertial>
+          <pose>-0.008985 -3.3e-05 -0.0089 0 -0 0</pose>
+          <mass>0.114882</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-1.77064e-08</ixy>
+            <ixz>3.55951e-06</ixz>
+            <iyy>0.01</iyy>
+            <iyz>6.57597e-08</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_shoulder_1_collision'>
+          <pose>-0.120257 0 -0.032223 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_shoulder_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_shoulder_1_visual'>
+          <pose>-0.120257 0 -0.032223 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_shoulder_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_shoulder_roll' type='revolute'>
+        <pose>-0 0 0 0 -0 0</pose>
+        <parent>l_shoulder_1</parent>
+        <child>l_shoulder_2</child>
+        <axis>
+          <xyz>-0.258819 0 0.965926</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>2.80649</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_shoulder_2'>
+        <pose>-0.021987 -0.106345 0.1748 -3.14158 1.30899 -0.261788</pose>
+        <inertial>
+          <pose>0.021475 0.000269 -0.019411 0 -0 0</pose>
+          <mass>0.238162</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>1.19701e-07</ixy>
+            <ixz>-1.29687e-05</ixz>
+            <iyy>0.01</iyy>
+            <iyz>1.20112e-06</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_shoulder_2_collision'>
+          <pose>-0.106587 0 -0.040743 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_shoulder_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_shoulder_2_visual'>
+          <pose>-0.106587 0 -0.040743 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_shoulder_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_shoulder_yaw' type='revolute'>
+        <pose>0 -0 0 0 -0 0</pose>
+        <parent>l_shoulder_2</parent>
+        <child>l_shoulder_3</child>
+        <axis>
+          <xyz>0.965926 0 0.258819</xyz>
+          <limit>
+            <lower>-0.645772</lower>
+            <upper>1.39626</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_shoulder_3'>
+        <pose>-0.010619 -0.109391 0.151746 -3.14158 1.30899 9e-06</pose>
+        <inertial>
+          <pose>0.026798 -1.6e-05 0.014696 0 -0 0</pose>
+          <mass>0.35913</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-2.22441e-07</ixy>
+            <ixz>-4.95846e-05</ixz>
+            <iyy>0.01</iyy>
+            <iyz>1.07538e-07</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_shoulder_3_collision'>
+          <pose>-0.131901 0 -0.035343 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_upper_arm_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_shoulder_3_visual'>
+          <pose>-0.131901 0 -0.035343 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_upper_arm_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_arm_ft_sensor' type='fixed'>
+        <pose>-0 0 -0 -0 -0 -0</pose>
+        <parent>l_shoulder_3</parent>
+        <child>l_upper_arm</child>
+        <axis>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_upper_arm'>
+        <pose>-0.025619 -0.109391 0.095 3.14159 6e-06 3.14159</pose>
+        <inertial>
+          <pose>-0.006121 -0.000189 0.029368 0 -1.309 3.14159</pose>
+          <mass>0.746799</mass>
+          <inertia>
+            <ixx>0.000509731</ixx>
+            <ixy>-6.90767e-07</ixy>
+            <ixz>1.20048e-05</ixz>
+            <iyy>0.00067086</iyy>
+            <iyz>3.11833e-06</iyz>
+            <izz>0.000601202</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_upper_arm_collision'>
+          <pose>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_upper_arm_visual'>
+          <pose>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_elbow' type='revolute'>
+        <pose>0 0 0 0 -0 0</pose>
+        <parent>l_upper_arm</parent>
+        <child>l_elbow_1</child>
+        <axis>
+          <xyz>0 -1 0</xyz>
+          <limit>
+            <lower>0.261799</lower>
+            <upper>1.85005</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_elbow_1'>
+        <pose>-0.025619 -0.075391 0.01574 -3.14159 1.30899 1e-06</pose>
+        <inertial>
+          <pose>0.006739 0.030302 -0.004658 0 -0 0</pose>
+          <mass>0.267903</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-7.37159e-06</ixy>
+            <ixz>1.04505e-05</ixz>
+            <iyy>0.01</iyy>
+            <iyz>3.9319e-06</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_elbow_1_collision'>
+          <pose>-0.25939 0.034 -0.085033 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_elbow_prosup_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_elbow_1_visual'>
+          <pose>-0.25939 0.034 -0.085033 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_elbow_prosup_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_wrist_prosup' type='revolute'>
+        <pose>-0 -0 -0 0 -0 0</pose>
+        <parent>l_elbow_1</parent>
+        <child>l_forearm</child>
+        <axis>
+          <xyz>0.965926 0 0.258819</xyz>
+          <limit>
+            <lower>-1.0472</lower>
+            <upper>1.0472</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_forearm'>
+        <pose>-0.010619 -0.109391 -0.020059 -3.14159 1.30899 1e-06</pose>
+        <inertial>
+          <pose>0.040451 -0.000686 0.005324 0 -0 0</pose>
+          <mass>0.636185</mass>
+          <inertia>
+            <ixx>0.000371447</ixx>
+            <ixy>4.34562e-06</ixy>
+            <ixz>-0.000105871</ixz>
+            <iyy>0.000674229</iyy>
+            <iyz>4.05222e-06</iyz>
+            <izz>0.000557115</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_forearm_collision'>
+          <pose>-0.296887 0 -0.079551 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_forearm_visual'>
+          <pose>-0.296887 0 -0.079551 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_wrist_pitch' type='revolute'>
+        <pose>0 -0 -0 0 -0 0</pose>
+        <parent>l_forearm</parent>
+        <child>l_wrist_1</child>
+        <axis>
+          <xyz>0.258819 0 -0.965926</xyz>
+          <limit>
+            <lower>-1.39626</lower>
+            <upper>0.436332</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_wrist_1'>
+        <pose>-0.008468 -0.109398 -0.126559 -3.14159 1.30899 1e-06</pose>
+        <inertial>
+          <pose>-0.000981 -0.001178 0.004083 0 -0 0</pose>
+          <mass>0.0362152</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>3.08362e-08</ixy>
+            <ixz>9.42153e-07</ixz>
+            <iyy>0.01</iyy>
+            <iyz>-1.58924e-07</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='l_wrist_1_collision'>
+          <pose>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_wrist_pitch_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='l_wrist_1_visual'>
+          <pose>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_l_wrist_pitch_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_wrist_yaw' type='revolute'>
+        <pose>0.020361 -0.01228 -0.000194 3.14077 -0.261006 -1.57058</pose>
+        <parent>l_wrist_1</parent>
+        <child>l_hand::l_hand_base_link</child>
+        <axis>
+          <xyz>-1 0 0</xyz>
+          <limit>
+            <lower>-0.349066</lower>
+            <upper>0.436332</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <joint name='neck_pitch' type='revolute'>
+        <pose>-0 -0 -0 0 -0 0</pose>
+        <parent>chest</parent>
+        <child>neck_1</child>
+        <axis>
+          <xyz>-1 0 0</xyz>
+          <limit>
+            <lower>-0.698132</lower>
+            <upper>0.383972</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='neck_1'>
+        <pose>-0.01081 0.0143 0.254797 1.5708 0 -1.5708</pose>
+        <inertial>
+          <pose>0.014371 0.006567 -0.006384 0 -0 0</pose>
+          <mass>0.125793</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>8.09156e-08</ixy>
+            <ixz>-3.74998e-08</ixz>
+            <iyy>0.01</iyy>
+            <iyz>9.39717e-06</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='neck_1_collision'>
+          <pose>0.0143 -0.079997 -0.029501 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_neck_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='neck_1_visual'>
+          <pose>0.0143 -0.079997 -0.029501 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_neck_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='neck_roll' type='revolute'>
+        <pose>-0 0 -0 0 -0 0</pose>
+        <parent>neck_1</parent>
+        <child>neck_2</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-0.349066</lower>
+            <upper>0.349066</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='neck_2'>
+        <pose>-0.03161 0 0.264297 1.5708 0 -1.5708</pose>
+        <inertial>
+          <pose>-8.9e-05 0.035225 -0.019545 0 -0 0</pose>
+          <mass>0.177087</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-5.25591e-07</ixy>
+            <ixz>4.68307e-07</ixz>
+            <iyy>0.01</iyy>
+            <iyz>9.81476e-06</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='neck_2_collision'>
+          <pose>0 -0.089497 -0.050301 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_neck_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='neck_2_visual'>
+          <pose>0 -0.089497 -0.050301 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_neck_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='neck_yaw' type='revolute'>
+        <pose>0 -0 -0 0 -0 0</pose>
+        <parent>neck_2</parent>
+        <child>head</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>-0.872665</lower>
+            <upper>0.872665</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='head'>
+        <pose>-0.01081 0 0.241953 1.5708 0 -1.5708</pose>
+        <inertial>
+          <pose>-0.000574 0.113511 -0.007539 0 -0 0</pose>
+          <mass>1.50691</mass>
+          <inertia>
+            <ixx>0.00680478</ixx>
+            <ixy>-1.60267e-05</ixy>
+            <ixz>7.28166e-05</ixz>
+            <iyy>0.00634736</iyy>
+            <iyz>0.000292091</iyz>
+            <izz>0.00478116</izz>
+          </inertia>
+        </inertial>
+        <collision name='head_collision'>
+          <pose>0 -0.067153 -0.029501 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='head_visual'>
+          <pose>0 -0.067153 -0.029501 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_shoulder_pitch' type='revolute'>
+        <pose>0 -0 0 0 -0 0</pose>
+        <parent>chest</parent>
+        <child>r_shoulder_1</child>
+        <axis>
+          <xyz>-0.965926 0 0.258819</xyz>
+          <limit>
+            <lower>-1.66679</lower>
+            <upper>0.174533</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_shoulder_1'>
+        <pose>-0.013466 0.120016 0.1748 -1.5708 4e-06 2.09439</pose>
+        <inertial>
+          <pose>-0.012266 3.2e-05 -0.003211 0 -0 0</pose>
+          <mass>0.114862</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-1.65173e-08</ixy>
+            <ixz>-3.55626e-06</ixz>
+            <iyy>0.01</iyy>
+            <iyz>-6.13337e-08</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_shoulder_1_collision'>
+          <pose>0.099008 0 -0.026529 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_shoulder_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_shoulder_1_visual'>
+          <pose>0.099008 0 -0.026529 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_shoulder_1_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_shoulder_roll' type='revolute'>
+        <pose>0 -0 -0 0 -0 0</pose>
+        <parent>r_shoulder_1</parent>
+        <child>r_shoulder_2</child>
+        <axis>
+          <xyz>-0.258819 -0 -0.965926</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>2.80649</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_shoulder_2'>
+        <pose>-0.021983 0.106347 0.1748 -3.14159 -1.30899 -2.8798</pose>
+        <inertial>
+          <pose>-0.021414 0.000272 -0.01944 0 -0 0</pose>
+          <mass>0.238162</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-1.12091e-07</ixy>
+            <ixz>1.02574e-05</ixz>
+            <iyy>0.01</iyy>
+            <iyz>1.19785e-06</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_shoulder_2_collision'>
+          <pose>0.106588 0 -0.040739 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_shoulder_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_shoulder_2_visual'>
+          <pose>0.106588 0 -0.040739 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_shoulder_2_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_shoulder_yaw' type='revolute'>
+        <pose>-0 0 0 0 -0 0</pose>
+        <parent>r_shoulder_2</parent>
+        <child>r_shoulder_3</child>
+        <axis>
+          <xyz>0.965926 -0 -0.258819</xyz>
+          <limit>
+            <lower>-0.645772</lower>
+            <upper>1.39626</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_shoulder_3'>
+        <pose>-0.010619 0.109391 0.151712 3.14159 -1.30899 3.14159</pose>
+        <inertial>
+          <pose>-0.026762 -7e-06 0.0147 0 -0 0</pose>
+          <mass>0.35913</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>3.60361e-07</ixy>
+            <ixz>4.94445e-05</ixz>
+            <iyy>0.01</iyy>
+            <iyz>2.65919e-07</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_shoulder_3_collision'>
+          <pose>0.131934 0 -0.035352 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_upper_arm_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_shoulder_3_visual'>
+          <pose>0.131934 0 -0.035352 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_upper_arm_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_arm_ft_sensor' type='fixed'>
+        <pose>-0 0 0 0 -0 0</pose>
+        <parent>r_shoulder_3</parent>
+        <child>r_upper_arm</child>
+        <axis>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+        </axis>
+        <physics>
+          <ode>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_upper_arm'>
+        <pose>-0.025619 0.109391 0.095 3.14159 5e-06 3.14159</pose>
+        <inertial>
+          <pose>-0.006087 0.000126 0.029312 0 1.309 0</pose>
+          <mass>0.745104</mass>
+          <inertia>
+            <ixx>0.000509527</ixx>
+            <ixy>1.19292e-06</ixy>
+            <ixz>-1.17426e-05</ixz>
+            <iyy>0.000668487</iyy>
+            <iyz>1.13363e-06</iyz>
+            <izz>0.000599254</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_upper_arm_collision'>
+          <pose>-0.015 0 -0.1933 0 1.309 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_upper_arm_visual'>
+          <pose>-0.015 0 -0.1933 0 1.309 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_elbow' type='revolute'>
+        <pose>-0 0 0 0 -0 0</pose>
+        <parent>r_upper_arm</parent>
+        <child>r_elbow_1</child>
+        <axis>
+          <xyz>0 1 0</xyz>
+          <limit>
+            <lower>0.261799</lower>
+            <upper>1.85005</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_elbow_1'>
+        <pose>-0.025619 0.086891 0.01574 3.14159 -1.30899 3.14159</pose>
+        <inertial>
+          <pose>-0.006739 0.018802 -0.004658 0 -0 0</pose>
+          <mass>0.267903</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>7.36974e-06</ixy>
+            <ixz>-1.04536e-05</ixz>
+            <iyy>0.01</iyy>
+            <iyz>3.92498e-06</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_elbow_1_collision'>
+          <pose>0.25939 0.0225 -0.085033 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_elbow_prosup_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_elbow_1_visual'>
+          <pose>0.25939 0.0225 -0.085033 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_elbow_prosup_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_wrist_prosup' type='revolute'>
+        <pose>-0 0 -0 0 -0 0</pose>
+        <parent>r_elbow_1</parent>
+        <child>r_forearm</child>
+        <axis>
+          <xyz>0.965926 -0 -0.258819</xyz>
+          <limit>
+            <lower>-1.0472</lower>
+            <upper>1.0472</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_forearm'>
+        <pose>-0.010619 0.109391 -0.020059 3.14159 -1.30899 3.14159</pose>
+        <inertial>
+          <pose>-0.040439 -0.000328 0.005327 0 -0 0</pose>
+          <mass>0.6347</mass>
+          <inertia>
+            <ixx>0.000370044</ixx>
+            <ixy>-1.65419e-06</ixy>
+            <ixz>0.00010538</ixz>
+            <iyy>0.000672279</iyy>
+            <iyz>1.1456e-06</iyz>
+            <izz>0.000553637</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_forearm_collision'>
+          <pose>0.296887 0 -0.079551 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_forearm_visual'>
+          <pose>0.296887 0 -0.079551 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_wrist_pitch' type='revolute'>
+        <pose>-0 0 -0 0 -0 0</pose>
+        <parent>r_forearm</parent>
+        <child>r_wrist_1</child>
+        <axis>
+          <xyz>0.258819 0 0.965926</xyz>
+          <limit>
+            <lower>-1.39626</lower>
+            <upper>0.436332</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_wrist_1'>
+        <pose>-0.008169 0.109398 -0.126559 3.14159 -1.30899 3.14159</pose>
+        <inertial>
+          <pose>0.000986 -0.001176 0.004101 0 -0 0</pose>
+          <mass>0.0362615</mass>
+          <inertia>
+            <ixx>0.01</ixx>
+            <ixy>-3.10462e-08</ixy>
+            <ixz>-9.44554e-07</ixz>
+            <iyy>0.01</iyy>
+            <iyz>-1.59685e-07</iyz>
+            <izz>0.01</izz>
+          </inertia>
+        </inertial>
+        <collision name='r_wrist_1_collision'>
+          <pose>0.400392 -7e-06 -0.104748 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_wrist_pitch_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='r_wrist_1_visual'>
+          <pose>0.400392 -7e-06 -0.104748 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.001 0.001 0.001</scale>
+              <uri>/meshes/simmechanics/sim_sea_2-5_r_wrist_pitch_prt-binary.stl</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <gravity>1</gravity>
+        <velocity_decay/>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_wrist_yaw' type='revolute'>
+        <pose>0.020362 -0.012279 -0.000124 -0.000829 -0.262597 1.57101</pose>
+        <parent>r_wrist_1</parent>
+        <child>r_hand::r_hand_base_link</child>
+        <axis>
+          <xyz>-1 0 0</xyz>
+          <limit>
+            <lower>-0.349066</lower>
+            <upper>0.436332</upper>
+            <effort>50000</effort>
+            <velocity>50000</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <frame name='l_hand::__model__' attached_to='l_hand::l_hand_base_link'>
+        <pose relative_to='__model__'>-0.01075 -0.110259 -0.11428 1.57 -0 1.57</pose>
+      </frame>
+      <link name='l_hand::l_hand_base_link'>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0.011682 -0.051355 -0.000577 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='base_link_fixed_joint_lump__l_palm_visual'>
+          <pose>0.016 -0.0625 -0 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_palm.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__l_palm_collision'>
+          <pose>0.016 -0.0625 -0 1.5708 -0 1.5708</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_palm.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__lindexbase_visual_1'>
+          <pose>0.01225 -0.0643 -0.027 -1.4749 -0.072507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_indexbase.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__lindexbase_collision_1'>
+          <pose>0.01225 -0.0643 -0.027 -1.4749 -0.072507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_indexbase.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__lail0_visual_2'>
+          <pose>0.01225 -0.075498 -0.027259 0.0959 0.017493 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ail0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__lail0_collision_2'>
+          <pose>0.01225 -0.075498 -0.027259 0.0959 0.017493 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ail0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__llittlebase_visual_3'>
+          <pose>0.0135 -0.06225 0.02475 -1.6581 -0.017493 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_littlebase.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__llittlebase_collision_3'>
+          <pose>0.0135 -0.06225 0.02475 -1.6581 -0.017493 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_littlebase.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__llil0_visual_4'>
+          <pose>0.0135 -0.077048 0.025009 -0.0873 -0.017493 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_lil0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__llil0_collision_4'>
+          <pose>0.0135 -0.077048 0.025009 -0.0873 -0.017493 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_lil0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__lmiddlebase_visual_5'>
+          <pose>0.011 -0.0653 -0.01 -1.5708 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_middlebase.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__lmiddlebase_collision_5'>
+          <pose>0.011 -0.0653 -0.01 -1.5708 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_middlebase.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__lml0_visual_6'>
+          <pose>0.011 -0.0803 -0.01 0 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ml0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__lml0_collision_6'>
+          <pose>0.011 -0.0803 -0.01 0 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ml0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__lringbase_visual_7'>
+          <pose>0.01175 -0.06415 0.0059 -1.6581 -0.008693 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ringbase.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__lringbase_collision_7'>
+          <pose>0.01175 -0.06415 0.0059 -1.6581 -0.008693 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ringbase.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__lril0_visual_8'>
+          <pose>0.01175 -0.078949 0.006029 -0.0873 -0.008693 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ril0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__lril0_collision_8'>
+          <pose>0.01175 -0.078949 0.006029 -0.0873 -0.008693 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ril0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <pose>-0.01075 -0.110259 -0.11428 1.57 -0 1.57</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='l_hand::l_ai_dummy'>
+        <pose>-0.037689 -0.097988 -0.178601 -1.47481 1.49749 -0.00071</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_aij6' type='revolute'>
+        <child>l_hand::l_ai_dummy</child>
+        <parent>l_hand::l_hand_base_link</parent>
+        <axis>
+          <xyz>-6e-06 -0.09575 -0.995405</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ail1'>
+        <pose>-0.037939 -0.097987 -0.1898 -3.04607 1.5541 3.14042</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ail1_visual'>
+          <pose>0.0259 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ail1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ail1_collision'>
+          <pose>0.0259 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ail1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_aij3' type='revolute'>
+        <child>l_hand::l_ail1</child>
+        <parent>l_hand::l_ai_dummy</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ail2'>
+        <pose>-0.038371 -0.097987 -0.215696 -3.04607 1.5541 3.14042</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ail2_visual'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ail2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ail2_collision'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ail2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_aij4' type='revolute'>
+        <child>l_hand::l_ail2</child>
+        <parent>l_hand::l_ail1</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ail3'>
+        <pose>-0.038739 -0.097987 -0.237692 -3.04607 1.5541 3.14042</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ail3_visual'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ail3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ail3_collision'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ail3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_aij5' type='revolute'>
+        <child>l_hand::l_ail3</child>
+        <parent>l_hand::l_ail2</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_li_dummy'>
+        <pose>0.01406 -0.096779 -0.17651 -1.65775 1.55251 -0.00045</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_lij6' type='revolute'>
+        <child>l_hand::l_li_dummy</child>
+        <parent>l_hand::l_hand_base_link</parent>
+        <axis>
+          <xyz>-6e-06 0.087193 -0.996191</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_lil1'>
+        <pose>0.014331 -0.096779 -0.191308 -0.086954 1.55251 -0.00045</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_lil1_visual'>
+          <pose>0.0218 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_lil1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_lil1_collision'>
+          <pose>0.0218 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_lil1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_lij3' type='revolute'>
+        <child>l_hand::l_lil1</child>
+        <parent>l_hand::l_li_dummy</parent>
+        <axis>
+          <xyz>0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_lil2'>
+        <pose>0.014729 -0.096778 -0.213104 -0.086954 1.55251 -0.00045</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_lil2_visual'>
+          <pose>0.019 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_lil2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_lil2_collision'>
+          <pose>0.019 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_lil2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_lij4' type='revolute'>
+        <child>l_hand::l_lil2</child>
+        <parent>l_hand::l_lil1</parent>
+        <axis>
+          <xyz>0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_lil3'>
+        <pose>0.015078 -0.096779 -0.2321 -0.086954 1.55251 -0.00045</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_lil3_visual'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_lil3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_lil3_collision'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_lil3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_lij5' type='revolute'>
+        <child>l_hand::l_lil3</child>
+        <parent>l_hand::l_lil2</parent>
+        <axis>
+          <xyz>0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ml_dummy'>
+        <pose>-0.020689 -0.099251 -0.179588 -1.56279 1.57001 0.007219</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_mj6' type='revolute'>
+        <child>l_hand::l_ml_dummy</child>
+        <parent>l_hand::l_hand_base_link</parent>
+        <axis>
+          <xyz>-6e-06 4e-06 -1</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ml1'>
+        <pose>-0.020677 -0.099251 -0.194588 0.008015 1.57001 0.007219</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ml1_visual'>
+          <pose>0.0285 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ml1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ml1_collision'>
+          <pose>0.0285 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ml1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_mj3' type='revolute'>
+        <child>l_hand::l_ml1</child>
+        <parent>l_hand::l_ml_dummy</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ml2'>
+        <pose>-0.020655 -0.099251 -0.223088 0.008015 1.57001 0.007219</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ml2_visual'>
+          <pose>0.024 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ml2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ml2_collision'>
+          <pose>0.024 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ml2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_mj4' type='revolute'>
+        <child>l_hand::l_ml2</child>
+        <parent>l_hand::l_ml1</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ml3'>
+        <pose>-0.020636 -0.09925 -0.247088 0.008015 1.57001 0.007219</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ml3_visual'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ml3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ml3_collision'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ml3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_mj5' type='revolute'>
+        <child>l_hand::l_ml3</child>
+        <parent>l_hand::l_ml2</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ril_dummy'>
+        <pose>-0.00479 -0.098514 -0.178425 -1.65743 1.56131 -0.00013</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_rij6' type='revolute'>
+        <child>l_hand::l_ril_dummy</child>
+        <parent>l_hand::l_hand_base_link</parent>
+        <axis>
+          <xyz>-6e-06 0.087193 -0.996191</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ril1'>
+        <pose>-0.004649 -0.098514 -0.193224 -0.086633 1.56131 -0.00013</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ril1_visual'>
+          <pose>0.0259 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ril1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ril1_collision'>
+          <pose>0.0259 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ril1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_rij3' type='revolute'>
+        <child>l_hand::l_ril1</child>
+        <parent>l_hand::l_ril_dummy</parent>
+        <axis>
+          <xyz>0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ril2'>
+        <pose>-0.004403 -0.098514 -0.219123 -0.086633 1.56131 -0.00013</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ril2_visual'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ril2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ril2_collision'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ril2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_rij4' type='revolute'>
+        <child>l_hand::l_ril2</child>
+        <parent>l_hand::l_ril1</parent>
+        <axis>
+          <xyz>0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_ril3'>
+        <pose>-0.004195 -0.098513 -0.241123 -0.086633 1.56131 -0.00013</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_ril3_visual'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_ril3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_ril3_collision'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_ril3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_rij5' type='revolute'>
+        <child>l_hand::l_ril3</child>
+        <parent>l_hand::l_ril2</parent>
+        <axis>
+          <xyz>0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_tl0'>
+        <pose>-0.023053 -0.089249 -0.15289 0.078597 0.498303 3.1408</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_tl0_visual'>
+          <pose>0 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_tl0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_tl0_collision'>
+          <pose>0 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_tl0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <visual name='l_tl0_fixed_joint_lump__l_tl1_visual_1'>
+          <pose>0.021 -0.0056 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_tl1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_tl0_fixed_joint_lump__l_tl1_collision_1'>
+          <pose>0.021 -0.0056 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_tl1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_tj2' type='revolute'>
+        <child>l_hand::l_tl0</child>
+        <parent>l_hand::l_hand_base_link</parent>
+        <axis>
+          <xyz>3e-06 -4e-06 -1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_tl2'>
+        <pose>-0.041285 -0.083652 -0.163312 -1.49221 0.498303 3.1408</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_tl2_visual'>
+          <pose>0.026 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_tl2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_tl2_collision'>
+          <pose>0.026 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_tl2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_tj4' type='revolute'>
+        <child>l_hand::l_tl2</child>
+        <parent>l_hand::l_tl0</parent>
+        <axis>
+          <xyz>0 -1e-06 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_tl3'>
+        <pose>-0.064123 -0.083633 -0.175739 -1.49221 0.498303 3.1408</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_tl3_visual'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_tl3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_tl3_collision'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_tl3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_tj5' type='revolute'>
+        <child>l_hand::l_tl3</child>
+        <parent>l_hand::l_tl2</parent>
+        <axis>
+          <xyz>0 -1e-06 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='l_hand::l_tl4'>
+        <pose>-0.083448 -0.083618 -0.186253 -1.49221 0.498303 3.1408</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='l_tl4_visual'>
+          <pose>0.0168 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/l_hand/l_tl4.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='l_tl4_collision'>
+          <pose>0.0168 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/l_hand/l_tl4.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='l_hand::l_tj6' type='revolute'>
+        <child>l_hand::l_tl4</child>
+        <parent>l_hand::l_tl3</parent>
+        <axis>
+          <xyz>0 -1e-06 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <frame name='r_hand::__model__' attached_to='r_hand::r_hand_base_link'>
+        <pose relative_to='__model__'>-0.01075 0.11026 -0.11428 1.57 0 -1.57</pose>
+      </frame>
+      <link name='r_hand::r_hand_base_link'>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0.011682 -0.051682 0.000577 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='base_link_fixed_joint_lump__r_palm_visual'>
+          <pose>0.016 -0.0625 -0 -1.5708 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_palm.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__r_palm_collision'>
+          <pose>0.016 -0.0625 -0 -1.5708 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_palm.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__rindexbase_visual_1'>
+          <pose>0.01225 -0.0643 0.027 -1.4749 0.017507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_indexbase.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__rindexbase_collision_1'>
+          <pose>0.01225 -0.0643 0.027 -1.4749 0.017507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_indexbase.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__rail0_visual_2'>
+          <pose>0.01225 -0.079098 0.026741 0.0959 0.017507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ail0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__rail0_collision_2'>
+          <pose>0.01225 -0.079098 0.026741 0.0959 0.017507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ail0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__rlittlebase_visual_3'>
+          <pose>0.0135 -0.06225 -0.02475 -1.4835 0.017507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_littlebase.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__rlittlebase_collision_3'>
+          <pose>0.0135 -0.06225 -0.02475 -1.4835 0.017507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_littlebase.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__rlil0_visual_4'>
+          <pose>0.0135 -0.077048 -0.025009 0.0873 0.017507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_lil0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__rlil0_collision_4'>
+          <pose>0.0135 -0.077048 -0.025009 0.0873 0.017507 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_lil0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__rmiddlebase_visual_5'>
+          <pose>0.011 -0.0653 0.01 -1.5708 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_middlebase.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__rmiddlebase_collision_5'>
+          <pose>0.011 -0.0653 0.01 -1.5708 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_middlebase.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__rml0_visual_6'>
+          <pose>0.011 -0.0803 0.01 0 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ml0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__rml0_collision_6'>
+          <pose>0.011 -0.0803 0.01 0 7e-06 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ml0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__rringbase_visual_7'>
+          <pose>0.01175 -0.06415 -0.0059 -1.4835 0.008707 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ringbase.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__rringbase_collision_7'>
+          <pose>0.01175 -0.06415 -0.0059 -1.4835 0.008707 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ringbase.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <visual name='base_link_fixed_joint_lump__rril0_visual_8'>
+          <pose>0.01175 -0.078949 -0.006029 0.0873 0.008707 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ril0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='base_link_fixed_joint_lump__rril0_collision_8'>
+          <pose>0.01175 -0.078949 -0.006029 0.0873 0.008707 -1.57079</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ril0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>4</max_contacts>
+        </collision>
+        <pose>-0.01075 0.11026 -0.11428 1.57 0 -1.57</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='r_hand::r_ai_dummy'>
+        <pose>-0.037791 0.097988 -0.178558 1.66631 1.55409 0.000418</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_aij6' type='revolute'>
+        <child>r_hand::r_ai_dummy</child>
+        <parent>r_hand::r_hand_base_link</parent>
+        <axis>
+          <xyz>6e-06 0.095749 0.995405</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ail1'>
+        <pose>-0.037544 0.097989 -0.193357 -3.04607 1.55409 0.000418</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ail1_visual'>
+          <pose>0.0259 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ail1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ail1_collision'>
+          <pose>0.0259 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ail1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_aij3' type='revolute'>
+        <child>r_hand::r_ail1</child>
+        <parent>r_hand::r_ai_dummy</parent>
+        <axis>
+          <xyz>-0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ail2'>
+        <pose>-0.037111 0.097988 -0.219253 -3.04607 1.55409 0.000418</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ail2_visual'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ail2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ail2_collision'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ail2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_aij4' type='revolute'>
+        <child>r_hand::r_ail2</child>
+        <parent>r_hand::r_ail1</parent>
+        <axis>
+          <xyz>-0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ail3'>
+        <pose>-0.036743 0.097988 -0.24125 -3.04607 1.55409 0.000418</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ail3_visual'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ail3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ail3_collision'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ail3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_aij5' type='revolute'>
+        <child>r_hand::r_ail3</child>
+        <parent>r_hand::r_ail2</parent>
+        <axis>
+          <xyz>-0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_li_dummy'>
+        <pose>0.013961 0.09678 -0.17655 1.65771 1.55409 0.000418</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_lij6' type='revolute'>
+        <child>r_hand::r_li_dummy</child>
+        <parent>r_hand::r_hand_base_link</parent>
+        <axis>
+          <xyz>6e-06 0.087185 0.996192</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_lil1'>
+        <pose>0.014208 0.09678 -0.191348 -3.05467 1.55409 0.000418</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_lil1_visual'>
+          <pose>0.0218 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_lil1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_lil1_collision'>
+          <pose>0.0218 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_lil1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_lij3' type='revolute'>
+        <child>r_hand::r_lil1</child>
+        <parent>r_hand::r_li_dummy</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_lil2'>
+        <pose>0.014573 0.09678 -0.213144 -3.05467 1.55409 0.000418</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_lil2_visual'>
+          <pose>0.019 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_lil2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_lil2_collision'>
+          <pose>0.019 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_lil2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_lij4' type='revolute'>
+        <child>r_hand::r_lil2</child>
+        <parent>r_hand::r_lil1</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_lil3'>
+        <pose>0.01489 0.09678 -0.232141 -3.05467 1.55409 0.000418</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_lil3_visual'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_lil3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_lil3_collision'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_lil3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_lij5' type='revolute'>
+        <child>r_hand::r_lil3</child>
+        <parent>r_hand::r_lil2</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_m_dummy'>
+        <pose>-0.020793 0.099252 -0.179572 -1.56279 1.57001 -3.13278</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_mj6' type='revolute'>
+        <child>r_hand::r_m_dummy</child>
+        <parent>r_hand::r_hand_base_link</parent>
+        <axis>
+          <xyz>6e-06 -4e-06 1</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ml1'>
+        <pose>-0.020805 0.099252 -0.194572 0.008015 1.57001 -3.13278</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ml1_visual'>
+          <pose>0.0285 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ml1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ml1_collision'>
+          <pose>0.0285 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ml1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_mj3' type='revolute'>
+        <child>r_hand::r_ml1</child>
+        <parent>r_hand::r_m_dummy</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ml2'>
+        <pose>-0.020828 0.099252 -0.223072 0.008015 1.57001 -3.13278</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ml2_visual'>
+          <pose>0.024 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ml2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ml2_collision'>
+          <pose>0.024 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ml2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_mj4' type='revolute'>
+        <child>r_hand::r_ml2</child>
+        <parent>r_hand::r_ml1</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ml3'>
+        <pose>-0.020846 0.099251 -0.247072 0.008015 1.57001 -3.13278</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ml3_visual'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ml3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ml3_collision'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ml3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_mj5' type='revolute'>
+        <child>r_hand::r_ml3</child>
+        <parent>r_hand::r_ml2</parent>
+        <axis>
+          <xyz>-0 -0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ri_dummy'>
+        <pose>-0.004892 0.098515 -0.178435 1.65729 1.56289 -3e-06</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_rij6' type='revolute'>
+        <child>r_hand::r_ri_dummy</child>
+        <parent>r_hand::r_hand_base_link</parent>
+        <axis>
+          <xyz>6e-06 0.087185 0.996192</xyz>
+          <limit>
+            <lower>-1.5708</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ril1'>
+        <pose>-0.004775 0.098515 -0.193234 -3.05509 1.56289 -3e-06</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ril1_visual'>
+          <pose>0.0259 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ril1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ril1_collision'>
+          <pose>0.0259 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ril1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_rij3' type='revolute'>
+        <child>r_hand::r_ril1</child>
+        <parent>r_hand::r_ri_dummy</parent>
+        <axis>
+          <xyz>-0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ril2'>
+        <pose>-0.00457 0.098515 -0.219133 -3.05509 1.56289 -3e-06</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ril2_visual'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ril2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ril2_collision'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ril2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_rij4' type='revolute'>
+        <child>r_hand::r_ril2</child>
+        <parent>r_hand::r_ril1</parent>
+        <axis>
+          <xyz>-0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_ril3'>
+        <pose>-0.004396 0.098515 -0.241133 -3.05509 1.56289 -3e-06</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_ril3_visual'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_ril3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_ril3_collision'>
+          <pose>0.0168 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_ril3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_rij5' type='revolute'>
+        <child>r_hand::r_ril3</child>
+        <parent>r_hand::r_ril2</parent>
+        <axis>
+          <xyz>-0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_tl0'>
+        <pose>-0.023114 0.08925 -0.15287 -0.078597 0.49671 -3.14079</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_tl0_visual'>
+          <pose>0 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_tl0.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_tl0_collision'>
+          <pose>0 0 0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_tl0.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <visual name='r_tl0_fixed_joint_lump__r_tl1_visual_1'>
+          <pose>0.021 0.0056 -0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_tl1.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_tl0_fixed_joint_lump__r_tl1_collision_1'>
+          <pose>0.021 0.0056 -0 -1.5708 0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_tl1.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_tj2' type='revolute'>
+        <child>r_hand::r_tl0</child>
+        <parent>r_hand::r_hand_base_link</parent>
+        <axis>
+          <xyz>-3e-06 -4e-06 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_tl2'>
+        <pose>-0.041363 0.083653 -0.163264 -1.64939 0.49671 -3.14079</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_tl2_visual'>
+          <pose>0.026 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_tl2.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_tl2_collision'>
+          <pose>0.026 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_tl2.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_tj4' type='revolute'>
+        <child>r_hand::r_tl2</child>
+        <parent>r_hand::r_tl0</parent>
+        <axis>
+          <xyz>-2e-06 1e-06 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_tl3'>
+        <pose>-0.064221 0.083634 -0.175653 -1.64939 0.49671 -3.14079</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_tl3_visual'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_tl3.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_tl3_collision'>
+          <pose>0.022 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_tl3.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_tj5' type='revolute'>
+        <child>r_hand::r_tl3</child>
+        <parent>r_hand::r_tl2</parent>
+        <axis>
+          <xyz>-2e-06 1e-06 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <link name='r_hand::r_tl4'>
+        <pose>-0.083562 0.083619 -0.186138 -1.64939 0.49671 -3.14079</pose>
+        <contact>
+          <friction_anchor/>
+          <spinning_friction>0.001</spinning_friction>
+          <lateral_friction>0.8</lateral_friction>
+          <rolling_friction>0.001</rolling_friction>
+        </contact>
+        <inertial>
+          <pose>0 0 0 0 -0 0</pose>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>0.00112</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00112</iyy>
+            <iyz>0</iyz>
+            <izz>0.00112</izz>
+          </inertia>
+        </inertial>
+        <visual name='r_tl4_visual'>
+          <pose>0.0168 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/visual/r_hand/r_tl4.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <collision name='r_tl4_collision'>
+          <pose>0.0168 0 0 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>1 1 1</scale>
+              <uri>/meshes/upmc/collision/r_hand/r_tl4.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>1</max_contacts>
+        </collision>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <joint name='r_hand::r_tj6' type='revolute'>
+        <child>r_hand::r_tl4</child>
+        <parent>r_hand::r_tl3</parent>
+        <axis>
+          <xyz>-2e-06 1e-06 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>1.5708</upper>
+            <effort>10</effort>
+            <velocity>0.5</velocity>
+          </limit>
+          <dynamics>
+            <damping>1</damping>
+            <friction>0.05</friction>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>1</cfm_damping>
+            <limit>
+              <cfm>0</cfm>
+              <erp>0.2</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+      <static>0</static>
+      <pose>0.0 0.0 0.63 0 -0 3.14</pose>
+    </model>
+  </world>
+</sdf>
