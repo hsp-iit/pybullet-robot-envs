@@ -71,7 +71,12 @@ The pybullet-robot-envs environments adopt the OpenAI Gym environment interface,
     $ pip3 install -r requirements.txt
     ```
     **Note:** Installing the requirements will install also [Stable Baselines](https://github.com/hill-a/stable-baselines/).
-5. [Optional] Install the environments and register them as Gym environments by doing:
+4. Download the robot model meshes:
+    ```
+    $ git lfs pull
+    ```
+   If you do not have git lfs installed, follow the instructions here [git-lfs](https://git-lfs.github.com/)
+5. Install the package:
     ```
     $ pip3 install -e .
     ```
@@ -90,27 +95,43 @@ $ python pybullet_robot_envs/examples/helloworlds/helloworld_panda.py
 ```
 
 ## Environments
-The [README.md](pybullet_robot_envs/README.md) file provides detailed information about the robotic environments of the repository. In general, there are two types of environments:
+The [README.md](pybullet_robot_envs/README.md) file provides detailed information about the robotic environments of the repository. In general, there are three types of environments:
 - **Robot environments**: load the URDF/SDF robot models and provide methods to directly interact with the robot in the simulation. They are not OpenAI Gym-like environments.
 - **Task environments**: provide the implementation of the RL task and are OpenAI Gym-like environments. Inside the task environment, the specific robot environment is instantiated.
-
+- **World environment**: load the objects into the scene and provide methods to observe the object states during the simulation. 
 ### Test Environments
 
 ##### iCub
 Run the following script to open an interactive GUI in PyBullet and test the iCub environment:
 * Forward Kinematic: use the sliders to change the positions of the iCub arm's joints
   ```
-  $ python pybullet_robot_envs/examples/test_envs/test_icub_reach_gym_env.py --arm l
+  $ python pybullet_robot_envs/examples/test_envs/test_icub_push_gym_env.py --arm l --joint
   ```
 * Inverse Kinematic: use the sliders to change the (x,y,z),(roll,pitch,yaw) position of the iCub's hand
   ```
-  $ python pybullet_robot_envs/examples/test_envs/test_icub_reach_gym_env.py --arm r --continueIK
+  $ python pybullet_robot_envs/examples/test_envs/test_icub_push_gym_env.py --arm l 
+  ```
+  
+* Random policy: test a random policy, both in cartesian and joint control spaces by adding `--random_policy`
+  ```
+  $ python pybullet_robot_envs/examples/test_envs/test_icub_push_gym_env.py --arm l --random_policy
   ```
 ##### Panda
 Run the following script to open an interactive GUI in pybullet and test the Panda environment:
-```
-$ python pybullet_robot_envs/examples/test_envs/test_panda_push_gym_env.py
-```
+
+* Forward Kinematic: use the sliders to change the positions of the iCub arm's joints
+  ```
+  $ python pybullet_robot_envs/examples/test_envs/test_panda_push_gym_env.py
+  ```
+* Inverse Kinematic: use the sliders to change the (x,y,z),(roll,pitch,yaw) position of the iCub's hand
+  ```
+  $ python pybullet_robot_envs/examples/test_envs/test_panda_push_gym_env.py --cart 
+  ```
+  
+* Random policy: test a random policy, both in cartesian and joint control spaces by adding `--random_policy`
+  ```
+  $ python pybullet_robot_envs/examples/test_envs/test_panda_push_gym_env.py --random_policy
+  ```
 
 
 

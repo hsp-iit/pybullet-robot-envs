@@ -4,184 +4,155 @@
 
 import os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-print(currentdir)
 parentdir = os.path.dirname(os.path.dirname(currentdir))
 os.sys.path.insert(0, parentdir)
 
-
 import pybullet as p
 import pybullet_data
-from icub_model_pybullet import model_with_hands
-from ycb_objects_models_sim import objects
+from pybullet_robot_envs.envs.icub_envs.icub_env_with_hands import iCubHandsEnv
+from pybullet_object_models import ycb_objects
 
 import time
 import math as m
-import numpy as np
 
 
 def main():
-    # Open GUI and set pybullet_data in the path
-    p.connect(p.GUI)
-    p.resetDebugVisualizerCamera(1.8, 140, -50, [0.0, -0.0, -0.0])
+
+    # ------------------------ #
+    # --- Setup simulation --- #
+    # ------------------------ #
+
+    # Create pybullet GUI
+    physics_client_id = p.connect(p.GUI)
+    p.resetDebugVisualizerCamera(1.8, 120, -50, [0.0, -0.0, -0.0])
     p.resetSimulation()
     p.setPhysicsEngineParameter(numSolverIterations=150)
-    p.setTimeStep(1/240.)
+    sim_timestep = 1.0/240
+    p.setTimeStep(sim_timestep)
 
     # Load plane contained in pybullet_data
-    p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"))
+    p.loadURDF(os.path.join(pybullet_data.getDataPath(), "plane.urdf"))
 
     # Set gravity for simulation
-    p.setGravity(0,0,-9.8)
+    p.setGravity(0, 0, -9.8)
 
-    # load robot model
-    icubId = p.loadSDF(os.path.join(model_with_hands.get_data_path(), "icub_model_with_hands.sdf"))[0]
+    # ------------------- #
+    # --- Setup robot --- #
+    # ------------------- #
 
-    # set constraint between base_link and world
-    p.createConstraint(icubId, -1, -1, -1, p.JOINT_FIXED, [0, 0, 0],
-                       parentFramePosition=[0, 0, 0],
-                       childFramePosition=[p.getBasePositionAndOrientation(icubId)[0][0],
-                                           p.getBasePositionAndOrientation(icubId)[0][1],
-                                           p.getBasePositionAndOrientation(icubId)[0][2] * 1.2],
-                       parentFrameOrientation=p.getBasePositionAndOrientation(icubId)[1])
+    robot = iCubHandsEnv(physics_client_id, use_IK=1, control_arm='r')
+    p.stepSimulation()
 
-    # --- init_pos for standing --- #
-    home_pos_torso = [0.0, 0.0, 0.0]  # degrees
-    home_pos_head = [0.47, 0, 0]
-    home_left_arm = [-29.4, 28.8, 0, 44.59, 0, 0, 0]
-    home_right_arm = [-29.4, 30.4, 0, 44.59, 0, 0, 0]
-    home_left_hand = [0] * 20
-    home_right_hand = [0] * 20
+    # -------------------------- #
+    # --- Load other objects --- #
+    # -------------------------- #
 
-    init_pos = [0]*12 + home_pos_torso + home_left_arm + home_left_hand + home_pos_head + home_right_arm + home_right_hand
-
-    hand_idx = 51
-    # Load other objects
     p.loadURDF(os.path.join(pybullet_data.getDataPath(), "table/table.urdf"), [1, 0.0, 0.0])
-    p.loadURDF(os.path.join(objects.getDataPath(), 'YcbFoamBrick',  "model.urdf"), [0.5, 0.0, 0.8])
+    p.loadURDF(os.path.join(ycb_objects.getDataPath(), 'YcbFoamBrick', "model.urdf"), [0.5, -0.03, 0.7])
 
-    p.addUserDebugLine([0, 0, 0], [0.1, 0, 0], [1, 0, 0], parentObjectUniqueId=icubId,
-                       parentLinkIndex=hand_idx)
-    p.addUserDebugLine([0, 0, 0], [0, 0.1, 0], [0, 1, 0], parentObjectUniqueId=icubId,
-                       parentLinkIndex=hand_idx)
-    p.addUserDebugLine([0, 0, 0], [0, 0, 0.1], [0, 0, 1], parentObjectUniqueId=icubId,
-                       parentLinkIndex=hand_idx)
-
-    # add debug slider
-    jointIds = []
-    paramIds = []
-    joints_num = p.getNumJoints(icubId)
-
-    for i in range(joints_num):
-        p.resetJointState(icubId, i, init_pos[i]/180*m.pi)
-
-    for i in range(joints_num):
-        info = p.getJointInfo(icubId, i)
-        jointName = info[1]
-        jointIds.append(i)
-        # paramIds.append(p.addUserDebugParameter(jointName.decode("utf-8"), info[8], info[9], init_pos[i]/180*m.pi))
-
+    # Run the world for a bit
     for _ in range(100):
         p.stepSimulation()
 
-    # pregrasp gesture of the right hand
-    p.setJointMotorControlArray(icubId, [50, 68], p.POSITION_CONTROL, targetPositions=[1.4, 1.57], forces=[50, 50])
-    for _ in range(70):
+    # ------------------ #
+    # --- Start Demo --- #
+    # ------------------ #
+
+    robot.pre_grasp()
+
+    for _ in range(10):
         p.stepSimulation()
-        time.sleep(0.02)
+        time.sleep(sim_timestep)
 
-    # go above the object
-    pos_1 = [0.5, 0.0, 0.8]
-    quat_1 = p.getQuaternionFromEuler([0, m.pi/2, m.pi/2])
-    jointPoses = p.calculateInverseKinematics(icubId, hand_idx, pos_1, quat_1)
-    p.setJointMotorControlArray(icubId, jointIds, p.POSITION_CONTROL, targetPositions=jointPoses,
-                                forces=[50] * len(jointIds))
-    p.setJointMotorControl2(icubId, 50, p.POSITION_CONTROL, targetPosition=1.4, force=50)
-    for _ in range(100):
+    # 1: go above the object
+    pos_1 = [0.49, 0.0, 0.8]
+    quat_1 = p.getQuaternionFromEuler([0, 0, m.pi/2])
+
+    robot.apply_action(pos_1 + list(quat_1), max_vel=5)
+    robot.pre_grasp()
+
+    for _ in range(60):
         p.stepSimulation()
-        time.sleep(0.02)
+        time.sleep(sim_timestep)
 
-    # go down to the object
-    pos_2 = [0.5, 0.0, 0.675 + 0.064]
-    quat_2 = p.getQuaternionFromEuler([0, m.pi/2, m.pi/2])
-    jointPoses = p.calculateInverseKinematics(icubId, hand_idx, pos_2, quat_2)
-    p.setJointMotorControlArray(icubId, jointIds, p.POSITION_CONTROL, targetPositions=jointPoses,
-                                forces=[50] * len(jointIds))
-    p.setJointMotorControl2(icubId, 50, p.POSITION_CONTROL, targetPosition=1.4, force=50)
-    for _ in range(100):
+    # 2: turn hand above the object
+    pos_2 = [0.485, 0.0, 0.72]
+    quat_2 = p.getQuaternionFromEuler([m.pi/2, 1/3*m.pi, -m.pi])
+
+    robot.apply_action(pos_2 + list(quat_2), max_vel=5)
+    robot.pre_grasp()
+
+    for _ in range(60):
         p.stepSimulation()
-        time.sleep(0.02)
+        time.sleep(sim_timestep)
 
-    # close fingers
-    pos = [0, 0.3, 0.5, 0.9, 0,  0.3, 0.5, 0.9, 0,  0.3, 0.5, 0.9, 0,  0.3, 0.5, 0.9, 1.57, 0.6, 0.4, 0.7]
+    # 3: close fingers
+    pos_cl = [0, 0.6, 0.8, 1.0, 0,  0.6, 0.8, 1.0, 0,  0.6, 0.8, 1.0, 0,  0.6, 0.8, 1.0, 1.57, 0.8, 0.5, 0.8]
 
-    steps = [i/100 for i in range(0, 101, 1)]
-    for s in steps:
-        next_pos = np.multiply(pos, s)
-        p.setJointMotorControlArray(icubId, range(52, 72), p.POSITION_CONTROL, targetPositions=next_pos,
-                                    forces=[20] * len(range(52, 72)))
-        p.setJointMotorControlArray(icubId, [50, 68], p.POSITION_CONTROL, targetPositions=[0.5, 1.57], forces=[50, 50])
-        for _ in range(5):
-            p.stepSimulation()
+    robot.grasp(pos_cl)
 
-    # go up to the object
-    pos_2 = [0.5, 0, 0.9]
-    quat_2 = p.getQuaternionFromEuler([0, m.pi/2, m.pi/2])
-    jointPoses = list(p.calculateInverseKinematics(icubId, hand_idx, pos_2, quat_2))
-    jointPoses[-20:] = pos
-    p.setJointMotorControlArray(icubId, jointIds, p.POSITION_CONTROL, targetPositions=jointPoses,
-                                forces=[50] * len(jointIds))
-    for _ in range(100):
+    for _ in range(60):
         p.stepSimulation()
-        time.sleep(0.03)
+        time.sleep(sim_timestep)
 
-    # go up to the object
-    pos_2 = [0.3, -0.2, 0.9]
-    quat_2 = p.getQuaternionFromEuler([0, 0, m.pi/2])
-    jointPoses = list(p.calculateInverseKinematics(icubId, hand_idx, pos_2, quat_2))
-    jointPoses[-20:] = pos
-    p.setJointMotorControlArray(icubId, jointIds, p.POSITION_CONTROL, targetPositions=jointPoses,
-                                forces=[50] * len(jointIds))
-    for _ in range(100):
+    # 4: go up
+    pos_4 = [0.45, 0, 0.9]
+    quat_4 = p.getQuaternionFromEuler([m.pi/2, 1/3*m.pi, -m.pi])
+
+    robot.apply_action(pos_4 + list(quat_4), max_vel=5)
+    robot.grasp(pos_cl)
+
+    for _ in range(60):
         p.stepSimulation()
-        time.sleep(0.03)
+        time.sleep(sim_timestep)
 
-    # open fingers
-    pos = [0, 0.3, 0.5, 0.9, 0, 0.3, 0.5, 0.9, 0, 0.3, 0.5, 0.9, 0, 0.3, 0.5, 0.9, 1.57, 0.6, 0.4, 0.7]
+    # 5: go right
+    pos_5 = [0.3, -0.2, 0.9]
+    quat_5 = p.getQuaternionFromEuler([0.0, 0.0, m.pi/2])
 
-    steps = [i / 100 for i in range(100, -1, -1)]
-    for s in steps:
-        next_pos = np.multiply(pos, s)
-        p.setJointMotorControlArray(icubId, range(52, 72), p.POSITION_CONTROL, targetPositions=next_pos,
-                                    forces=[20] * len(range(52, 72)))
-        for _ in range(4):
-            p.stepSimulation()
+    robot.apply_action(pos_5 + list(quat_5), max_vel=5)
+    robot.grasp(pos_cl)
 
-    jointPoses[-20:] = [0]*20
+    for _ in range(60):
+        p.stepSimulation()
+        time.sleep(sim_timestep)
 
-    # reset joints to home position
-    jointIds = []
-    num_joints = p.getNumJoints(icubId)
+    # 6: open hand
+    robot.pre_grasp()
+
+    for _ in range(50):
+        p.stepSimulation()
+        time.sleep(sim_timestep)
+
+    # ------------------------ #
+    # --- Play with joints --- #
+    # ------------------------ #
+
+    param_ids = []
+    joint_ids = []
+    num_joints = p.getNumJoints(robot.robot_id)
+
+    joint_states = p.getJointStates(robot.robot_id, range(0, num_joints))
+    joint_poses = [x[0] for x in joint_states]
     idx = 0
     for i in range(num_joints):
-        jointInfo = p.getJointInfo(icubId, i)
-        jointName = jointInfo[1]
-        jointType = jointInfo[2]
+        joint_info = p.getJointInfo(robot.robot_id, i)
+        joint_name = joint_info[1]
+        joint_type = joint_info[2]
 
-        if jointType is p.JOINT_REVOLUTE or jointType is p.JOINT_PRISMATIC:
-            jointIds.append(i)
-            paramIds.append(
-                p.addUserDebugParameter(jointName.decode("utf-8"), jointInfo[8], jointInfo[9], jointPoses[idx]))
+        if joint_type is p.JOINT_REVOLUTE or joint_type is p.JOINT_PRISMATIC:
+            param_ids.append(p.addUserDebugParameter(joint_name.decode("utf-8"), joint_info[8], joint_info[9], joint_poses[i]))
+            joint_ids.append(i)
             idx += 1
-
 
     while True:
         new_pos = []
-        for i in paramIds:
+        for i in param_ids:
             new_pos.append(p.readUserDebugParameter(i))
-        p.setJointMotorControlArray(icubId, jointIds, p.POSITION_CONTROL, targetPositions=new_pos, forces=[50]*len(jointIds))
+        p.setJointMotorControlArray(robot.robot_id, joint_ids, p.POSITION_CONTROL, targetPositions=new_pos)
 
         p.stepSimulation()
-        time.sleep(0.01)
+        time.sleep(sim_timestep)
 
 
 if __name__ == '__main__':

@@ -65,7 +65,7 @@ def callback(_locals, _globals):
 
 def main():
     # create Environment
-    env = iCubPushGymEnv(renders=False, use_IK=1, discrete_action=0, obj_pose_rnd_std=0, max_steps=2000, reward_type=0)
+    env = iCubPushGymEnv(renders=False, use_IK=1, obj_pose_rnd_std=0, max_steps=2000, reward_type=0)
 
     # set seed
     seed = 1

@@ -4,194 +4,276 @@
 
 import os, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-print ("current_dir=" + currentdir)
 os.sys.path.insert(0,currentdir)
 
-import math as m
 import gym
 from gym import spaces
 from gym.utils import seeding
+import math as m
 import numpy as np
 import time
+
 import pybullet as p
-from panda_env import pandaEnv
-import random
-import pybullet_data
-from pkg_resources import parse_version
+from pybullet_robot_envs.envs.panda_envs.panda_env import pandaEnv
+from pybullet_robot_envs.envs.world_envs.world_env import get_objects_list, WorldEnv
+from pybullet_robot_envs.envs.utils import goal_distance, scale_gym_data
 
-
-largeValObservation = 100
-
-RENDER_HEIGHT = 720
-RENDER_WIDTH = 960
-
-def goal_distance(goal_a, goal_b):
-    assert goal_a.shape == goal_b.shape
-    return np.linalg.norm(goal_a - goal_b, axis = -1)
 
 class pandaReachGymEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'],
     'video.frames_per_second': 50 }
 
-    def __init__(self, urdfRoot=[],
-                 useIK = 0,
-                 isDiscrete = 0,
-                 actionRepeat = 1,
-                 renders = False,
-                 maxSteps = 1000,
-                 dist_delta = 0.03, numControlledJoints = 7, fixedPositionObj = True, includeVelObs = True):
+    def __init__(self,
+                 use_IK=0,
+                 action_repeat=1,
+                 obj_name=get_objects_list()[1],
+                 renders=False,
+                 max_steps=1000,
+                 obj_pose_rnd_std=0,
+                 includeVelObs=True):
 
-        self.action_dim = numControlledJoints
-        self._isDiscrete = isDiscrete
-        self._timeStep = 1./240.
-        self._useIK = useIK
-        self._urdfRoot = urdfRoot
-        self._actionRepeat = actionRepeat
+        self._timeStep = 1. / 240.
+
+        self.action_dim = []
+        self._use_IK = use_IK
+        self._action_repeat = action_repeat
         self._observation = []
-        self._envStepCounter = 0
+        self._env_step_counter = 0
         self._renders = renders
-        self._maxSteps = maxSteps
-        self.terminated = False
-        self._cam_dist = 1.3
-        self._cam_yaw = 180
-        self._cam_pitch = -40
-        self._h_table = []
-        self._target_dist_max = 0.3
-        self._target_dist_min = 0.2
-        self._p = p
-        self.fixedPositionObj = fixedPositionObj
+        self._max_steps = max_steps
+        self.terminated = 0
+
+        self._target_dist_min = 0.03
+
         self.includeVelObs = includeVelObs
 
         if self._renders:
-          cid = p.connect(p.SHARED_MEMORY)
-          if (cid<0):
-             cid = p.connect(p.GUI)
-          p.resetDebugVisualizerCamera(2.5,90,-60,[0.52,-0.2,-0.33])
+            self._physics_client_id = p.connect(p.SHARED_MEMORY)
+            if self._physics_client_id < 0:
+                self._physics_client_id = p.connect(p.GUI)
+            p.resetDebugVisualizerCamera(2.5, 90, -60, [0.52, -0.2, -0.33], physicsClientId=self._physics_client_id)
         else:
-            p.connect(p.DIRECT)
+            self._physics_client_id = p.connect(p.DIRECT)
 
-        #self.seed()
-        # initialize simulation environment
-        self.reset()
+        # Load robot
+        self._robot = pandaEnv(self._physics_client_id, use_IK=self._use_IK)
 
-        observationDim = len(self._observation)
-        observation_high = np.array([largeValObservation] * observationDim)
-        self.observation_space = spaces.Box(-observation_high, observation_high, dtype='float32')
+        # Load world environment
+        self._world = WorldEnv(self._physics_client_id,
+                               obj_name=obj_name, obj_pose_rnd_std=obj_pose_rnd_std,
+                               workspace_lim=self._robot.get_workspace())
 
-        if (self._isDiscrete):
-            self.action_space = spaces.Discrete(self._panda.getActionDimension())
+        # limit robot workspace to table plane
+        workspace = self._robot.get_workspace()
+        workspace[2][0] = self._world.get_table_height()
+        self._robot.set_workspace(workspace)
 
-        else:
-            #self.action_dim = 2 #self._panda.getActionDimension()
-            self._action_bound = 1
-            action_high = np.array([self._action_bound] * self.action_dim)
-            self.action_space = spaces.Box(-action_high, action_high, dtype='float32')
+        # Define spaces
+        self.observation_space, self.action_space = self.create_gym_spaces()
 
-        self.viewer = None
+        self.seed()
+        # self.reset()
 
+    def create_gym_spaces(self):
+        # Configure observation limits
+        obs, obs_lim = self.get_extended_observation()
+        observation_dim = len(obs)
+
+        observation_low = []
+        observation_high = []
+        for el in obs_lim:
+            observation_low.extend([el[0]])
+            observation_high.extend([el[1]])
+
+        # Configure the observation space
+        observation_space = spaces.Box(np.array(observation_low), np.array(observation_high), dtype='float32')
+
+        # Configure action space
+        self.action_dim = self._robot.get_action_dim()
+        action_bound = 1
+        action_high = np.array([action_bound] * self.action_dim)
+        action_space = spaces.Box(-action_high, action_high, dtype='float32')
+
+        return observation_space, action_space
 
     def reset(self):
-        self.terminated = False
-        p.resetSimulation()
-        p.setPhysicsEngineParameter(numSolverIterations=150)
-        p.setTimeStep(self._timeStep)
-        self._envStepCounter = 0
+        self.reset_simulation()
 
+        obs, _ = self.get_extended_observation()
+        scaled_obs = scale_gym_data(self.observation_space, obs)
+        return scaled_obs
 
-        p.loadURDF(os.path.join(pybullet_data.getDataPath(),"plane.urdf"), useFixedBase= True)
-        # Load robot
-        self._panda = pandaEnv(self._urdfRoot, timeStep=self._timeStep, basePosition =[0,0,0.625], useInverseKinematics= self._useIK, action_space = self.action_dim, includeVelObs = self.includeVelObs)
-        # Load table and object for simulation
-        tableId = p.loadURDF(os.path.join(self._urdfRoot, "franka_description/table.urdf"), useFixedBase=True)
+    def reset_simulation(self):
+        self.terminated = 0
 
+        # --- reset simulation --- #
+        p.resetSimulation(physicsClientId=self._physics_client_id)
+        p.setPhysicsEngineParameter(numSolverIterations=150, physicsClientId=self._physics_client_id)
+        p.setTimeStep(self._timeStep, physicsClientId=self._physics_client_id)
+        self._env_step_counter = 0
 
-        table_info = p.getVisualShapeData(tableId,-1)[0]
-        self._h_table =table_info[5][2] + table_info[3][2]
+        p.setGravity(0, 0, -9.8, physicsClientId=self._physics_client_id)
 
-        #limit panda workspace to table plane
-        self._panda.workspace_lim[2][0] = self._h_table
-        # Randomize start position of object and target.
+        # --- reset robot --- #
+        self._robot.reset()
 
-        if (self.fixedPositionObj):
-            self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition = [0.7,0.0,0.64], useFixedBase=True)
-        else:
-            self.target_pose = self._sample_pose()[0]
-            self._objID = p.loadURDF( os.path.join(self._urdfRoot,"franka_description/cube_small.urdf"), basePosition= self.target_pose, useFixedBase=True)
-
-        self._debugGUI()
-        p.setGravity(0,0,-9.8)
         # Let the world run for a bit
-        for _ in range(10):
-            p.stepSimulation()
+        for _ in range(100):
+            p.stepSimulation(physicsClientId=self._physics_client_id)
 
-        self._observation = self.getExtendedObservation()
-        return np.array(self._observation)
+        # --- reset world --- #
+        self._world.reset()
 
+        # Let the world run for a bit
+        for _ in range(100):
+            p.stepSimulation(physicsClientId=self._physics_client_id)
 
-    def getExtendedObservation(self):
+        if self._use_IK:
+            self._hand_pose = self._robot._home_hand_pose
 
-        #get robot observations
-        self._observation = self._panda.getObservation()
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
+        # --- draw some reference frames in the simulation for debugging --- #
+        self._robot.debug_gui()
+        self._world.debug_gui()
+        p.stepSimulation(physicsClientId=self._physics_client_id)
 
-        self._observation.extend(list(objPos))
-        self._observation.extend(list(objOrn))
-        return self._observation
+    def get_extended_observation(self):
+        self._observation = []
+        observation_lim = []
 
+        # ----------------------------------- #
+        # --- Robot and world observation --- #
+        # ----------------------------------- #
+        robot_observation, robot_obs_lim = self._robot.get_observation()
+        world_observation, world_obs_lim = self._world.get_observation()
 
-    def step(self, action):
-        if self._useIK:
-            #TO DO
-            return 0
+        self._observation.extend(list(robot_observation))
+        self._observation.extend(list(world_observation))
+        observation_lim.extend(robot_obs_lim)
+        observation_lim.extend(world_obs_lim)
 
-        else:
-            action = [float(i*0.05) for i in action]
-            return self.step2(action)
+        # ----------------------------------------- #
+        # --- Object pose wrt hand c.o.m. frame --- #
+        # ----------------------------------------- #
+        inv_hand_pos, inv_hand_orn = p.invertTransform(robot_observation[:3],
+                                                       p.getQuaternionFromEuler(robot_observation[3:6]))
 
-    def step2(self,action):
+        obj_pos_in_hand, obj_orn_in_hand = p.multiplyTransforms(inv_hand_pos, inv_hand_orn, world_observation[:3],
+                                                                p.getQuaternionFromEuler(world_observation[3:6]))
 
-        for i in range(self._actionRepeat):
-            self._panda.applyAction(action)
-            p.stepSimulation()
+        obj_euler_in_hand = p.getEulerFromQuaternion(obj_orn_in_hand)
+
+        self._observation.extend(list(obj_pos_in_hand))
+        self._observation.extend(list(obj_euler_in_hand))
+        observation_lim.extend([[-0.5, 0.5], [-0.5, 0.5], [-0.5, 0.5]])
+        observation_lim.extend([[0, 2 * m.pi], [0, 2 * m.pi], [0, 2 * m.pi]])
+
+        return np.array(self._observation), observation_lim
+
+    def apply_action(self, action):
+        # process action and send it to the robot
+
+        action = scale_gym_data(self.action_space, np.array(action))
+
+        for _ in range(self._action_repeat):
+            robot_obs, _ = self._robot.get_observation()
+
+            if self._use_IK:
+                if not self._robot._control_orientation:
+                    action *= 0.005
+                    new_action = np.add(self._hand_pose[:3], action)
+
+                else:
+                    action[:3] *= 0.005
+                    action[3:6] *= 0.01
+
+                    new_action = np.add(self._hand_pose, action)
+
+                    # constraint rotation inside limits
+                    eu_lim = self._robot.get_rotation_lim()
+                    new_action[3:6] = [min(eu_lim[0][1], max(eu_lim[0][0], new_action[3])),
+                                       min(eu_lim[1][1], max(eu_lim[1][0], new_action[4])),
+                                       min(eu_lim[2][1], max(eu_lim[2][0], new_action[5]))]
+
+                # constraint position inside workspace
+                ws_lim = self._robot.get_workspace()
+                new_action[:3] = [
+                    min(ws_lim[0][1], max(ws_lim[0][0], new_action[0])),
+                    min(ws_lim[1][1], max(ws_lim[1][0], new_action[1])),
+                    min(ws_lim[2][1], max(ws_lim[2][0], new_action[2]))]
+
+                # Update hand_pose to new pose
+                self._hand_pose = new_action
+
+            else:
+                action *= 0.05
+
+                n_tot_joints = len(self._robot._joint_name_to_ids.items())  # arm  + fingers
+                n_joints_to_control = self._robot.get_action_dim()  # only arm
+
+                new_action = np.add(robot_obs[-n_tot_joints: -(n_tot_joints - n_joints_to_control)], action)
+
+            # -------------------------- #
+            # --- send pose to robot --- #
+            # -------------------------- #
+            self._robot.apply_action(new_action)
+            p.stepSimulation(physicsClientId=self._physics_client_id)
+            time.sleep(self._timeStep)
 
             if self._termination():
                 break
 
-            self._envStepCounter += 1
+            self._env_step_counter += 1
 
-        if self._renders:
-            time.sleep(self._timeStep)
+    def step(self, action):
 
-        self._observation = self.getExtendedObservation()
+        # apply action on the robot
+        self.apply_action(action)
 
-        reward = self._compute_reward()
+        obs, _ = self.get_extended_observation()
+        scaled_obs = scale_gym_data(self.observation_space, obs)
 
         done = self._termination()
+        reward = self._compute_reward()
 
-        return np.array(self._observation), np.array([reward]), np.array(done), {}
+        return scaled_obs, np.array(reward), np.array(done), {}
 
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        self._world.seed(seed)
+        self._robot.seed(seed)
+        return [seed]
 
-
-    def render(self, mode="rgb_array", close=False):
-        ## TODO Check the behavior of this function
+    def render(self, mode="rgb_array"):
         if mode != "rgb_array":
-          return np.array([])
+            return np.array([])
 
-        base_pos,orn = self._p.getBasePositionAndOrientation(self._panda.pandaId)
-        view_matrix = self._p.computeViewMatrixFromYawPitchRoll(
-            cameraTargetPosition=base_pos,
-            distance=self._cam_dist,
-            yaw=self._cam_yaw,
-            pitch=self._cam_pitch,
-            roll=0,
-            upAxisIndex=2)
-        proj_matrix = self._p.computeProjectionMatrixFOV(
-            fov=60, aspect=float(RENDER_WIDTH)/RENDER_HEIGHT,
-            nearVal=0.1, farVal=100.0)
-        (_, _, px, _, _) = self._p.getCameraImage(
-            width=RENDER_WIDTH, height=RENDER_HEIGHT, viewMatrix=view_matrix,
-            projectionMatrix=proj_matrix, renderer=self._p.ER_BULLET_HARDWARE_OPENGL)
-            #renderer=self._p.ER_TINY_RENDERER)
+        base_pos, _ = self._p.getBasePositionAndOrientation(self._robot.robot_id,
+                                                            physicsClientId=self._physics_client_id)
+
+        cam_dist = 1.3
+        cam_yaw = 180
+        cam_pitch = -40
+        RENDER_HEIGHT = 720
+        RENDER_WIDTH = 960
+
+        view_matrix = self._p.computeViewMatrixFromYawPitchRoll(cameraTargetPosition=base_pos,
+                                                                distance=cam_dist,
+                                                                yaw=cam_yaw,
+                                                                pitch=cam_pitch,
+                                                                roll=0,
+                                                                upAxisIndex=2,
+                                                                physicsClientId=self._physics_client_id)
+
+        proj_matrix = self._p.computeProjectionMatrixFOV(fov=60, aspect=float(RENDER_WIDTH) / RENDER_HEIGHT,
+                                                         nearVal=0.1, farVal=100.0,
+                                                         physicsClientId=self._physics_client_id)
+
+        (_, _, px, _, _) = self._p.getCameraImage(width=RENDER_WIDTH, height=RENDER_HEIGHT,
+                                                  viewMatrix=view_matrix,
+                                                  projectionMatrix=proj_matrix,
+                                                  renderer=self._p.ER_BULLET_HARDWARE_OPENGL,
+                                                  physicsClientId=self._physics_client_id)
+        # renderer=self._p.ER_TINY_RENDERER)
 
         rgb_array = np.array(px, dtype=np.uint8)
         rgb_array = np.reshape(rgb_array, (RENDER_HEIGHT, RENDER_WIDTH, 4))
@@ -199,48 +281,32 @@ class pandaReachGymEnv(gym.Env):
         rgb_array = rgb_array[:, :, :3]
         return rgb_array
 
-
     def _termination(self):
-
-        endEffPose = self._panda.getObservation()[0:3]
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        d = goal_distance(np.array(objPos), np.array(endEffPose))
+        robot_obs, _ = self._robot.get_observation()
+        world_obs, _ = self._world.get_observation()
+        d = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
 
         if d <= self._target_dist_min:
-            self.terminated = True
+            self.terminated = 1
+            print('------------->>> success!')
+            print('final reward')
+            print(self._compute_reward())
 
+            return np.float32(1.0)
 
-        if (self.terminated or self._envStepCounter > self._maxSteps):
-            self._observation = self.getExtendedObservation()
-            return [True]
+        if self.terminated or self._env_step_counter > self._max_steps:
+            return np.float32(1.0)
 
-        return [False]
-
+        return np.float32(0.0)
 
     def _compute_reward(self):
+        robot_obs, _ = self._robot.get_observation()
+        world_obs, _ = self._world.get_observation()
 
-        reward = np.float(32.0)
-        objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-        endEffAct = self._panda.getObservation()[0:3]
-        d = goal_distance(np.array(endEffAct), np.array(objPos))
+        d = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
+
         reward = -d
         if d <= self._target_dist_min:
             reward = np.float32(1000.0) + (100 - d*80)
+
         return reward
-
-
-    def _sample_pose(self):
-        ws_lim = self._panda.workspace_lim
-        px,tx = np.random.uniform(low=ws_lim[0][0], high=ws_lim[0][1], size=(2))
-        py,ty = np.random.uniform(low=ws_lim[1][0], high=ws_lim[1][1], size=(2))
-        pz,tz = self._h_table, self._h_table
-        obj_pose = [px,py,pz]
-        tg_pose = [tx,ty,tz]
-
-        return obj_pose, tg_pose
-
-
-
-    def _debugGUI(self):
-        #TO DO
-        return 0
