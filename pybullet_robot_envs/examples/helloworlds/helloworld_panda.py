@@ -12,6 +12,7 @@ os.sys.path.insert(0, parentdir)
 import pybullet as p
 import pybullet_data
 from pybullet_robot_envs.envs.panda_envs.panda_env import pandaEnv
+from pybullet_object_models import ycb_objects
 
 import time
 import os
@@ -80,6 +81,7 @@ def main():
 
     p.loadURDF(os.path.join(pybullet_data.getDataPath(), "table/table.urdf"), [1, 0.0, 0.0])
     obj_id = p.loadURDF(os.path.join(pybullet_data.getDataPath(), "lego/lego.urdf"), [0.5, 0.0, 0.8])
+    # obj_id = p.loadURDF(os.path.join(ycb_objects.getDataPath(), 'YcbBanana', "model.urdf"), [0.5, 0.0, 0.8])
 
     # Run the world for a bit
     for _ in range(100):
