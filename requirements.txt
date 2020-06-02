@@ -1,7 +1,8 @@
 gym==0.12.5
-pybullet==2.5.0
+pybullet
 matplotlib
 pandas
 ruamel.yaml
 tensorflow==1.15.2
 stable_baselines==2.7
+git+https://github.com/eleramp/pybullet-object-models.git

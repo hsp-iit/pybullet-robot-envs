@@ -1,0 +1,11 @@
+pybullet_robot_envs/robot_data/franka_panda/meshes/collision/*.obj filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/franka_panda/meshes/visual/*.obj filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/dae/*.dae filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/simmechanics/*.stl filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/simmechanics/2-5_plus/*.stl filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/upmc/collision/*.dae filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/upmc/collision/l_hand/*.dae filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/upmc/collision/r_hand/*.dae filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/upmc/visual/*.dae filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/upmc/visual/l_hand/*.dae filter=lfs diff=lfs merge=lfs -text
+pybullet_robot_envs/robot_data/iCub/meshes/upmc/visual/r_hand/*.dae filter=lfs diff=lfs merge=lfs -text

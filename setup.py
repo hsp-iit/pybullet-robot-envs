@@ -20,7 +20,7 @@ for root, dirs, files in os.walk(hh):
       need_files.append(fn[1 + len(hh):])
 
 print("packages")
-print(find_packages('pybullet_robot_envs'))
+print(find_packages())
 print("-----")
 
 setup(
@@ -29,6 +29,7 @@ setup(
     author="Elena Rampone, Andrea Romdhana, Giulia Vezzani",
     author_email="elena.rampone@iit.it, andrea.romdhana@iit.it, giulia.vezzani@iit.it",
     description="PyBullet Robot Envs: A collection of OpenAI Gym RL robotic environments in PyBullet simulator",
+    license="LGPL",
     url='https://github.com/robotology-playground/pybullet-robot-envs',
     python_requires='>=3.5',
     #install_requires=['gym==0.12.5','pybullet==2.5.0'],

@@ -7,9 +7,6 @@ __pycache__/
 # C extensions
 *.so
 
-pybullet_robot_envs/examples/algos/train/baselines/panda_envs/panda_reaching_ddpg
-
-
 # Distribution / packaging
 .Python
 build/
@@ -27,6 +24,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.idea/
 MANIFEST
 
 # PyInstaller

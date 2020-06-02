@@ -18,28 +18,27 @@
 
 - `Action space`:
 
-    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`
-    - joints space: torso and arm joint positions
+    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)` (if `use_IK=1`)
+    - Joints space: torso and arm joint positions  (if `use_IK=0`)
     - You can choose which arm to control with flag `control_arm`, when instatiating `iCub Env`
 
 
 -  `Observation space`:
 
-   - hand pose
+   - hand 6D pose
    - hand linear velocity
    - arm and torso joint positions
 
 ### Panda Env
-- `Action space`: joints space
-
-- `Action space dimensions`: 7 DOF maximum (the no. of joints can be specified when calling the training script)
-    - **Note**: use the same number of joints when calling the test scripts.
+- `Action space`: 
+    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`  (if `use_IK=1`)
+    - Joints space  (if `use_IK=0`)
 
 
 -  `Observation space`:
+   - gripper 6D pose
+   - gripper linear velocity
    - joint positions
-   - end-effector pose
-   - end-effector velocity
 
 
 ## Task environments
@@ -51,13 +50,13 @@ The different task environments concerning the same robot differ mostly for:
 ### iCub Reach Env
 
 - `Action space`:
-    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`
-
+    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`  (if `use_IK=1`)
+    - Joints space: torso and arm joint positions  (if `use_IK=0`)
 
 -  `Observation space`:
     - iCub's observation space
     - object absolute 6D pose
-    - object relative 6D pose (wrt hand)
+    - object relative 6D pose wrt hand
 
 #### Reward function
 The reward function is given by:
@@ -67,28 +66,27 @@ The reward function is given by:
 Here is the code used to compute the reward function:
 
 ```python
-reward = np.float(0.0)
-objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-handPos = self._icub.getObservation()[0:3]
-d = goal_distance(np.array(handPos), np.array(objPos))
+robot_obs, _ = self._robot.get_observation()
+world_obs, _ = self._world.get_observation()
+
+d = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
+
 reward = -d
 if d <= self._target_dist_min:
-    reward = np.float32(1000.0)
-    return reward
+    reward += np.float32(1000.0) + (100 - d*80)
 ```
 
 ### iCub Push Env
 
 - `Action space`:
-    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`
-
+    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`  (if `use_IK=1`)
+    - Joints space: torso and arm joint positions  (if `use_IK=0`)
 
 -  `Observation space`:
     - iCub's observation space
     - object absolute 6D pose
     - object linear velocity
-    - object relative 6D pose (wrt hand)
-    - object relative velocity (wrt hand)
+    - object relative 6D pose wrt hand
     - target absolute pose
 
 #### Reward function
@@ -136,35 +134,108 @@ rew2 = 0.25
       reward += np.float32(1000.0)
 ```
 
+### iCub Push Goal Env
+Hindsight Experience Replay (HER) implementation of the iCub Push Env.
+
+- `Action space`:
+    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`  (if `use_IK=1`)
+    - Joints space: torso and arm joint positions  (if `use_IK=0`)
+
+
+-  `Observation space`:
+    - iCub's observation space
+    - object 6D pose
+    - object linear velocity
+    - object relative 6D pose wrt hand
+    - target 3D pose
+
+#### Goals
+
+-  `Achieved goal`:
+    - object 3D pose
+    
+-  `Desired goal`:
+    - target 3D pose
+
+
 ### Panda Reach Env
 
-#### Observation space
-- Panda's observation space
-- plus object position and orientation
+- `Action space`: 
+    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`  (if `use_IK=1`)
+    - Joints space  (if `use_IK=0`)
+    
+-  `Observation space`:
+    - Panda's observation space
+    - object absolute 6D pose
+    - object relative 6D pose wrt hand
 
 #### Reward function
-In this environment the rewad function is given by:
+In this environment the reward function is given by:
 - the distance between the end-effector and the desired position
 - plus a bonus when the end-effector is close to the desired position
 
 Here is the code used to compute the reward function:
 
 ```python
-reward = np.float(32.0)
-objPos, objOrn = p.getBasePositionAndOrientation(self._objID)
-endEffAct = self._panda.getObservation()[0:3]
-d = goal_distance(np.array(endEffAct), np.array(objPos))
+robot_obs, _ = self._robot.get_observation()
+world_obs, _ = self._world.get_observation()
+
+d = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
+
 reward = -d
 if d <= self._target_dist_min:
     reward = np.float32(1000.0) + (100 - d*80)
-    return reward
 ```
 
 ### Panda Push Env
 
-#### Observation space
-- Panda's observation space
-- plus object position and orientation
+- `Action space`: 
+    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`  (if `use_IK=1`)
+    - Joints space  (if `use_IK=0`)
+    
+-  `Observation space`:
+    - Panda's observation space
+    - object absolute 6D pose
+    - object relative 6D pose wrt hand
+    - target 3D pose
 
 #### Reward function
-Coming soon...
+The reward function is given by:
+- distance `d1` between hand and object (target) position
+- distance `d2` between object position and target position
+- plus a bonus when the hand is close to the object
+
+Here is the code used to compute the reward function:
+
+```python
+robot_obs, _ = self._robot.get_observation()
+world_obs, _ = self._world.get_observation()
+
+d1 = goal_distance(np.array(robot_obs[:3]), np.array(world_obs[:3]))
+d2 = goal_distance(np.array(world_obs[:3]), np.array(self._target_pose))
+
+reward = -d1 - d2
+if d2 <= self._target_dist_min:
+    reward = np.float32(1000.0) + (100 - d2*80)
+```
+
+### Panda Push Goal Env
+Hindsight Experience Replay (HER) implementation of the Panda Push Env.
+
+- `Action space`: 
+    - Cartesian space: hand 6D pose `(x,y,z),(roll,pitch,yaw)`  (if `use_IK=1`)
+    - Joints space  (if `use_IK=0`)
+    
+-  `Observation space`:
+    - Panda's observation space
+    - object absolute 6D pose
+    - object relative 6D pose wrt hand
+    - target 3D pose
+
+#### Goals
+
+-  `Achieved goal`:
+    - object 3D pose
+    
+-  `Desired goal`:
+    - target 3D pose
