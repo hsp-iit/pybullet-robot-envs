@@ -12,7 +12,6 @@ from pybullet_robot_envs.robot_data import iCub
 from pybullet_robot_envs.envs.icub_envs.icub_env import iCubEnv
 
 import numpy as np
-import quaternion
 import math as m
 import time
 
