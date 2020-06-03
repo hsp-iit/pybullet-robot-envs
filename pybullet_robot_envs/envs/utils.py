@@ -3,11 +3,9 @@ import math as m
 import warnings
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 
 import struct
 
-sns.set()
 
 
 def goal_distance(a: np.ndarray, b: np.ndarray):
