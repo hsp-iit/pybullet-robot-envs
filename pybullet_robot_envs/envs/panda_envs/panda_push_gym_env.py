@@ -26,6 +26,7 @@ class pandaPushGymEnv(gym.Env):
     'video.frames_per_second': 50 }
 
     def __init__(self,
+                 numControlledJoints=7,
                  use_IK=0,
                  action_repeat=1,
                  obj_name=get_objects_list()[1],
@@ -61,7 +62,7 @@ class pandaPushGymEnv(gym.Env):
             self._physics_client_id = p.connect(p.DIRECT)
 
         # Load robot
-        self._robot = pandaEnv(self._physics_client_id, use_IK=self._use_IK)
+        self._robot = pandaEnv(self._physics_client_id, use_IK=self._use_IK, joint_action_space=numControlledJoints)
 
         # Load world environment
         self._world = WorldEnv(self._physics_client_id,
@@ -373,4 +374,3 @@ class pandaPushGymEnv(gym.Env):
                            physicsClientId=self._physics_client_id)
         p.addUserDebugLine(self._target_pose, [self._target_pose[0], self._target_pose[1], self._target_pose[2] + 0.1], [0, 0, 1],
                            physicsClientId=self._physics_client_id)
-

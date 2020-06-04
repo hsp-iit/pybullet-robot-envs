@@ -11,7 +11,7 @@ os.sys.path.insert(0, parentdir)
 
 from stable_baselines import HER, DQN, SAC, DDPG, TD3
 from stable_baselines.her import GoalSelectionStrategy, HERGoalEnvWrapper
-from envs.panda_envs.panda_push_gym_env_HER import pandaPushGymEnvHER
+from envs.panda_envs.panda_push_gym_goal_env import pandaPushGymGoalEnv
 from stable_baselines.common.vec_env import SubprocVecEnv
 from stable_baselines.results_plotter import load_results, ts2xy
 from stable_baselines.bench import Monitor
@@ -36,7 +36,8 @@ class CustomTD3Policy(FeedForwardPolicy):
 best_mean_reward, n_steps = -np.inf, 0
 log_dir="../pybullet_logs/panda_push_TD3/stable_baselines/"
 log_dir_policy = '../policies/TD3_phase1_target_fixed'
-
+os.makedirs(log_dir, exist_ok=True)
+os.makedirs(log_dir_policy, exist_ok=True)
 
 def callback(_locals, _globals):
 
@@ -59,24 +60,20 @@ def callback(_locals, _globals):
     n_steps += 1
     return True
 
-def main(load_policy=True):
+def main(load_policy=False):
     global log_dir
     model_class = TD3  # works also with SAC and DDPG
     action_space = 7
-    fixed = True
-    #0 completely fixed, 1 slightly random radius, 2 big random radius,
-    object_position = 1
     normalize_observations = False
     gamma = 0.9
     memory_limit = 1000000
     normalize_returns = True
     timesteps = 8000000
-    discreteAction = 0
     rend = False
 
-    env = pandaPushGymEnvHER(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0,
-            isDiscrete=discreteAction, action_space = action_space,
-            fixedPositionObj = fixed, includeVelObs = True, object_position=object_position)
+    obj_pose_rnd_std = 0
+
+    env = pandaPushGymGoalEnv(renders=rend, use_IK=0, numControlledJoints = action_space, obj_pose_rnd_std = obj_pose_rnd_std, includeVelObs = True)
 
     env = Monitor(env, log_dir, allow_early_resets=True)
 

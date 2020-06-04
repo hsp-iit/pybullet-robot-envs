@@ -31,7 +31,7 @@ def main(argv):
     # -j
     numControlledJoints = 7
     # -p
-    fixed = False
+    fixed = True
     # -o
     normalize_observations = False
     # -g
@@ -85,10 +85,9 @@ def main(argv):
 
 
 
-
-    discreteAction = 0
     rend = False
-    pandaenv = pandaReachGymEnv(urdfRoot=robot_data.getDataPath(), renders=rend, useIK=0, isDiscrete=discreteAction, numControlledJoints = numControlledJoints, fixedPositionObj = fixed, includeVelObs = True)
+    obj_pose_rnd_std = 0 if fixed == True else 0.05
+    pandaenv = pandaReachGymEnv(renders=rend, use_IK=0, numControlledJoints = numControlledJoints, obj_pose_rnd_std = obj_pose_rnd_std, includeVelObs = True)
     n_actions = pandaenv.action_space.shape[-1]
     param_noise = None
     action_noise = OrnsteinUhlenbeckActionNoise(mean=np.zeros(n_actions), sigma=float(0.5) * np.ones(n_actions))

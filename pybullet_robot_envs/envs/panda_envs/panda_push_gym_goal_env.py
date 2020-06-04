@@ -21,6 +21,7 @@ class pandaPushGymGoalEnv(gym.GoalEnv, pandaPushGymEnv):
                 'video.frames_per_second': 50}
 
     def __init__(self,
+                 numControlledJoints=7,
                  use_IK=0,
                  action_repeat=1,
                  obj_name=get_objects_list()[1],
@@ -29,7 +30,7 @@ class pandaPushGymGoalEnv(gym.GoalEnv, pandaPushGymEnv):
                  obj_pose_rnd_std=0, tg_pose_rnd_std=0.2,
                  includeVelObs=True):
 
-        super().__init__(use_IK, action_repeat, obj_name,
+        super().__init__(numControlledJoints, use_IK, action_repeat, obj_name,
                                                  renders, max_steps, obj_pose_rnd_std, tg_pose_rnd_std,
                                                  includeVelObs)
 
@@ -119,7 +120,3 @@ class pandaPushGymGoalEnv(gym.GoalEnv, pandaPushGymEnv):
         d = goal_distance(achieved_goal[:3], goal[:3])
 
         return -(d > self._target_dist_min).astype(np.float32)
-
-
-
-

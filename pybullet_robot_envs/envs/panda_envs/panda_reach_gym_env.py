@@ -24,6 +24,7 @@ class pandaReachGymEnv(gym.Env):
     'video.frames_per_second': 50 }
 
     def __init__(self,
+                 numControlledJoints=7,
                  use_IK=0,
                  action_repeat=1,
                  obj_name=get_objects_list()[1],
@@ -56,7 +57,7 @@ class pandaReachGymEnv(gym.Env):
             self._physics_client_id = p.connect(p.DIRECT)
 
         # Load robot
-        self._robot = pandaEnv(self._physics_client_id, use_IK=self._use_IK)
+        self._robot = pandaEnv(self._physics_client_id, use_IK=self._use_IK, joint_action_space=numControlledJoints)
 
         # Load world environment
         self._world = WorldEnv(self._physics_client_id,
