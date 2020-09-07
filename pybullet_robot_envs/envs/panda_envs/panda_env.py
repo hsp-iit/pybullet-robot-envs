@@ -50,7 +50,7 @@ class pandaEnv:
 
     def reset(self):
         # Load robot model
-        flags = p.URDF_ENABLE_CACHED_GRAPHICS_SHAPES | p.URDF_USE_INERTIA_FROM_FILE
+        flags = p.URDF_ENABLE_CACHED_GRAPHICS_SHAPES | p.URDF_USE_INERTIA_FROM_FILE | p.URDF_USE_SELF_COLLISION
         self.robot_id = p.loadURDF(os.path.join(franka_panda.get_data_path(), "panda_model.urdf"),
                                    basePosition=self._base_position, useFixedBase=True, flags=flags,
                                    physicsClientId=self._physics_client_id)
