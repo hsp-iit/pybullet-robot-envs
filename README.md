@@ -5,6 +5,8 @@
 <h align="center"> ⚠️ Status: Pre-alpha ⚠️ </h>
 </p>
 
+Notice: at the moment we are not actively maintaining this repository so we may not be able to reply to issues in a timely manner.
+
 ---
 
 **pybullet-robot-envs** is a *Python* package that collects robotic environments based on the [PyBullet](https://github.com/bulletphysics/bullet3) simulator, suitable to develop and test Reinforcement Learning algorithms on simulated **grasping** and **manipulation** applications.
