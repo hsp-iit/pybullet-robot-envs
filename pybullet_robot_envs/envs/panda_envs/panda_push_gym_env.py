@@ -264,7 +264,7 @@ class pandaPushGymEnv(gym.Env):
         if mode != "rgb_array":
             return np.array([])
 
-        base_pos, _ = self._p.getBasePositionAndOrientation(self._robot.robot_id,
+        base_pos, _ = p.getBasePositionAndOrientation(self._robot.robot_id,
                                                             physicsClientId=self._physics_client_id)
 
         cam_dist = 1.3
@@ -273,7 +273,7 @@ class pandaPushGymEnv(gym.Env):
         RENDER_HEIGHT = 640
         RENDER_WIDTH = 480
 
-        view_matrix = self._p.computeViewMatrixFromYawPitchRoll(cameraTargetPosition=base_pos,
+        view_matrix = p.computeViewMatrixFromYawPitchRoll(cameraTargetPosition=base_pos,
                                                                 distance=cam_dist,
                                                                 yaw=cam_yaw,
                                                                 pitch=cam_pitch,
@@ -281,16 +281,16 @@ class pandaPushGymEnv(gym.Env):
                                                                 upAxisIndex=2,
                                                                 physicsClientId=self._physics_client_id)
 
-        proj_matrix = self._p.computeProjectionMatrixFOV(fov=60, aspect=float(RENDER_WIDTH) / RENDER_HEIGHT,
+        proj_matrix = p.computeProjectionMatrixFOV(fov=60, aspect=float(RENDER_WIDTH) / RENDER_HEIGHT,
                                                          nearVal=0.1, farVal=100.0,
                                                          physicsClientId=self._physics_client_id)
 
-        (_, _, px, _, _) = self._p.getCameraImage(width=RENDER_WIDTH, height=RENDER_HEIGHT,
+        (_, _, px, _, _) = p.getCameraImage(width=RENDER_WIDTH, height=RENDER_HEIGHT,
                                                   viewMatrix=view_matrix,
                                                   projectionMatrix=proj_matrix,
-                                                  renderer=self._p.ER_BULLET_HARDWARE_OPENGL,
+                                                  renderer=p.ER_BULLET_HARDWARE_OPENGL,
                                                   physicsClientId=self._physics_client_id)
-        # renderer=self._p.ER_TINY_RENDERER)
+        # renderer=p.ER_TINY_RENDERER)
 
         rgb_array = np.array(px, dtype=np.uint8)
         rgb_array = np.reshape(rgb_array, (RENDER_HEIGHT, RENDER_WIDTH, 4))
