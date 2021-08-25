@@ -3,6 +3,6 @@ pybullet
 matplotlib
 pandas
 ruamel.yaml
-tensorflow==2.4.0
+tensorflow==2.5.1
 stable_baselines==2.7
 git+https://github.com/eleramp/pybullet-object-models.git
